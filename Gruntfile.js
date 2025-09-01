@@ -171,7 +171,6 @@ module.exports = function (grunt) {
                             '<%= yeoman.app %>/bower_components/uri.js/src/URI.min.js',
                             '<%= yeoman.app %>/bower_components/bootstrap/js/transition.js',
                             '<%= yeoman.app %>/bower_components/bootstrap/js/collapse.js',
-                            '<%= yeoman.app %>/scripts/showdown.js',
                             '<%= yeoman.app %>/scripts/base.js'
                         ]
                     },
@@ -358,17 +357,48 @@ module.exports = function (grunt) {
         'connect:test'
     ]);
 
-    grunt.registerTask('build', [
+    grunt.registerTask('build:deps', [
         'clean:dist',
         'googlefonts',
         'npm-command',
-        'copy:server',
+        'copy:server'
+    ]);
+
+    grunt.registerTask('list-dist', function() {
+        var fs = require('fs');
+        var path = require('path');
+        var distPath = grunt.config('yeoman.dist');
+        
+        grunt.log.writeln('Dist directory: ' + distPath);
+        
+        try {
+            var files = fs.readdirSync(distPath);
+            if (files.length === 0) {
+                grunt.log.warn('Dist directory is empty');
+            } else {
+                grunt.log.writeln('Dist directory contents:');
+                files.forEach(function(file) {
+                    grunt.log.writeln(file);
+                });
+            }
+        } catch (err) {
+            grunt.log.error('Error reading dist directory: ' + err);
+        }
+    });
+
+    grunt.registerTask('build:assets', [
         'concurrent',
         'cssmin',
         'concat',
         'includes:build',
         'uglify',
-        'copy'
+        'copy',
+        'list-dist'  // Add this line to list dist contents after build
+    ]);
+
+    grunt.registerTask('build', [
+        'build:deps',
+        'build:assets'
     ]);
 
     grunt.registerTask('default', [

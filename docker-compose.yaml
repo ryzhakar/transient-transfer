@@ -7,15 +7,15 @@ services:
       dockerfile: Dockerfile
     container_name: transfer-sh-builder
     volumes:
-      - webapp-assets:/app/dist:rw
-    command: ["sh", "-c", "ls -la dist/ && echo '✅ Assets built and ready in shared volume' && tail -f /dev/null"]
+      - ./dist:/app/dist:rw
+    # command: ["sh", "-c", "mkdir -p /app/dist && echo '✅ Assets built and ready in shared directory'"]
     restart: "no"
-    healthcheck:
-      test: ["CMD", "test", "-f", "/app/dist/index.html"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
-      start_period: 10s
+    # healthcheck:
+    #   test: ["CMD", "test", "-d", "/app/dist"]
+    #   interval: 5s
+    #   timeout: 3s
+    #   retries: 5
+    #   start_period: 10s
 
   transfer-sh:
     image: dutchcoders/transfer.sh:v1.6.1-noroot
@@ -33,18 +33,14 @@ services:
       - PURGE_DAYS=1
       - RANDOM_TOKEN_LENGTH=8
     volumes:
-      - webapp-assets:/webapp:ro
+      - ./dist:/webapp:ro
       - ./tmp:/tmp/transfersh
     depends_on:
       builder:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
-
-volumes:
-  webapp-assets:
-    driver: local
+        condition: service_completed_successfully
+    # healthcheck:
+    #   test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 10s
