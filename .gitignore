@@ -15,3 +15,8 @@ bower_components/
 node_modules/
 
 letsencrypt.cache
+
+dist/
+node_modules/
+.tmp/
+*.log
