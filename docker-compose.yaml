@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  builder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: transfer-sh-builder
+    volumes:
+      - webapp-assets:/app/dist:rw
+    command: ["sh", "-c", "ls -la dist/ && echo '✅ Assets built and ready in shared volume' && tail -f /dev/null"]
+    restart: "no"
+    healthcheck:
+      test: ["CMD", "test", "-f", "/app/dist/index.html"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+  transfer-sh:
+    image: dutchcoders/transfer.sh:v1.6.1-noroot
+    container_name: transfer-sh-custom
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - PROVIDER=local
+      - BASEDIR=/tmp/transfersh
+      - LISTENER=:8080
+      - TEMP_PATH=/tmp
+      - WEB_PATH=/webapp
+      - MAX_UPLOAD_SIZE=5368709120
+      - PURGE_DAYS=1
+      - RANDOM_TOKEN_LENGTH=8
+    volumes:
+      - webapp-assets:/webapp:ro
+      - ./tmp:/tmp/transfersh
+    depends_on:
+      builder:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  webapp-assets:
+    driver: local

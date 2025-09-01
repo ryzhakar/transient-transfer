@@ -1,0 +1,15 @@
+node_modules
+src/bower_components
+dist
+bindata_gen.go
+logs
+.env*
+*.log
+.DS_Store
+.git
+.gitignore
+README.md
+.dockerignore
+Dockerfile*
+docker-compose*.yml
+
