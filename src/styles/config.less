@@ -1,33 +1,160 @@
-// Colors
+@rams-charcoal: #2c2c2c;
+@rams-graphite: #404040;
+@rams-steel: #6b6b6b;
+@rams-silver: #a8a8a8;
+@rams-platinum: #d4d4d4;
+@rams-pearl: #f7f7f7;
+@rams-snow: #ffffff;
 
-@blue: #85b5bb;
-@dark-blue: #36535a;
-@red: #e96e57;
-@light-gray: #f6f8f8;
-@dark-gray: #3b3b3b;
+// Functional Colors - Inspired by Braun's restrained palette
+@rams-cobalt: #2563eb;
+@rams-forest: #16a34a;
+@rams-crimson: #dc2626;
+@rams-amber: #d97706;
 
-@navbar-default-bg:    #fff;
+// Semantic Color Mapping
+@primary-text: @rams-graphite;
+@secondary-text: @rams-steel;
+@accent-color: @rams-cobalt;
+@background-primary: @rams-snow;
+@background-secondary: @rams-pearl;
+@border-color: @rams-platinum;
+@success-color: @rams-forest;
+@error-color: @rams-crimson;
+@warning-color: @rams-amber;
 
+// Legacy Bootstrap Compatibility
+@blue: @rams-cobalt;
+@dark-blue: @rams-graphite;
+@red: @rams-crimson;
+@light-gray: @rams-platinum;
+@dark-gray: @rams-graphite;
+@navbar-default-bg: @background-primary;
+@text-color: @primary-text;
+@link-color: @accent-color;
+@progress-bg: @accent-color;
 
-@text-color: @dark-gray;
-@link-color: @dark-gray;
+@font-family-display: "Akzidenz-Grotesk", sans-serif;
+@font-family-base: "Univers", sans-serif;
+@font-family-mono: "JetBrains Mono", "Fira Code", "SF Mono", "Roboto Mono", "Consolas", monospace;
 
+@font-family-system: -apple-system, BlinkMacSystemFont;
 
-@progress-bg:    @blue;
+@font-size-micro: 10px;
+@font-size-small: 12px;
+@font-size-base: 15px;
+@font-size-medium: 17px;
+@font-size-large: 20px;
+@font-size-xl: 28px;
+@font-size-xxl: 36px;
+@font-size-display: 56px;
 
-// Typography
-@font-family-base: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
-@font-family-mono: "Droid Sans Mono", monospace;
+@font-size-h6: @font-size-micro;
+@font-size-h5: @font-size-small;
+@font-size-h4: @font-size-base;
+@font-size-h3: @font-size-large;
+@font-size-h2: @font-size-xl;
+@font-size-h1: @font-size-xxl;
 
-@headings-font-family:    @font-family-base;
-@headings-font-weight:    100;
-@headings-line-height:    1.1;
-@headings-color:          inherit;
+@line-height-micro: 1.0;
+@line-height-tight: 1.15;
+@line-height-base: 1.4;
+@line-height-loose: 1.6;
 
+@font-weight-light: 300;
+@font-weight-normal: 400;
+@font-weight-medium: 500;
+@font-weight-semibold: 600;
+@font-weight-bold: 700;
 
-// Animation
-@animation-duration: 0.3s;
+@headings-font-family: @font-family-display;
+@headings-font-weight: @font-weight-semibold;
+@headings-line-height: @line-height-tight;
+@headings-color: @primary-text;
+@headings-margin-bottom: 0.6em;
+@headings-letter-spacing: -0.015em;
 
+@body-font-family: @font-family-base;
+@body-font-weight: @font-weight-normal;
+@body-line-height: @line-height-base;
+@body-letter-spacing: -0.005em;
 
-// Layout
-@grid-gutter-width:         70px;
+@mono-font-family: @font-family-mono;
+@mono-font-weight: @font-weight-normal;
+@mono-line-height: @line-height-base;
+@mono-letter-spacing: 0;
+
+@animation-duration-instant: 0.1s;
+@animation-duration-fast: 0.15s;
+@animation-duration-base: 0.25s;
+@animation-duration-slow: 0.4s;
+@animation-duration-lazy: 0.6s;
+
+// Easing Curves
+@ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+@ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+@ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+@ease-in-out-back: cubic-bezier(0.68, -0.6, 0.32, 1.6);
+@ease-linear: linear;
+
+// Default Easing
+@animation-easing: @ease-out-quart;
+@animation-easing-bounce: @ease-in-out-back;
+
+// Spacing System - 8px grid for visual rhythm
+// Based on 8px base unit for consistent spacing
+@spacing-unit: 8px;
+@spacing-0: 0;
+@spacing-1: @spacing-unit * 0.5;    // 4px
+@spacing-2: @spacing-unit;          // 8px  
+@spacing-3: @spacing-unit * 1.5;    // 12px
+@spacing-4: @spacing-unit * 2;      // 16px
+@spacing-5: @spacing-unit * 2.5;    // 20px
+@spacing-6: @spacing-unit * 3;      // 24px
+@spacing-8: @spacing-unit * 4;      // 32px
+@spacing-10: @spacing-unit * 5;     // 40px
+@spacing-12: @spacing-unit * 6;     // 48px
+@spacing-16: @spacing-unit * 8;     // 64px
+@spacing-20: @spacing-unit * 10;    // 80px
+@spacing-24: @spacing-unit * 12;    // 96px
+
+// Semantic Spacing Aliases
+@spacing-xs: @spacing-2;
+@spacing-sm: @spacing-4;
+@spacing-md: @spacing-6;
+@spacing-lg: @spacing-8;
+@spacing-xl: @spacing-12;
+@spacing-xxl: @spacing-16;
+
+// Border Radius - Subtle and consistent
+@border-radius-none: 0;
+@border-radius-sm: 2px;
+@border-radius-base: 4px;
+@border-radius-md: 6px;
+@border-radius-lg: 8px;
+@border-radius-xl: 12px;
+@border-radius-full: 9999px;
+
+// Shadows - Minimal depth
+@shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+@shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+@shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+@shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+// Grid System
+@grid-gutter-width: @spacing-lg;
+@container-max-width: 1200px;
+
+// Responsive Breakpoints - Mobile-first approach
+@screen-xs: 480px;
+@screen-sm: 768px;
+@screen-md: 1024px;
+@screen-lg: 1200px;
+@screen-xl: 1440px;
+
+// Media Query Mixins
+@mobile-only: ~"(max-width: @{screen-xs})";
+@tablet-up: ~"(min-width: @{screen-sm})";
+@desktop-up: ~"(min-width: @{screen-md})";
+@large-up: ~"(min-width: @{screen-lg})";
+@xl-up: ~"(min-width: @{screen-xl})";

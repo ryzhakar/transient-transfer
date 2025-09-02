@@ -1,151 +1,378 @@
+// Home Page - Braun-inspired upload interface
+// "Good design makes a product understandable" - spacious but not empty
+
 #home {
-    text-align: center;
-    .page-title {
-        font-size: 30px;
-    }
-    @media (min-width: @screen-sm-min) {
-        padding: 50px;
-        .page-title {
-            font-size: 45px;
-            margin-top: -20px;
-            margin-bottom: 20px;
-        }
-    }
-    .btn-home {
-        margin: 50px 0 25px 0;
-    }
-    hr {
-        margin-top: 20px;
-        margin-bottom: 20px;
-        margin-right: 20px;
-        border: 0;
-        border-top: 1px solid #eeeeee;
-        height: 0;
-    }
-}
-
-
-#web, .terminal {
-    word-wrap: break-word;
-    font-size: 12px;
-    .code-title {
-        color: @red;
-    }
-    padding: 25px 0 0 10px;
-    @media (min-width: @screen-sm-min) {
-        padding: 25px 0 0 20px;
-        font-size: 15px
-    }
-    code {
-        font-family: @font-family-mono;
-    }
-    .code-wrapper {
-        white-space: pre-line;
-    }
-    font-family: @font-family-mono;
-
-    text-align: left;
-    color: #fff;
-    .transition(all @animation-duration ease);
-}
-
-
-#web {
-    margin-top: -2px;
-    padding-top: 0;
-    padding-bottom: 50px;
-    width: 100%;
-    display: block;
-    background: @dark-blue;
-    .transition(all @animation-duration ease);
-    .btn-cta {
-        padding: 5px 10px;
-        font-size: 14px;
-        border-color: #fff;
-    }
-    .queue {
-        margin: 0;
-        list-style: none;
-        padding: 0;
-    }
-    a {
-        color: #fff;
-    }
-      .border-bottom-radius (5px);
-
-}
- .dragged {
-        background: lighten(@dark-blue, 5%)!important;
-}
-
-.terminal {
-    a {
-        color: #fff
-    }
-
-     .border-top-radius (0);
-
-    .border-bottom-radius (5px);
-    background: @dark-blue;
- //   background: url(../images/terminal.svg);
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-
-.terminal-top {
-    .border-top-radius (5px);
-    background: url(../images/terminal-top.svg);
-    background-repeat: no-repeat;
-    background-size: cover;
-    height: 30px;
-}
-
-.upload-progress {
-    max-width: 80%;
-    .bar {
-        word-wrap: normal;
-        overflow: hidden;
-    }
-    span {
-        float: right;
-    }
-    padding-top: 4px;
-}
-
-.all-files {
-    display: none;
-}
-
-.all-files .show {
-    display: block;
-}
-
-#thank-you {color: #fff;
-    text-align: center;
-    .col-md-4 {
+    // Upload Area - Central focal point with watch-like precision
+    .upload-area {
+        border: 2px solid fade(@border-color, 40%);
+        border-radius: @border-radius-md;
+        padding: @spacing-10 @spacing-6;
         text-align: center;
-        a {
-            font-size: 20px;
+        background-color: @background-primary;
+        transition: all @animation-duration-fast @ease-out-quart;
+        cursor: pointer;
+        margin-bottom: @spacing-10;
+        min-height: 140px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        
+        @media @tablet-up {
+            padding: @spacing-12 @spacing-8;
+            margin-bottom: @spacing-12;
+            min-height: 160px;
+        }
+        
+        @media @desktop-up {
+            padding: @spacing-16 @spacing-10;
+            min-height: 180px;
+        }
+        
+        // Hover State - Confident feedback like Braun controls
+        &:hover {
+            border-color: @accent-color;
+            background-color: fade(@accent-color, 3%);
+            transform: translateY(-1px);
+            
+            .upload-icon {
+                color: @accent-color;
+                transform: translateY(-2px);
+            }
+            
+            .upload-description {
+                color: @primary-text;
+            }
+        }
+        
+        // Drag State - Clear visual feedback with mechanical precision
+        &.dragged {
+            border-color: @accent-color;
+            border-style: solid;
+            background-color: fade(@accent-color, 8%);
+            transform: scale(1.01);
+            box-shadow: @shadow-md;
+            
+            .upload-icon {
+                color: @accent-color;
+                transform: scale(1.05) translateY(-2px);
+            }
+        }
+        
+        // Focus State - Accessibility with watch-like clarity
+        &:focus-within {
+            outline: 2px solid @accent-color;
+            outline-offset: 2px;
+        }
+        
+        .upload-content {
+            width: 100%;
+            max-width: 360px;
+        }
+        
+        .upload-icon {
+            color: @secondary-text;
+            margin-bottom: @spacing-3;
+            transition: all @animation-duration-fast @ease-out-expo;
+            
+            svg {
+                display: block;
+                margin: 0 auto;
+                width: 28px;
+                height: 28px;
+                stroke-width: 1.5;
+                
+                @media @tablet-up {
+                    width: 32px;
+                    height: 32px;
+                }
+                
+                @media @desktop-up {
+                    width: 36px;
+                    height: 36px;
+                }
+            }
+        }
+        
+        .upload-description {
+            font-size: @font-size-base;
+            color: @secondary-text;
+            margin: 0;
+            font-weight: @font-weight-normal;
+            line-height: @line-height-base;
+            transition: color @animation-duration-fast @ease-out-quart;
+            
+            @media @tablet-up {
+                font-size: @font-size-medium;
+            }
+            
+            .browse {
+                color: @accent-color;
+                font-weight: @font-weight-semibold;
+                cursor: pointer;
+                text-decoration: none;
+                border-bottom: 1px solid fade(@accent-color, 40%);
+                transition: all @animation-duration-fast @ease-out-quart;
+                
+                &:hover {
+                    border-bottom-color: @accent-color;
+                    color: darken(@accent-color, 8%);
+                }
+                
+                &:focus {
+                    outline: 2px solid @accent-color;
+                    outline-offset: 2px;
+                    border-radius: @border-radius-sm;
+                }
+            }
+        }
+    }
+    
+    // File Queue - Watch-like precision in file listing
+    .file-queue {
+        .queue {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            
+            li {
+                border-bottom: 1px solid fade(@border-color, 25%);
+                padding: @spacing-3 0;
+                transition: all @animation-duration-fast @ease-out-quart;
+                
+                @media @tablet-up {
+                    padding: @spacing-4 0;
+                }
+                
+                &:last-child {
+                    border-bottom: none;
+                }
+                
+                &:first-child {
+                    padding-top: 0;
+                }
+                
+                &:hover {
+                    background-color: fade(@accent-color, 2%);
+                    margin: 0 -@spacing-3;
+                    padding-left: @spacing-3;
+                    padding-right: @spacing-3;
+                    border-radius: @border-radius-sm;
+                    transform: translateY(-1px);
+                }
+                
+                .file-info {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                    margin-bottom: @spacing-2;
+                    gap: @spacing-3;
+                    
+                    @media @tablet-up {
+                        align-items: center;
+                        gap: @spacing-4;
+                    }
+                    
+                    .file-name {
+                        font-weight: @font-weight-medium;
+                        color: @primary-text;
+                        font-size: @font-size-small;
+                        word-break: break-word;
+                        flex: 1;
+                        transition: color @animation-duration-fast @ease-out-quart;
+                        line-height: @line-height-base;
+                        cursor: pointer;
+                        
+                        @media @tablet-up {
+                            font-size: @font-size-base;
+                        }
+                        
+                        &:hover {
+                            color: @accent-color;
+                        }
+                    }
+                    
+                    .file-actions {
+                        display: flex;
+                        align-items: center;
+                        gap: @spacing-2;
+                        flex-shrink: 0;
+                        
+                        .file-status {
+                            font-size: @font-size-micro;
+                            color: @secondary-text;
+                            white-space: nowrap;
+                            font-family: @font-family-mono;
+                            font-weight: @font-weight-medium;
+                            text-transform: uppercase;
+                            letter-spacing: 0.05em;
+                            
+                            @media @tablet-up {
+                                font-size: @font-size-small;
+                            }
+                        }
+                        
+                        .copy-token-btn,
+                        .copy-link-btn {
+                            background-color: @background-secondary;
+                            border: 1px solid fade(@border-color, 30%);
+                            color: @secondary-text;
+                            cursor: pointer;
+                            padding: @spacing-1;
+                            border-radius: @border-radius-sm;
+                            font-size: 12px;
+                            transition: all @animation-duration-fast @ease-out-quart;
+                            min-height: 28px;
+                            min-width: 28px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            
+                            @media @tablet-up {
+                                padding: @spacing-2;
+                                font-size: 14px;
+                                min-height: 32px;
+                                min-width: 32px;
+                            }
+                            
+                            &:hover {
+                                color: @accent-color;
+                                border-color: @accent-color;
+                                background-color: fade(@accent-color, 8%);
+                                transform: translateY(-1px);
+                            }
+                            
+                            &:active {
+                                transform: translateY(0);
+                                transition-duration: @animation-duration-instant;
+                            }
+                            
+                            &:focus {
+                                outline: 2px solid @accent-color;
+                                outline-offset: 2px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // Upload Progress - Watch-like precision indicator
+    .upload-progress {
+        width: 100%;
+        height: 2px;
+        background-color: fade(@border-color, 30%);
+        border-radius: @border-radius-sm;
+        overflow: hidden;
+        margin-bottom: @spacing-2;
+        
+        .bar {
+            height: 100%;
+            background-color: @accent-color;
+            transition: width @animation-duration-base @ease-linear;
+            border-radius: @border-radius-sm;
+            position: relative;
+            
+            &::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-image: linear-gradient(
+                    90deg,
+                    transparent 0%,
+                    rgba(255, 255, 255, 0.2) 50%,
+                    transparent 100%
+                );
+                background-size: 20px 100%;
+                animation: progress-shimmer 1.5s ease-in-out infinite;
+            }
+        }
+    }
+    
+    // Batch Actions - Secondary functionality
+    .batch-actions {
+        display: none;
+        text-align: center;
+        margin: @spacing-8 0;
+        padding: @spacing-6 0;
+        border-top: 1px solid fade(@border-color, 30%);
+        
+        @media @tablet-up {
+            margin: @spacing-12 0;
+            padding: @spacing-8 0;
+        }
+        
+        &.show {
+            display: block;
+        }
+        
+        .batch-buttons {
+            display: inline-block;
+        }
+        
+        .btn-batch {
+            font-family: @font-family-base;
+            font-size: @font-size-small;
+            font-weight: @font-weight-medium;
+            color: @accent-color;
+            background-color: @background-primary;
+            border: 1px solid @border-color;
+            padding: @spacing-3 @spacing-6;
+            border-radius: @border-radius-base;
             text-decoration: none;
+            transition: all @animation-duration-base @animation-easing;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            
+            @media @tablet-up {
+                font-size: @font-size-base;
+                padding: @spacing-4 @spacing-8;
+                min-height: 48px;
+            }
+            
+            &:hover {
+                color: @background-primary;
+                border-color: @accent-color;
+                background-color: @accent-color;
+                transform: translateY(-1px);
+                box-shadow: @shadow-md;
+            }
+            
+            &:active {
+                transform: translateY(0);
+                box-shadow: @shadow-sm;
+            }
+            
+            &:focus {
+                outline: 2px solid @accent-color;
+                outline-offset: 2px;
+            }
+        }
+    }
+}
 
-            line-height: 25px;
-            color: #fff;
-        }
+// Progress Animations
+@keyframes progress-animation {
+    0% {
+        background-position: 0 0;
     }
-    i {
-        vertical-align: middle;
+    100% {
+        background-position: 20px 0;
     }
-    padding: 40px 0;
-    .donate {
-        img {
-            max-width: 200px;
-        }
+}
+
+@keyframes progress-shimmer {
+    0% {
+        background-position: -20px 0;
     }
-    h3 {color: #fff;
-        font-size: 25px;
-    }
-    background: @blue;
-    .btn-cta {
-        border-color: @dark-blue;
+    100% {
+        background-position: 40px 0;
     }
 }

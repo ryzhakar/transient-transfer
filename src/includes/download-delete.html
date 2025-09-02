@@ -1,14 +1,21 @@
-<a href="{{.URL}}" id="fire-delete" class="btn-cta btn"> delete</i> </a> <br/><br/>
-<div class="delete-modal row animated fadeInDown">
-  <div id="from-terminal" class=" box col-md-8  col-md-offset-2 col-xs-12">
-    <div class="terminal-top">
+<div class="delete-section">
+    <button id="fire-delete" class="btn-secondary delete-btn">Delete File</button>
+</div>
+
+<div class="delete-modal" id="delete-modal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Delete File</h3>
+        </div>
+        <div class="modal-body">
+            <p>Enter the deletion token to permanently remove this file:</p>
+            <input type="text" id="deletion-token" placeholder="Deletion token" class="token-input">
+            <div id="error" class="error-message"></div>
+        </div>
+        <div class="modal-actions">
+            <button id="confirm-delete" class="btn-primary">Delete</button>
+            <button id="cancel-delete" class="btn-secondary">Cancel</button>
+        </div>
     </div>
-    <div class="terminal">
-      <div id="web">
-        <input type="text" id="deletion-token" value="" placeholder="Please enter the deletion token">
-        <a href="#" id="confirm-delete" class="btn-cta btn"> confirm</i> </a> <br/><br/>
-      </div>
-      <div id="error"></div>
-    </div>
-  </div>
 </div>

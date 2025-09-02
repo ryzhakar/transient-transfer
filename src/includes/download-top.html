@@ -1,9 +1,20 @@
-        <br/>
-        <h2 class="page-title">{{.Filename}}</h2>
-        <h4>type: <b>{{.ContentType}}</b></h4>
-        <h4>size: <b>{{.ContentLength | format "#,###."}}</b> bytes</h4>
+        <div class="download-header">
+            <h1 class="file-title">{{.Filename}}</h1>
+            <div class="file-meta">
+                <span class="file-type">{{.ContentType}}</span>
+                <span class="file-size">{{.ContentLength | format "#,###."}} bytes</span>
+            </div>
+        </div>
 
-        <a href="{{.URLGet}}" class="btn-cta btn"> download</i> </a> <br/><br/>
-        <div class="qrcode">
-                <img src="data:image/png;base64,{{.QRCode}}"/>
+        <div class="download-actions">
+            <a href="{{.URLGet}}" class="btn-primary download-btn">Download</a>
+        </div>
+
+        <div class="qr-section">
+            <details class="qr-details">
+                <summary class="qr-summary">QR Code</summary>
+                <div class="qr-code">
+                    <img src="data:image/png;base64,{{.QRCode}}" alt="QR Code for mobile access"/>
+                </div>
+            </details>
         </div>

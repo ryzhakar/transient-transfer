@@ -1,102 +1,361 @@
 
+// Dieter Rams Global Styles - "Good design is as little design as possible"
+
+// Universal Box Model - Consistent and predictable
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+// Root Typography Settings - Inter font optimization
+html {
+    font-size: @font-size-base;
+    line-height: @body-line-height;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1, "ss01" 1; // Inter's contextual alternates
+}
+
+// Body - Sophisticated foundation with Inter
 body {
-    max-width: 2000px;
+    font-family: @body-font-family;
+    font-weight: @body-font-weight;
+    color: @primary-text;
+    background-color: @background-primary;
+    margin: 0;
+    padding: 0;
+    max-width: @container-max-width;
     margin: 0 auto;
+    padding: 0 @spacing-4;
+    letter-spacing: @body-letter-spacing;
+    
+    @media @tablet-up {
+        padding: 0 @spacing-6;
+    }
+    
+    @media @desktop-up {
+        padding: 0 @spacing-8;
+    }
 }
 
+// Typography Hierarchy - Inter's sophisticated character
+h1, h2, h3, h4, h5, h6 {
+    font-family: @headings-font-family;
+    font-weight: @headings-font-weight;
+    line-height: @headings-line-height;
+    color: @headings-color;
+    margin: 0 0 @headings-margin-bottom 0;
+    letter-spacing: @headings-letter-spacing;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+}
+
+h1 {
+    font-size: @font-size-h1;
+    font-weight: @font-weight-bold;
+    letter-spacing: -0.025em;
+    line-height: @line-height-tight;
+}
+
+h2 {
+    font-size: @font-size-h2;
+    font-weight: @font-weight-semibold;
+    letter-spacing: -0.02em;
+}
+
+h3 {
+    font-size: @font-size-h3;
+    font-weight: @font-weight-semibold;
+    letter-spacing: -0.015em;
+}
+
+h4 {
+    font-size: @font-size-h4;
+    font-weight: @font-weight-medium;
+    letter-spacing: -0.01em;
+}
+
+h5 {
+    font-size: @font-size-h5;
+    font-weight: @font-weight-medium;
+    letter-spacing: -0.005em;
+}
+
+h6 {
+    font-size: @font-size-h6;
+    font-weight: @font-weight-semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    line-height: @line-height-micro;
+}
+
+// Paragraph and Text - Optimized for Inter
+p {
+    margin: 0 0 @spacing-4 0;
+    line-height: @body-line-height;
+    font-weight: @body-font-weight;
+    letter-spacing: @body-letter-spacing;
+}
+
+small {
+    font-size: @font-size-small;
+    color: @secondary-text;
+    font-weight: @font-weight-normal;
+    line-height: @line-height-base;
+    letter-spacing: @body-letter-spacing;
+}
+
+// Monospace elements - JetBrains Mono precision
+code, pre, .mono {
+    font-family: @mono-font-family;
+    font-weight: @mono-font-weight;
+    line-height: @mono-line-height;
+    letter-spacing: @mono-letter-spacing;
+    font-feature-settings: "kern" 0, "liga" 0; // Disable ligatures for code
+}
+
+// Browser Compatibility Warning
 .browsehappy {
-    margin: 0.2em 0;
-    background: orange;
-    color: white;
-    padding: 0.2em 0;
+    margin: @spacing-4 0;
+    padding: @spacing-4;
+    background-color: @error-color;
+    color: @background-primary;
+    border-radius: @border-radius-base;
+    font-weight: @font-weight-medium;
 }
 
+// Navigation - Minimal and functional with watch-like precision
 #navigation {
-    margin-top: 30px;
-    ul {
-        list-style: none;
-        max-width: 400px;
-        margin: 0 auto;
+    padding: @spacing-8 0;
+    margin-bottom: @spacing-12;
+    border-bottom: 1px solid fade(@border-color, 20%);
+    
+    .wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
-    li {
-        display: inline-block;
-        padding: 0 15px;
-    }
+    
     h1 {
-        text-align: center;
-        font-family: @font-family-mono;
-        margin-bottom: 15px;
-        color: @dark-blue;
-        font-size: 35px;
-    }
-    @media (min-width: @screen-sm-min) {
-        ul {
-            float: right;
-            margin: 33px 0;
-        }
-        h1 {
-            float: left
-        }
-    }
-    a {
+        font-size: @font-size-medium;
+        font-weight: @font-weight-semibold;
+        color: @primary-text;
+        margin: 0;
         text-decoration: none;
-        font-size: 15px;
-        color: @dark-gray;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        transition: color @animation-duration-fast @animation-easing;
+        font-feature-settings: "kern" 1, "liga" 1, "ss01" 1;
+        
+        &:hover {
+            color: @accent-color;
+        }
+        
+        @media @tablet-up {
+            font-size: @font-size-large;
+        }
+        
+        @media @desktop-up {
+            font-size: @font-size-xl;
+        }
+    }
+    
+    .nav-spacer {
+        flex: 1;
+    }
+    
+    @media @tablet-up {
+        padding: @spacing-12 0;
+        margin-bottom: @spacing-16;
     }
 }
 
-
+// Page Title - Bold and graphic with Inter's character
 .page-title {
     text-align: center;
-    font-size: 35px;
-    @media (min-width: @screen-sm-min) {
-        font-size: 50px;
+    font-size: @font-size-xxl;
+    font-weight: @font-weight-bold;
+    margin-bottom: @spacing-6;
+    letter-spacing: -0.025em;
+    line-height: @line-height-tight;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+    
+    @media @tablet-up {
+        font-size: @font-size-display;
+        margin-bottom: @spacing-8;
+        letter-spacing: -0.035em;
     }
 }
 
-.btn-cta {
-    .transition(all @animation-duration);
-    padding: 10px 50px;
-    border: 2px solid @red;
-    font-size: 20px;
-    color: @red;
-    border-radius: 10px;
-    display: inline-block;
+// Button System - Bold and functional like Braun controls
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: @spacing-3 @spacing-6;
+    background-color: @accent-color;
+    color: @background-primary;
+    border: none;
+    border-radius: @border-radius-base;
+    font-family: @font-family-base;
+    font-size: @font-size-small;
+    font-weight: @font-weight-semibold;
     text-decoration: none;
+    cursor: pointer;
+    transition: all @animation-duration-fast @ease-out-quart;
+    min-height: 44px; // Accessibility: touch-friendly minimum
+    letter-spacing: 0.025em;
+    text-transform: uppercase;
+    font-feature-settings: "kern" 1, "liga" 1;
+    
+    @media @tablet-up {
+        padding: @spacing-4 @spacing-8;
+        font-size: @font-size-base;
+        min-height: 48px;
+    }
+    
     &:hover {
+        background-color: darken(@accent-color, 8%);
+        color: @background-primary;
         text-decoration: none;
-        border-color: @dark-blue;
-        color: @dark-blue;
+        transform: translateY(-1px);
+        box-shadow: @shadow-md;
+    }
+    
+    &:active {
+        transform: translateY(0);
+        box-shadow: @shadow-sm;
+        transition-duration: @animation-duration-instant;
+    }
+    
+    &:focus {
+        outline: 2px solid @accent-color;
+        outline-offset: 2px;
     }
 }
 
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: @spacing-3 @spacing-5;
+    background-color: @background-primary;
+    color: @accent-color;
+    border: 2px solid @border-color;
+    border-radius: @border-radius-base;
+    font-family: @font-family-base;
+    font-size: @font-size-small;
+    font-weight: @font-weight-medium;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all @animation-duration-fast @ease-out-quart;
+    min-height: 44px; // Touch-friendly minimum
+    letter-spacing: 0.015em;
+    font-feature-settings: "kern" 1, "liga" 1;
+    
+    @media @tablet-up {
+        padding: @spacing-3 @spacing-6;
+        font-size: @font-size-base;
+        min-height: 48px;
+    }
+    
+    &:hover {
+        background-color: @accent-color;
+        border-color: @accent-color;
+        color: @background-primary;
+        text-decoration: none;
+        transform: translateY(-1px);
+    }
+    
+    &:active {
+        transform: translateY(0);
+        transition-duration: @animation-duration-instant;
+    }
+    
+    &:focus {
+        outline: 2px solid @accent-color;
+        outline-offset: 2px;
+    }
+}
+
+// Layout Container - Centered and constrained
 .wrapper {
     margin: 0 auto;
-    max-width: 1100px;
-    .container;
+    max-width: 800px;
+    width: 100%;
 }
 
+// Section Spacing - Consistent rhythm
 section {
-   // padding: 50px 0
-}
-
-img {
-    max-width: 100%;
-    margin: 0 auto;
-}
-
-a {
-    text-decoration: underline;
-    color: @dark-blue;
-    &:hover {
-        text-decoration: none;
-        color: inherit;
+    margin-bottom: @spacing-20;
+    
+    @media @tablet-up {
+        margin-bottom: @spacing-24;
     }
 }
 
-::selection {
-  background: @red;
+// Images - Responsive by default
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
 }
+
+// Links - Clear and accessible
+a {
+    color: @accent-color;
+    text-decoration: none;
+    transition: color @animation-duration-base @animation-easing;
+    
+    &:hover {
+        color: darken(@accent-color, 15%);
+        text-decoration: underline;
+    }
+    
+    &:focus {
+        outline: 2px solid @accent-color;
+        outline-offset: 2px;
+        border-radius: @border-radius-sm;
+    }
+}
+
+// Footer - Minimal and unobtrusive
+footer {
+    padding: @spacing-16 0;
+    margin-top: @spacing-20;
+    border-top: 1px solid fade(@border-color, 30%);
+    
+    .footer-content {
+        text-align: center;
+        
+        .footer-brand {
+            font-size: @font-size-small;
+            font-weight: @font-weight-normal;
+            color: @secondary-text;
+            margin: 0;
+        }
+    }
+}
+
+// Selection - Subtle highlighting
+::selection {
+    background-color: fade(@accent-color, 15%);
+    color: @primary-text;
+}
+
 ::-moz-selection {
-  background: @red; 
+    background-color: fade(@accent-color, 15%);
+    color: @primary-text;
+}
+
+// Focus Management - Accessibility first
+:focus {
+    outline: 2px solid @accent-color;
+    outline-offset: 2px;
+}
+
+// Remove default focus for mouse users, keep for keyboard users
+:focus:not(:focus-visible) {
+    outline: none;
 }

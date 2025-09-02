@@ -1,32 +1,53 @@
+// Legacy Pages - Cleaned up and consistent with Dieter Rams principles
+
 #samples {
-    h4 {
-        margin-top: 30px;
-    }
-    padding: 75px 0;
+    padding: @spacing-20 0;
     text-align: center;
+    
+    h4 {
+        margin-top: @spacing-8;
+        text-align: left;
+        font-size: @font-size-h4;
+        font-weight: @font-weight-medium;
+        color: @primary-text;
+    }
+    
     .btn-cta {
-        margin: 30px 0;
+        margin: @spacing-8 0;
         cursor: pointer;
     }
-    h4 {
-        text-align: left;
-    }
+    
     .terminal {
-        padding: 20px 15px;
-        font-size: 13px;
+        padding: @spacing-5 @spacing-4;
+        font-size: @font-size-small;
+        font-family: @font-family-mono;
         min-height: 230px;
+        background-color: @background-secondary;
+        border-radius: @border-radius-lg;
+        border: 1px solid @border-color;
+        text-align: left;
+        line-height: @line-height-loose;
     }
 }
 
-footer {
+// Footer - Overriding global footer for legacy compatibility
+footer.legacy-footer {
     text-align: center;
-    background: @dark-blue;
-    padding: 30px 0;
-    color: #fff;
+    background-color: @primary-text;
+    padding: @spacing-8 0;
+    color: @background-primary;
+    border-top: none;
+    
     p {
         margin: 0;
+        font-size: @font-size-small;
     }
+    
     a {
-        color: @light-gray;
+        color: @background-secondary;
+        
+        &:hover {
+            color: @background-primary;
+        }
     }
 }
