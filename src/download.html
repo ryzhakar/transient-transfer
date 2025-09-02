@@ -1,28 +1,121 @@
 <!doctype html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!-->
-<html class="no-js">
-<!--<![endif]-->
-
-include "includes/download-head.html"
-
-<body id="download">
-
-include "includes/download-navigation.html"
-
-
-<section id="home">
-    <div class="wrapper">
-        include "includes/download-top.html"
-        include "includes/download-delete.html"
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Filename}} - {{.Hostname}}</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 32px;
+            background: #ffffff;
+            color: #0a0a0a;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        h1 {
+            font-size: 32px;
+            font-weight: 200;
+            margin: 0 0 16px 0;
+            letter-spacing: -0.02em;
+        }
+        
+        .meta {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+            font-size: 12px;
+            color: #5a5a5a;
+            margin-bottom: 32px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .btn {
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 8px 24px;
+            border: 1px solid #bababa;
+            background: #ffffff;
+            color: #0a0a0a;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.1s ease-out;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background: #0a0a0a;
+            color: #ffffff;
+            border-color: #0a0a0a;
+        }
+        
+        .btn-primary {
+            background: #0a0a0a;
+            color: #ffffff;
+            border-color: #0a0a0a;
+        }
+        
+        .btn-primary:hover {
+            background: #ffffff;
+            color: #0a0a0a;
+            border-color: #0a0a0a;
+        }
+        
+        .countdown {
+            font-size: 12px;
+            color: #5a5a5a;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>{{.Filename}}</h1>
+        <div class="meta">{{.ContentType}} · {{.ContentLength | format "#,###."}} bytes</div>
+        <div class="actions">
+            <a href="{{.URLGet}}" class="btn btn-primary">Download</a>
+            <a href="/" class="btn">Upload More</a>
+        </div>
+        <div class="countdown">Download starts automatically in <span id="countdown">3</span> seconds</div>
     </div>
-</section>
-
-
-include "includes/download-js.html"
-
+    
+    <script>
+        let count = 3;
+        const countdownEl = document.getElementById('countdown');
+        
+        const timer = setInterval(() => {
+            count--;
+            countdownEl.textContent = count;
+            
+            if (count <= 0) {
+                clearInterval(timer);
+                window.location.href = '{{.URLGet}}';
+            }
+        }, 1000);
+        
+        // Cancel auto-download if user interacts with the page
+        let cancelled = false;
+        document.addEventListener('click', () => {
+            if (!cancelled) {
+                cancelled = true;
+                clearInterval(timer);
+                document.querySelector('.countdown').textContent = 'Auto-download cancelled';
+            }
+        });
+    </script>
 </body>
-
 </html>

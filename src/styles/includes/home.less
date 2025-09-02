@@ -1,378 +1,259 @@
-// Home Page - Braun-inspired upload interface
-// "Good design makes a product understandable" - spacious but not empty
+// Home - Pure File Management Interface
+// "Good design makes a product useful" - Watchface precision
 
-#home {
-    // Upload Area - Central focal point with watch-like precision
-    .upload-area {
-        border: 2px solid fade(@border-color, 40%);
-        border-radius: @border-radius-md;
-        padding: @spacing-10 @spacing-6;
-        text-align: center;
-        background-color: @background-primary;
-        transition: all @animation-duration-fast @ease-out-quart;
-        cursor: pointer;
-        margin-bottom: @spacing-10;
-        min-height: 140px;
+main {
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    
+    .container {
+        flex: 1;
         display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
+        flex-direction: column;
+        gap: @space-16;
+    }
+    
+    // Upload area - minimal, functional
+    .upload-area {
+        border: 2px dashed @color-border;
+        padding: @space-20 @space-12;
+        text-align: center;
+        background: @color-surface;
+        cursor: pointer;
+        transition: all @duration-fast @easing;
         
-        @media @tablet-up {
-            padding: @spacing-12 @spacing-8;
-            margin-bottom: @spacing-12;
-            min-height: 160px;
-        }
-        
-        @media @desktop-up {
-            padding: @spacing-16 @spacing-10;
-            min-height: 180px;
-        }
-        
-        // Hover State - Confident feedback like Braun controls
-        &:hover {
-            border-color: @accent-color;
-            background-color: fade(@accent-color, 3%);
-            transform: translateY(-1px);
-            
-            .upload-icon {
-                color: @accent-color;
-                transform: translateY(-2px);
-            }
-            
-            .upload-description {
-                color: @primary-text;
-            }
-        }
-        
-        // Drag State - Clear visual feedback with mechanical precision
+        &:hover,
         &.dragged {
-            border-color: @accent-color;
-            border-style: solid;
-            background-color: fade(@accent-color, 8%);
-            transform: scale(1.01);
-            box-shadow: @shadow-md;
-            
-            .upload-icon {
-                color: @accent-color;
-                transform: scale(1.05) translateY(-2px);
-            }
-        }
-        
-        // Focus State - Accessibility with watch-like clarity
-        &:focus-within {
-            outline: 2px solid @accent-color;
-            outline-offset: 2px;
-        }
-        
-        .upload-content {
-            width: 100%;
-            max-width: 360px;
-        }
-        
-        .upload-icon {
-            color: @secondary-text;
-            margin-bottom: @spacing-3;
-            transition: all @animation-duration-fast @ease-out-expo;
-            
-            svg {
-                display: block;
-                margin: 0 auto;
-                width: 28px;
-                height: 28px;
-                stroke-width: 1.5;
-                
-                @media @tablet-up {
-                    width: 32px;
-                    height: 32px;
-                }
-                
-                @media @desktop-up {
-                    width: 36px;
-                    height: 36px;
-                }
-            }
+            border-color: @color-text;
+            background: @color-background;
         }
         
         .upload-description {
-            font-size: @font-size-base;
-            color: @secondary-text;
+            font-size: @font-size-lg;
+            color: @color-text-secondary;
             margin: 0;
-            font-weight: @font-weight-normal;
-            line-height: @line-height-base;
-            transition: color @animation-duration-fast @ease-out-quart;
-            
-            @media @tablet-up {
-                font-size: @font-size-medium;
-            }
+            font-weight: 300;
             
             .browse {
-                color: @accent-color;
-                font-weight: @font-weight-semibold;
-                cursor: pointer;
-                text-decoration: none;
-                border-bottom: 1px solid fade(@accent-color, 40%);
-                transition: all @animation-duration-fast @ease-out-quart;
+                color: @color-text;
+                font-weight: 400;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                border-bottom: 1px solid @color-text;
                 
                 &:hover {
-                    border-bottom-color: @accent-color;
-                    color: darken(@accent-color, 8%);
-                }
-                
-                &:focus {
-                    outline: 2px solid @accent-color;
-                    outline-offset: 2px;
-                    border-radius: @border-radius-sm;
+                    opacity: 0.7;
                 }
             }
         }
     }
     
-    // File Queue - Watch-like precision in file listing
+    // File queue - watchface data display
     .file-queue {
+        flex: 1;
+        
+        .queue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: @space-8;
+            padding-bottom: @space-4;
+            border-bottom: 1px solid @color-border;
+            
+            .queue-title {
+                font-size: @font-size-sm;
+                font-weight: 500;
+                color: @color-text-secondary;
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                margin: 0;
+            }
+            
+            .queue-actions {
+                display: flex;
+                gap: @space-4;
+                
+                .download-all,
+                .clear-all {
+                    font-size: @font-size-xs;
+                    padding: @space-2 @space-4;
+                }
+            }
+        }
+        
         .queue {
-            list-style: none;
-            margin: 0;
-            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            background: @color-border;
             
             li {
-                border-bottom: 1px solid fade(@border-color, 25%);
-                padding: @spacing-3 0;
-                transition: all @animation-duration-fast @ease-out-quart;
-                
-                @media @tablet-up {
-                    padding: @spacing-4 0;
-                }
-                
-                &:last-child {
-                    border-bottom: none;
-                }
-                
-                &:first-child {
-                    padding-top: 0;
-                }
+                background: @color-background;
+                padding: @space-6;
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) auto auto;
+                grid-template-rows: auto auto;
+                gap: @space-3 @space-6;
+                align-items: center;
+                transition: background-color @duration-fast @easing;
                 
                 &:hover {
-                    background-color: fade(@accent-color, 2%);
-                    margin: 0 -@spacing-3;
-                    padding-left: @spacing-3;
-                    padding-right: @spacing-3;
-                    border-radius: @border-radius-sm;
-                    transform: translateY(-1px);
+                    background: @color-surface;
+                }
+                
+                // Status indicators - minimal, functional
+                &.uploading {
+                    background: fade(@color-text, 3%);
+                    
+                    .file-name::before {
+                        content: "↑";
+                        margin-right: @space-2;
+                        color: @color-text-secondary;
+                    }
+                }
+                
+                &.completed {
+                    .file-name::before {
+                        content: "✓";
+                        margin-right: @space-2;
+                        color: @color-success;
+                    }
+                }
+                
+                &.error {
+                    background: fade(@color-error, 3%);
+                    
+                    .file-name::before {
+                        content: "✗";
+                        margin-right: @space-2;
+                        color: @color-error;
+                    }
+                }
+                
+                &.paused {
+                    background: fade(@color-warning, 3%);
+                    
+                    .file-name::before {
+                        content: "⏸";
+                        margin-right: @space-2;
+                        color: @color-warning;
+                    }
                 }
                 
                 .file-info {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: flex-start;
-                    margin-bottom: @spacing-2;
-                    gap: @spacing-3;
-                    
-                    @media @tablet-up {
-                        align-items: center;
-                        gap: @spacing-4;
-                    }
+                    grid-column: 1;
+                    grid-row: 1;
+                    min-width: 0;
+                    overflow: hidden;
                     
                     .file-name {
-                        font-weight: @font-weight-medium;
-                        color: @primary-text;
-                        font-size: @font-size-small;
+                        font-size: @font-size-base;
+                        font-weight: 400;
+                        color: @color-text;
+                        margin-bottom: @space-1;
                         word-break: break-word;
-                        flex: 1;
-                        transition: color @animation-duration-fast @ease-out-quart;
-                        line-height: @line-height-base;
-                        cursor: pointer;
-                        
-                        @media @tablet-up {
-                            font-size: @font-size-base;
-                        }
-                        
-                        &:hover {
-                            color: @accent-color;
-                        }
+                        overflow-wrap: break-word;
+                        hyphens: auto;
+                        line-height: @line-height-tight;
                     }
                     
-                    .file-actions {
+                    .file-meta {
                         display: flex;
-                        align-items: center;
-                        gap: @spacing-2;
-                        flex-shrink: 0;
+                        gap: @space-4;
+                        flex-wrap: wrap;
                         
-                        .file-status {
-                            font-size: @font-size-micro;
-                            color: @secondary-text;
-                            white-space: nowrap;
+                        .file-size,
+                        .file-type {
                             font-family: @font-family-mono;
-                            font-weight: @font-weight-medium;
+                            font-size: @font-size-xs;
+                            color: @color-text-muted;
                             text-transform: uppercase;
                             letter-spacing: 0.05em;
-                            
-                            @media @tablet-up {
-                                font-size: @font-size-small;
-                            }
+                            white-space: nowrap;
                         }
+                    }
+                }
+                
+                .file-progress {
+                    grid-column: 1 / -1;
+                    grid-row: 2;
+                    height: 2px;
+                    background: @color-border;
+                    overflow: hidden;
+                    margin-top: @space-2;
+                    
+                    .progress-bar {
+                        height: 100%;
+                        background: @color-text;
+                        width: 0%;
+                        transition: width @duration-base @easing;
+                    }
+                    
+                    &.complete {
+                        opacity: 0;
+                        height: 0;
+                        margin-top: 0;
+                        transition: all @duration-base @easing;
+                    }
+                }
+                
+                .file-actions {
+                    grid-column: 2;
+                    grid-row: 1;
+                    display: flex;
+                    gap: @space-2;
+                    align-self: start;
+                    
+                    button {
+                        font-size: @font-size-xs;
+                        padding: @space-2 @space-3;
+                        min-width: 32px;
+                        height: 24px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                    
+                    .pause-btn,
+                    .resume-btn {
+                        background: @color-surface;
+                        border-color: @color-border;
                         
-                        .copy-token-btn,
-                        .copy-link-btn {
-                            background-color: @background-secondary;
-                            border: 1px solid fade(@border-color, 30%);
-                            color: @secondary-text;
-                            cursor: pointer;
-                            padding: @spacing-1;
-                            border-radius: @border-radius-sm;
-                            font-size: 12px;
-                            transition: all @animation-duration-fast @ease-out-quart;
-                            min-height: 28px;
-                            min-width: 28px;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            
-                            @media @tablet-up {
-                                padding: @spacing-2;
-                                font-size: 14px;
-                                min-height: 32px;
-                                min-width: 32px;
-                            }
-                            
-                            &:hover {
-                                color: @accent-color;
-                                border-color: @accent-color;
-                                background-color: fade(@accent-color, 8%);
-                                transform: translateY(-1px);
-                            }
-                            
-                            &:active {
-                                transform: translateY(0);
-                                transition-duration: @animation-duration-instant;
-                            }
-                            
-                            &:focus {
-                                outline: 2px solid @accent-color;
-                                outline-offset: 2px;
-                            }
+                        &:hover {
+                            background: @color-text;
+                            color: @color-background;
                         }
+                    }
+                }
+                
+                .file-controls {
+                    grid-column: 3;
+                    grid-row: 1;
+                    display: flex;
+                    gap: @space-2;
+                    align-self: start;
+                    
+                    button {
+                        font-size: @font-size-xs;
+                        padding: @space-2 @space-3;
+                        min-width: 32px;
+                        height: 24px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
                     }
                 }
             }
         }
-    }
-    
-    // Upload Progress - Watch-like precision indicator
-    .upload-progress {
-        width: 100%;
-        height: 2px;
-        background-color: fade(@border-color, 30%);
-        border-radius: @border-radius-sm;
-        overflow: hidden;
-        margin-bottom: @spacing-2;
         
-        .bar {
-            height: 100%;
-            background-color: @accent-color;
-            transition: width @animation-duration-base @ease-linear;
-            border-radius: @border-radius-sm;
-            position: relative;
-            
-            &::after {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background-image: linear-gradient(
-                    90deg,
-                    transparent 0%,
-                    rgba(255, 255, 255, 0.2) 50%,
-                    transparent 100%
-                );
-                background-size: 20px 100%;
-                animation: progress-shimmer 1.5s ease-in-out infinite;
-            }
+        .queue-empty {
+            text-align: center;
+            padding: @space-20;
+            color: @color-text-muted;
+            font-size: @font-size-sm;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
         }
-    }
-    
-    // Batch Actions - Secondary functionality
-    .batch-actions {
-        display: none;
-        text-align: center;
-        margin: @spacing-8 0;
-        padding: @spacing-6 0;
-        border-top: 1px solid fade(@border-color, 30%);
-        
-        @media @tablet-up {
-            margin: @spacing-12 0;
-            padding: @spacing-8 0;
-        }
-        
-        &.show {
-            display: block;
-        }
-        
-        .batch-buttons {
-            display: inline-block;
-        }
-        
-        .btn-batch {
-            font-family: @font-family-base;
-            font-size: @font-size-small;
-            font-weight: @font-weight-medium;
-            color: @accent-color;
-            background-color: @background-primary;
-            border: 1px solid @border-color;
-            padding: @spacing-3 @spacing-6;
-            border-radius: @border-radius-base;
-            text-decoration: none;
-            transition: all @animation-duration-base @animation-easing;
-            min-height: 44px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            
-            @media @tablet-up {
-                font-size: @font-size-base;
-                padding: @spacing-4 @spacing-8;
-                min-height: 48px;
-            }
-            
-            &:hover {
-                color: @background-primary;
-                border-color: @accent-color;
-                background-color: @accent-color;
-                transform: translateY(-1px);
-                box-shadow: @shadow-md;
-            }
-            
-            &:active {
-                transform: translateY(0);
-                box-shadow: @shadow-sm;
-            }
-            
-            &:focus {
-                outline: 2px solid @accent-color;
-                outline-offset: 2px;
-            }
-        }
-    }
-}
-
-// Progress Animations
-@keyframes progress-animation {
-    0% {
-        background-position: 0 0;
-    }
-    100% {
-        background-position: 20px 0;
-    }
-}
-
-@keyframes progress-shimmer {
-    0% {
-        background-position: -20px 0;
-    }
-    100% {
-        background-position: 40px 0;
     }
 }

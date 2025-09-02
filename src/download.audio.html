@@ -1,53 +1,99 @@
 <!doctype html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!-->
-<html class="no-js">
-<!--<![endif]-->
-
-include "includes/download-head.html"
-
-
-<body id="download">
-<script src="../scripts/vendor/video.js"></script>
-
-include "includes/download-navigation.html"
-
-
-<section id="home">
-    <div class="wrapper">
-
-        include "includes/download-top.html"
-
-        <div class="row animated fadeInDown">
-            <div id="from-terminal" class=" box col-md-8  col-md-offset-2 col-xs-12">
-                <div class="terminal-top">
-
-                </div>
-                <div id="terminal" class="terminal preview-image">
-                    <audio id="audio-player"
-                           class="video-js vjs-default-skin"
-                           controls
-                           preload="auto"
-                           data-setup='{}'>
-                        <source src="{{.URL}}" type="{{.ContentType}}"></source>
-                    </audio>
-                </div>
-            </div>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Filename}} - {{.Hostname}}</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 32px;
+            background: #ffffff;
+            color: #0a0a0a;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        h1 {
+            font-size: 32px;
+            font-weight: 200;
+            margin: 0 0 16px 0;
+            letter-spacing: -0.02em;
+        }
+        
+        .meta {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+            font-size: 12px;
+            color: #5a5a5a;
+            margin-bottom: 32px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .audio-preview {
+            margin-bottom: 32px;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .btn {
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 8px 24px;
+            border: 1px solid #bababa;
+            background: #ffffff;
+            color: #0a0a0a;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.1s ease-out;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background: #0a0a0a;
+            color: #ffffff;
+            border-color: #0a0a0a;
+        }
+        
+        .btn-primary {
+            background: #0a0a0a;
+            color: #ffffff;
+            border-color: #0a0a0a;
+        }
+        
+        .btn-primary:hover {
+            background: #ffffff;
+            color: #0a0a0a;
+            border-color: #0a0a0a;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>{{.Filename}}</h1>
+        <div class="meta">{{.ContentType}} · {{.ContentLength | format "#,###."}} bytes</div>
+        <audio controls class="audio-preview">
+            <source src="{{.URL}}" type="{{.ContentType}}">
+            Your browser does not support the audio element.
+        </audio>
+        <div class="actions">
+            <a href="{{.URLGet}}" class="btn btn-primary">Download</a>
+            <a href="/" class="btn">Upload More</a>
         </div>
-        <br/>
-
-        include "includes/download-delete.html"
-
-        <br/>
     </div>
-
-</section>
-
-
-include "includes/download-js.html"
-
 </body>
-
 </html>

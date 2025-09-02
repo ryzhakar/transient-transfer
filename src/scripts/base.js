@@ -1,371 +1,422 @@
 'use strict';
 
+// Pure File Management - Watchface Precision
 (function() {
-    var files = Array();
-    var queue = Array();
-
-    $(window).bind('beforeunload', function(){
-        if (queue.length===0)  {
-            return;
+    const fileQueue = [];
+    const activeUploads = new Map();
+    
+    // DOM elements
+    let uploadArea, fileInput, queueContainer, queueList, queueHeader, downloadAllBtn, clearAllBtn;
+    
+    // Initialize interface
+    function init() {
+        uploadArea = document.getElementById('upload-area');
+        fileInput = document.getElementById('file-input');
+        queueContainer = document.getElementById('file-queue');
+        queueList = queueContainer.querySelector('.queue');
+        queueHeader = queueContainer.querySelector('.queue-header');
+        downloadAllBtn = document.getElementById('download-all');
+        clearAllBtn = document.getElementById('clear-all');
+        
+        if (!uploadArea || !fileInput) return;
+        
+        setupEventListeners();
+        updateQueueDisplay();
+    }
+    
+    function setupEventListeners() {
+        // Upload area interactions
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('dragover', handleDragOver);
+        uploadArea.addEventListener('dragleave', handleDragLeave);
+        uploadArea.addEventListener('drop', handleDrop);
+        
+        // File input
+        fileInput.addEventListener('change', handleFileSelect);
+        
+        // Queue actions
+        if (downloadAllBtn) downloadAllBtn.addEventListener('click', downloadAll);
+        if (clearAllBtn) clearAllBtn.addEventListener('click', clearAll);
+        
+        // Paste support
+        document.addEventListener('paste', handlePaste);
+        
+        // Prevent default drag behaviors
+        document.addEventListener('dragover', e => e.preventDefault());
+        document.addEventListener('drop', e => e.preventDefault());
+    }
+    
+    function handleDragOver(e) {
+        e.preventDefault();
+        uploadArea.classList.add('dragged');
+    }
+    
+    function handleDragLeave(e) {
+        e.preventDefault();
+        if (!uploadArea.contains(e.relatedTarget)) {
+            uploadArea.classList.remove('dragged');
         }
-
-        return 'There are still ' + queue.length + ' files being uploaded.';
-    });
-
-    function deleteFile(baseURL) {
-        var deleteModal = $('#delete-modal');
-        var modalOverlay = deleteModal.find('.modal-overlay');
-        var cancelBtn = $('#cancel-delete');
-        var confirmBtn = $('#confirm-delete');
-        var errorDiv = $('#error');
-        var tokenInput = $('#deletion-token');
+    }
+    
+    function handleDrop(e) {
+        e.preventDefault();
+        uploadArea.classList.remove('dragged');
         
-        // Show modal
-        deleteModal.addClass('show');
-        
-        // Clear previous state
-        tokenInput.val('');
-        errorDiv.text('');
-        
-        // Close modal handlers
-        function closeModal() {
-            deleteModal.removeClass('show');
+        const files = Array.from(e.dataTransfer.files);
+        if (files.length > 0) {
+            addFilesToQueue(files);
         }
+    }
+    
+    function handleFileSelect(e) {
+        const files = Array.from(e.target.files);
+        if (files.length > 0) {
+            addFilesToQueue(files);
+        }
+        e.target.value = '';
+    }
+    
+    function handlePaste(e) {
+        const items = Array.from(e.clipboardData.items);
+        const files = items
+            .filter(item => item.kind === 'file')
+            .map(item => item.getAsFile())
+            .filter(file => file);
         
-        modalOverlay.off('click').on('click', closeModal);
-        cancelBtn.off('click').on('click', closeModal);
-        
-        // Handle delete confirmation
-        confirmBtn.off('click').on('click', function(event) {
-            event.preventDefault();
-            var deletionToken = tokenInput.val().trim();
-            
-            if (deletionToken.length === 0) {
-                errorDiv.text('Please enter a deletion token');
-                return;
-            }
-            
-            confirmBtn.prop('disabled', true).text('Deleting...');
-            
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4) {
-                    confirmBtn.prop('disabled', false).text('Delete');
-                    
-                    if (xhr.status === 200) {
-                        errorDiv.css('color', '#28a745').text('File deleted successfully');
-                        setTimeout(function() {
-                            closeModal();
-                            // Optionally redirect to home
-                            window.location.href = '/';
-                        }, 1500);
-                    } else {
-                        errorDiv.text('Error (' + xhr.status + ') during deletion of file');
-                    }
-                }
+        if (files.length > 0) {
+            addFilesToQueue(files);
+        }
+    }
+    
+    function addFilesToQueue(files) {
+        files.forEach(file => {
+            const fileData = {
+                id: generateId(),
+                file: file,
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                status: 'queued',
+                progress: 0,
+                url: null,
+                deletionToken: null,
+                xhr: null
             };
             
-            xhr.open('DELETE', baseURL + '/' + deletionToken, true);
-            xhr.send();
+            fileQueue.push(fileData);
+            createFileElement(fileData);
+            startUpload(fileData);
         });
+        
+        updateQueueDisplay();
     }
-
-    function prettyFileName(filename) {
-        // Remove file extension for display
-        var name = filename.replace(/\.[^/.]+$/, "");
-        // Replace underscores and hyphens with spaces
-        name = name.replace(/[_-]/g, ' ');
-        // Capitalize first letter of each word
-        return name.replace(/\b\w/g, function(l) { return l.toUpperCase(); });
+    
+    function createFileElement(fileData) {
+        const li = document.createElement('li');
+        li.id = `file-${fileData.id}`;
+        li.className = fileData.status;
+        
+        li.innerHTML = `
+            <div class="file-info">
+                <div class="file-name">${escapeHtml(fileData.name)}</div>
+                <div class="file-meta">
+                    <span class="file-size">${formatBytes(fileData.size)}</span>
+                    <span class="file-type">${fileData.type || 'unknown'}</span>
+                </div>
+            </div>
+            <div class="file-progress">
+                <div class="progress-bar"></div>
+            </div>
+            <div class="file-actions">
+                <button class="pause-btn" title="Pause">⏸</button>
+                <button class="resume-btn" title="Resume" hidden>▶</button>
+            </div>
+            <div class="file-controls">
+                <button class="copy-btn" title="Copy Link" disabled>Link</button>
+                <button class="delete-btn" title="Delete">✗</button>
+            </div>
+        `;
+        
+        // Event listeners
+        const pauseBtn = li.querySelector('.pause-btn');
+        const resumeBtn = li.querySelector('.resume-btn');
+        const copyBtn = li.querySelector('.copy-btn');
+        const deleteBtn = li.querySelector('.delete-btn');
+        
+        pauseBtn.addEventListener('click', () => pauseUpload(fileData.id));
+        resumeBtn.addEventListener('click', () => resumeUpload(fileData.id));
+        copyBtn.addEventListener('click', () => copyLink(fileData.id));
+        deleteBtn.addEventListener('click', () => deleteFile(fileData.id));
+        
+        queueList.appendChild(li);
     }
-
+    
+    function startUpload(fileData) {
+        fileData.status = 'uploading';
+        updateFileElement(fileData);
+        
+        const xhr = new XMLHttpRequest();
+        fileData.xhr = xhr;
+        activeUploads.set(fileData.id, xhr);
+        
+        xhr.upload.addEventListener('progress', (e) => {
+            if (e.lengthComputable) {
+                fileData.progress = (e.loaded / e.total) * 100;
+                updateFileElement(fileData);
+            }
+        });
+        
+        xhr.addEventListener('readystatechange', () => {
+            if (xhr.readyState === 4) {
+                activeUploads.delete(fileData.id);
+                
+                if (xhr.status === 200) {
+                    const response = xhr.responseText.trim();
+                    fileData.url = response;
+                    fileData.status = 'completed';
+                    fileData.progress = 100;
+                    
+                    // Get deletion URL from X-Url-Delete header
+                    const deleteUrl = xhr.getResponseHeader('X-Url-Delete');
+                    if (deleteUrl) {
+                        fileData.deleteUrl = deleteUrl;
+                    } else {
+                        // Fallback: extract deletion token from URL pattern
+                        const urlParts = response.split('/');
+                        if (urlParts.length >= 2) {
+                            fileData.deletionToken = urlParts[urlParts.length - 2];
+                        }
+                    }
+                } else {
+                    fileData.status = 'error';
+                }
+                
+                updateFileElement(fileData);
+                updateQueueDisplay();
+            }
+        });
+        
+        xhr.open('PUT', '/' + encodeURIComponent(fileData.name), true);
+        xhr.send(fileData.file);
+    }
+    
+    function pauseUpload(fileId) {
+        const fileData = fileQueue.find(f => f.id === fileId);
+        if (!fileData || !fileData.xhr) return;
+        
+        fileData.xhr.abort();
+        fileData.status = 'paused';
+        activeUploads.delete(fileId);
+        updateFileElement(fileData);
+    }
+    
+    function resumeUpload(fileId) {
+        const fileData = fileQueue.find(f => f.id === fileId);
+        if (!fileData || fileData.status !== 'paused') return;
+        
+        startUpload(fileData);
+    }
+    
+    function copyLink(fileId) {
+        const fileData = fileQueue.find(f => f.id === fileId);
+        if (!fileData || !fileData.url) return;
+        
+        copyToClipboard(fileData.url);
+        
+        const copyBtn = document.querySelector(`#file-${fileId} .copy-btn`);
+        const originalText = copyBtn.textContent;
+        copyBtn.textContent = 'Copied';
+        setTimeout(() => {
+            copyBtn.textContent = originalText;
+        }, 1500);
+    }
+    
+    function deleteFile(fileId) {
+        const fileData = fileQueue.find(f => f.id === fileId);
+        if (!fileData) return;
+        
+        // Cancel upload if in progress
+        if (fileData.xhr) {
+            fileData.xhr.abort();
+            activeUploads.delete(fileId);
+        }
+        
+        // Delete from server if uploaded
+        if (fileData.status === 'completed') {
+            if (fileData.deleteUrl) {
+                // Use the proper deletion URL from X-Url-Delete header
+                const xhr = new XMLHttpRequest();
+                xhr.open('DELETE', fileData.deleteUrl, true);
+                xhr.send();
+            } else if (fileData.deletionToken) {
+                // Fallback method
+                const xhr = new XMLHttpRequest();
+                xhr.open('DELETE', fileData.url + '/' + fileData.deletionToken, true);
+                xhr.send();
+            }
+        }
+        
+        // Remove from queue
+        const index = fileQueue.findIndex(f => f.id === fileId);
+        if (index > -1) {
+            fileQueue.splice(index, 1);
+        }
+        
+        // Remove from DOM
+        const element = document.getElementById(`file-${fileId}`);
+        if (element) {
+            element.remove();
+        }
+        
+        updateQueueDisplay();
+    }
+    
+    function downloadAll() {
+        const completedFiles = fileQueue.filter(f => f.status === 'completed' && f.url);
+        if (completedFiles.length === 0) return;
+        
+        if (completedFiles.length === 1) {
+            copyToClipboard(completedFiles[0].url);
+        } else {
+            const filePaths = completedFiles.map(f => {
+                const urlParts = f.url.split('/');
+                return urlParts[urlParts.length - 2] + '/' + urlParts[urlParts.length - 1];
+            });
+            const zipUrl = window.location.origin + '/(' + filePaths.join(',') + ').zip';
+            copyToClipboard(zipUrl);
+        }
+        
+        const originalText = downloadAllBtn.textContent;
+        downloadAllBtn.textContent = 'Copied';
+        setTimeout(() => {
+            downloadAllBtn.textContent = originalText;
+        }, 1500);
+    }
+    
+    function clearAll() {
+        // Cancel all active uploads
+        activeUploads.forEach(xhr => xhr.abort());
+        activeUploads.clear();
+        
+        // Delete completed files from server
+        fileQueue.forEach(fileData => {
+            if (fileData.status === 'completed') {
+                if (fileData.deleteUrl) {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('DELETE', fileData.deleteUrl, true);
+                    xhr.send();
+                } else if (fileData.deletionToken) {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('DELETE', fileData.url + '/' + fileData.deletionToken, true);
+                    xhr.send();
+                }
+            }
+        });
+        
+        // Clear queue
+        fileQueue.length = 0;
+        queueList.innerHTML = '';
+        updateQueueDisplay();
+    }
+    
+    function updateFileElement(fileData) {
+        const element = document.getElementById(`file-${fileData.id}`);
+        if (!element) return;
+        
+        element.className = fileData.status;
+        
+        const progressBar = element.querySelector('.progress-bar');
+        const pauseBtn = element.querySelector('.pause-btn');
+        const resumeBtn = element.querySelector('.resume-btn');
+        const copyBtn = element.querySelector('.copy-btn');
+        const progressContainer = element.querySelector('.file-progress');
+        
+        if (progressBar) {
+            progressBar.style.width = `${fileData.progress}%`;
+        }
+        
+        if (fileData.status === 'completed') {
+            progressContainer.classList.add('complete');
+            pauseBtn.hidden = true;
+            resumeBtn.hidden = true;
+            copyBtn.disabled = false;
+        } else if (fileData.status === 'paused') {
+            pauseBtn.hidden = true;
+            resumeBtn.hidden = false;
+        } else if (fileData.status === 'uploading') {
+            pauseBtn.hidden = false;
+            resumeBtn.hidden = true;
+        } else {
+            pauseBtn.hidden = true;
+            resumeBtn.hidden = true;
+        }
+    }
+    
+    function updateQueueDisplay() {
+        const hasFiles = fileQueue.length > 0;
+        const completedFiles = fileQueue.filter(f => f.status === 'completed');
+        
+        if (queueHeader) {
+            queueHeader.style.display = hasFiles ? 'flex' : 'none';
+        }
+        
+        if (downloadAllBtn) {
+            downloadAllBtn.disabled = completedFiles.length === 0;
+            downloadAllBtn.textContent = completedFiles.length <= 1 ? 'Copy Link' : `Copy ZIP (${completedFiles.length})`;
+        }
+        
+        if (clearAllBtn) {
+            clearAllBtn.disabled = fileQueue.length === 0;
+        }
+        
+        // Show/hide empty state
+        const emptyState = queueContainer.querySelector('.queue-empty');
+        if (!hasFiles && !emptyState) {
+            const empty = document.createElement('div');
+            empty.className = 'queue-empty';
+            empty.textContent = 'No files';
+            queueContainer.appendChild(empty);
+        } else if (hasFiles && emptyState) {
+            emptyState.remove();
+        }
+    }
+    
+    // Utility functions
     function copyToClipboard(text) {
         if (navigator.clipboard) {
             navigator.clipboard.writeText(text);
         } else {
-            // Fallback for older browsers
-            var textArea = document.createElement("textarea");
-            textArea.value = text;
-            document.body.appendChild(textArea);
-            textArea.select();
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
             document.execCommand('copy');
-            document.body.removeChild(textArea);
+            document.body.removeChild(textarea);
         }
     }
-
-    function upload(file) {
-        var li = $('<li></li>');
-        var deletionToken = '';
-        
-        // Create file info structure
-        var fileInfo = $('<div class="file-info"></div>');
-        var fileName = $('<div class="file-name">' + prettyFileName(file.name) + '</div>');
-        var fileActions = $('<div class="file-actions"></div>');
-        var fileStatus = $('<div class="file-status">Uploading...</div>');
-        
-        fileActions.append(fileStatus);
-        fileInfo.append(fileName);
-        fileInfo.append(fileActions);
-        
-        // Create progress bar
-        var progressContainer = $('<div class="upload-progress"></div>');
-        var progressBar = $('<div class="bar" style="width: 0%;"></div>');
-        progressContainer.append(progressBar);
-        
-        li.append(fileInfo);
-        li.append(progressContainer);
-        $(li).appendTo($('.queue'));
-
-        var xhr = new XMLHttpRequest();
-
-        xhr.upload.addEventListener('progress', function(e) {
-            var pc = parseInt((e.loaded / e.total * 100));
-            progressBar.css('width', pc + '%');
-        }, false);
-
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    deletionToken = xhr.getResponseHeader('X-Url-Delete').split('/').pop();
-                    var url = $('<p></p>').text(xhr.responseText).html();
-                    
-                    // Update file status and add copy token button
-                    fileStatus.text('Ready');
-                    var copyTokenBtn = $('<button class="copy-token-btn" title="Copy deletion token">🔑</button>');
-                    copyTokenBtn.on('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        copyToClipboard(deletionToken);
-                        $(this).text('✓').css('color', '#28a745');
-                        setTimeout(function() {
-                            copyTokenBtn.text('🔑').css('color', '');
-                        }, 1500);
-                    });
-                    fileActions.append(copyTokenBtn);
-                    
-                    // Remove progress bar
-                    progressContainer.remove();
-                    
-                    // Make file name clickable to navigate to file
-                    fileName.css('cursor', 'pointer');
-                    fileName.on('click', function() {
-                        window.open(url, '_blank');
-                    });
-                    
-                    // Add copy link button
-                    var copyLinkBtn = $('<button class="copy-link-btn" title="Copy file link">🔗</button>');
-                    copyLinkBtn.on('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        copyToClipboard(url);
-                        $(this).text('✓').css('color', '#28a745');
-                        setTimeout(function() {
-                            copyLinkBtn.text('🔗').css('color', '');
-                        }, 1500);
-                    });
-                    fileActions.append(copyLinkBtn);
-                } else {
-                    fileStatus.text('Error (' + xhr.status + ')');
-                    progressContainer.remove();
-                }
-
-                // file uploaded successfully, remove from queue
-                var index = queue.indexOf(xhr);
-                if (index > -1) {
-                    queue.splice(index, 1);
-                }
-
-                if (xhr.status === 200) {
-                    files.push(URI($('<p></p>').text(xhr.responseText.replace('\n', '')).html()).path());
-
-                    var zipUrl = URI('(' + files.join(',') + ').zip').absoluteTo(location.href).toString();
-                    
-                    $('.download-zip').data('url', zipUrl);
-
-                    $('#batch-actions').addClass('show');
-                }
-            }
-        };
-
-        // should queue all uploads.
-        queue.push(xhr);
-
-        // start upload
-        xhr.open('PUT', './' + file.name, true);
-        xhr.send(file);
+    
+    function formatBytes(bytes) {
+        if (bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
     }
-
-    $(document).bind('dragenter', function(event) {
-        event.preventDefault();
-    }).bind('dragover', function(event) {
-        event.preventDefault();
-        // show drop indicator
-        $('#upload-area').addClass('dragged');
-    }).bind('dragleave', function(event) {
-        // Only remove dragged class if we're leaving the document
-        if (!event.relatedTarget || event.relatedTarget.nodeName === 'HTML') {
-            $('#upload-area').removeClass('dragged');
-        }
-    }).bind('drop dragdrop', function(event) {
-        $('#upload-area').removeClass('dragged');
-        
-        var files = event.originalEvent.target.files || event.originalEvent.dataTransfer.files;
-
-        $.each(files, function(index, file) {
-            upload(file);
-        });
-
-        event.stopPropagation();
-        event.preventDefault();
-    });
-
-    $(document).bind('paste', function(event) {
-        $.each(event.originalEvent.clipboardData.files, function(index, file) {
-            upload(file);
-        });
-    });
-
-    // File input handling - ensure it's properly initialized
-    function initializeFileInput() {
-        const fileInput = document.getElementById('file-input');
-        if (!fileInput) {
-            console.error('File input not found');
-            return;
-        }
-        
-        // Clear any existing event listeners
-        $(fileInput).off('change');
-        
-        // Add change event listener
-        $(fileInput).on('change', function(e) {
-            const files = e.target.files;
-            if (files && files.length > 0) {
-                $.each(files, function(index, file) {
-                    if (file instanceof Blob) {
-                        upload(file);
-                    }
-                });
-                // Clear the input so the same file can be selected again
-                $(this).val('');
-            }
-        });
+    
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
-
-    // Handle browse link clicks
-    $(document).on('click', 'a.browse', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        const fileInput = document.getElementById('file-input');
-        if (fileInput) {
-            fileInput.click();
-        }
-        return false;
-    });
-
-    // Handle upload area clicks
-    $(document).on('click', '#upload-area', function(e) {
-        // Don't trigger if clicking on the browse link or file input itself
-        if ($(e.target).hasClass('browse') || 
-            $(e.target).closest('a.browse').length || 
-            $(e.target).is('#file-input')) {
-            return;
-        }
-        e.preventDefault();
-        e.stopPropagation();
-        const fileInput = document.getElementById('file-input');
-        if (fileInput) {
-            fileInput.click();
-        }
-    });
-
-    // Initialize file input when document is ready
-    $(document).ready(function() {
-        initializeFileInput();
-    });
-
-    $('#fire-delete').on('click', function(event) {
-        event.stopPropagation();
-        event.preventDefault();
-        var baseURL = window.location.pathname;
-        deleteFile(baseURL);
-    });
-
-    // Handle batch download button
-    $('.download-zip').on('click', function(event) {
-        event.preventDefault();
-        var url = $(this).data('url');
-        
-        if (url) {
-            copyToClipboard(url);
-            var originalText = $(this).text();
-            $(this).text('✓ Copied!').css('color', '#28a745');
-            setTimeout(function() {
-                $(this).text(originalText).css('color', '');
-            }.bind(this), 2000);
-        }
-    });
-
-    // clipboard
-    if (window.location.href.indexOf('download') > -1 ) {
-
-
-        (function() {
-            var copylinkbtn = document.getElementById('copy-link-btn'),
-                copylink = document.getElementById('copy-link-wrapper'),
-                overlay = document.getElementById('overlay');
-
-            var url = 'http://url';
-            copylinkbtn.addEventListener('click', function() {
-
-                var error = document.getElementsByClassName('error');
-
-                while (error[0]) {
-                    error[0].parentNode.removeChild(error[0]);
-                }
-
-                document.body.className += ' active';
-
-                copylink.children[1].value = url;
-                copylink.children[1].focus();
-                copylink.children[1].select();
-            }, false);
-
-            overlay.addEventListener('click', function() {
-                document.body.className = '';
-            }, false);
-
-            copylink.children[1].addEventListener('keydown', function(e) {
-
-                var error = document.getElementsByClassName('error');
-
-                while (error[0]) {
-                    error[0].parentNode.removeChild(error[0]);
-                }
-
-                setTimeout(function() {
-
-                    if ((e.metaKey || e.ctrlKey) && e.keyCode === 67 && isTextSelected(copylink.children[2])) {
-                        document.body.className = '';
-                    } else if ((e.metaKey || e.ctrlKey) && e.keyCode === 67 && isTextSelected(copylink.children[2]) === false) {
-                        var error = document.createElement('span');
-                        error.className = 'error';
-                        var errortext = document.createTextNode('The link was not copied, make sure the entire text is selected.');
-
-                        error.appendChild(errortext);
-                        copylink.appendChild(error);
-                    }
-                }, 100);
-
-                function isTextSelected(input) {
-                    if (typeof input.selectionStart === 'number') {
-                        return input.selectionStart === 0 && input.selectionEnd === input.value.length;
-                    } else if (typeof document.selection !== 'undefined') {
-                        input.focus();
-                        return document.selection.createRange().text === input.value;
-                    }
-                }
-            }, false);
-        })();
+    
+    function generateId() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2);
     }
-
+    
+    // Initialize
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
 })();

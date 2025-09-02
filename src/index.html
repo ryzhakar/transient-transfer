@@ -1,10 +1,5 @@
 <!doctype html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!-->
-<html class="no-js">
-<!--<![endif]-->
+<html lang="en">
 
 include "includes/head.html"
 
@@ -12,37 +7,28 @@ include "includes/head.html"
 
 include "includes/navigation.html"
 
-<section id="home">
-    <div class="wrapper">
+<main>
+    <div class="container">
         <div class="upload-area" id="upload-area">
-            <div class="upload-content">
-                <div class="upload-icon">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                        <polyline points="7,10 12,15 17,10"/>
-                        <line x1="12" y1="15" x2="12" y2="3"/>
-                    </svg>
-                </div>
-                <p class="upload-description">Drop files or <a class="browse" href="#">choose files</a></p>
-            </div>
-            <input type="file" multiple="multiple" style="display: none;" id="file-input" />
-        </div>
-        
-        <div class="batch-actions" id="batch-actions">
-            <div class="batch-buttons">
-                <a class="download-zip btn-batch" href="#" title="Copy ZIP download link">Copy ZIP Link</a>
-            </div>
+            <p class="upload-description">Drop files or <a class="browse" href="#">choose files</a></p>
+            <input type="file" multiple id="file-input" hidden>
         </div>
         
         <div class="file-queue" id="file-queue">
+            <div class="queue-header" style="display: none;">
+                <h3 class="queue-title">Files</h3>
+                <div class="queue-actions">
+                    <button id="download-all" class="download-all btn" disabled>Copy Link</button>
+                    <button id="clear-all" class="clear-all btn" disabled>Clear</button>
+                </div>
+            </div>
             <ul class="queue"></ul>
+            <div class="queue-empty">No files</div>
         </div>
     </div>
-</section>
-
+</main>
 
 include "includes/js.html"
 
 </body>
-
 </html>
