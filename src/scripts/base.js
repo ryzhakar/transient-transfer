@@ -356,13 +356,9 @@
         const hasFiles = fileQueue.length > 0;
         const completedFiles = fileQueue.filter(f => f.status === 'completed');
         
-        if (queueHeader) {
-            queueHeader.style.display = hasFiles ? 'flex' : 'none';
-        }
-        
         if (downloadAllBtn) {
             downloadAllBtn.disabled = completedFiles.length === 0;
-            downloadAllBtn.textContent = completedFiles.length <= 1 ? 'Copy Link' : `Copy ZIP (${completedFiles.length})`;
+            downloadAllBtn.textContent = completedFiles.length <= 1 ? 'Copy link' : 'Copy archive';
         }
         
         if (clearAllBtn) {
@@ -371,13 +367,10 @@
         
         // Show/hide empty state
         const emptyState = queueContainer.querySelector('.queue-empty');
-        if (!hasFiles && !emptyState) {
-            const empty = document.createElement('div');
-            empty.className = 'queue-empty';
-            empty.textContent = 'No files';
-            queueContainer.appendChild(empty);
+        if (!hasFiles && emptyState) {
+            emptyState.style.display = 'block';
         } else if (hasFiles && emptyState) {
-            emptyState.remove();
+            emptyState.style.display = 'none';
         }
     }
     

@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{.Filename}} - {{.Hostname}}</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,200..900;1,7..72,200..900&display=swap');
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-family: 'Literata', Georgia, serif;
             margin: 0;
             padding: 32px;
             background: #ffffff;
@@ -20,19 +22,16 @@
         }
         
         h1 {
-            font-size: 32px;
+            font-size: 38px;
             font-weight: 200;
             margin: 0 0 16px 0;
-            letter-spacing: -0.02em;
         }
         
         .meta {
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
-            font-size: 12px;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 13px;
             color: #5a5a5a;
             margin-bottom: 32px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
         }
         
         .audio-preview {
@@ -50,15 +49,13 @@
         
         .btn {
             font-family: inherit;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
-            padding: 8px 24px;
+            padding: 8px 16px;
             border: 1px solid #bababa;
             background: #ffffff;
             color: #0a0a0a;
             text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
             transition: all 0.1s ease-out;
             cursor: pointer;
         }

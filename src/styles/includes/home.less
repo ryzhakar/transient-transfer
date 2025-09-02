@@ -36,13 +36,12 @@ main {
             
             .browse {
                 color: @color-text;
-                font-weight: 400;
-                text-transform: uppercase;
-                letter-spacing: 0.05em;
+                font-weight: 500;
                 border-bottom: 1px solid @color-text;
                 
                 &:hover {
-                    opacity: 0.7;
+                    background: @color-text;
+                    color: @color-background;
                 }
             }
         }
@@ -64,8 +63,6 @@ main {
                 font-size: @font-size-sm;
                 font-weight: 500;
                 color: @color-text-secondary;
-                text-transform: uppercase;
-                letter-spacing: 0.1em;
                 margin: 0;
             }
             
@@ -76,7 +73,7 @@ main {
                 .download-all,
                 .clear-all {
                     font-size: @font-size-xs;
-                    padding: @space-2 @space-4;
+                    padding: @space-2 @space-6;
                 }
             }
         }
@@ -101,43 +98,24 @@ main {
                     background: @color-surface;
                 }
                 
-                // Status indicators - minimal, functional
+                // Status indicators - pure color communication
                 &.uploading {
-                    background: fade(@color-text, 3%);
-                    
-                    .file-name::before {
-                        content: "↑";
-                        margin-right: @space-2;
-                        color: @color-text-secondary;
-                    }
+                    border-left: 3px solid @gray-400;
+                    background: @gray-50;
                 }
                 
                 &.completed {
-                    .file-name::before {
-                        content: "✓";
-                        margin-right: @space-2;
-                        color: @color-success;
-                    }
+                    border-left: 3px solid @gray-700;
                 }
                 
                 &.error {
-                    background: fade(@color-error, 3%);
-                    
-                    .file-name::before {
-                        content: "✗";
-                        margin-right: @space-2;
-                        color: @color-error;
-                    }
+                    border-left: 3px solid @black;
+                    background: @gray-50;
                 }
                 
                 &.paused {
-                    background: fade(@color-warning, 3%);
-                    
-                    .file-name::before {
-                        content: "⏸";
-                        margin-right: @space-2;
-                        color: @color-warning;
-                    }
+                    border-left: 3px solid @gray-500;
+                    background: @gray-50;
                 }
                 
                 .file-info {
@@ -167,8 +145,6 @@ main {
                             font-family: @font-family-mono;
                             font-size: @font-size-xs;
                             color: @color-text-muted;
-                            text-transform: uppercase;
-                            letter-spacing: 0.05em;
                             white-space: nowrap;
                         }
                     }
@@ -186,14 +162,12 @@ main {
                         height: 100%;
                         background: @color-text;
                         width: 0%;
-                        transition: width @duration-base @easing;
+                        transition: width @duration-base ease-out;
                     }
                     
-                    &.complete {
-                        opacity: 0;
-                        height: 0;
-                        margin-top: 0;
-                        transition: all @duration-base @easing;
+                    &.complete .progress-bar {
+                        background: @color-border;
+                        width: 100%;
                     }
                 }
                 
@@ -206,9 +180,9 @@ main {
                     
                     button {
                         font-size: @font-size-xs;
-                        padding: @space-2 @space-3;
-                        min-width: 32px;
-                        height: 24px;
+                        padding: @space-2 @space-4;
+                        min-width: @space-16;
+                        height: @space-16;
                         display: flex;
                         align-items: center;
                         justify-content: center;
@@ -235,9 +209,9 @@ main {
                     
                     button {
                         font-size: @font-size-xs;
-                        padding: @space-2 @space-3;
-                        min-width: 32px;
-                        height: 24px;
+                        padding: @space-2 @space-4;
+                        min-width: @space-16;
+                        height: @space-16;
                         display: flex;
                         align-items: center;
                         justify-content: center;
@@ -252,8 +226,7 @@ main {
             color: @color-text-muted;
             font-size: @font-size-sm;
             font-weight: 300;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
+            font-style: italic;
         }
     }
 }
