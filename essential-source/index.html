@@ -305,10 +305,10 @@
                     // Smoothly remove the file div from the page
                     const fileDiv = button.closest('#file-list > div');
                     if (fileDiv) {
-                        fileDiv.style.animation = 'collapseAndFadeOut 0.4s ease forwards';
+                        fileDiv.style.animation = 'fadeOutDown 0.5s ease forwards';
                         setTimeout(() => {
                             fileDiv.remove();
-                        }, 400);
+                        }, 500);
                     }
                     
                     // Restore scroll position
