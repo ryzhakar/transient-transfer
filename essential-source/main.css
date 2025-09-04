@@ -56,6 +56,8 @@ body {
     padding: 0;
     height: 100vh;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 /* PARCEL Header - Size based on text + padding only */
@@ -84,11 +86,10 @@ main {
     width: 100%;
     max-width: 56rem;
     margin: 0 auto;
-    padding: var(--space-xxl);
+    padding: 0 var(--space-xxl) var(--space-xxl);
     display: flex;
     flex-direction: column;
     /* Fill remaining space after header */
-    min-height: calc(100vh - 16rem); /* Approximate header height */
     flex: 1;
 }
 
@@ -99,7 +100,7 @@ main {
     justify-content: center;
     align-items: center;
     /* Take full height of main container */
-    height: 100%;
+    flex: 1;
     transition: all 0.3s ease;
 }
 
