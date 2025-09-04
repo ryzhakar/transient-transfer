@@ -11,10 +11,6 @@
     <!-- Skip to main content for keyboard users -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
     
-    <header>
-        <h1>{{.Hostname}}</h1>
-    </header>
-    
     <main id="main-content">
         <section>
             <input type="file" id="file-input" multiple>
@@ -127,7 +123,7 @@
                         <div class="file-actions">
                             <button onclick="copyToClipboard('${downloadUrl.trim()}', this)">Copy Link</button>
                             <button class="danger" onclick="deleteFile('${deleteUrl}', this, '${file.name}')">Delete</button>
-                        </div>
+    </div>
                     `;
                     
                     // Show ZIP button if we have files
@@ -205,10 +201,12 @@
             await navigator.clipboard.writeText(zipUrl);
             const btn = document.getElementById('copy-zip-btn');
             const originalText = btn.textContent;
-            btn.textContent = 'ZIP Link Copied!';
+            btn.textContent = 'Copied!';
+            btn.style.backgroundColor = '#28a745';
             setTimeout(() => {
                 btn.textContent = originalText;
-            }, 2000);
+                btn.style.backgroundColor = '';
+            }, 1500);
         } catch (error) {
             // Fallback for older browsers
             const textArea = document.createElement('textarea');
@@ -222,10 +220,12 @@
             
             const btn = document.getElementById('copy-zip-btn');
             const originalText = btn.textContent;
-            btn.textContent = 'ZIP Link Copied!';
+            btn.textContent = 'Copied!';
+            btn.style.backgroundColor = '#28a745';
             setTimeout(() => {
                 btn.textContent = originalText;
-            }, 2000);
+                btn.style.backgroundColor = '';
+            }, 1500);
         }
     }
     
@@ -244,14 +244,20 @@
             });
             
             if (response.ok) {
-                // Remove from uploaded files array
-                uploadedFiles = uploadedFiles.filter(file => file.name !== fileName);
-                
-                // Remove the file div from the page - need to go up to the parent div
-                const fileDiv = button.closest('#file-list > div');
-                if (fileDiv) {
-                    fileDiv.remove();
-                }
+                                    // Store scroll position to maintain it during DOM changes
+                    const scrollPosition = window.scrollY;
+                    
+                    // Remove from uploaded files array
+                    uploadedFiles = uploadedFiles.filter(file => file.name !== fileName);
+                    
+                    // Remove the file div from the page - need to go up to the parent div
+                    const fileDiv = button.closest('#file-list > div');
+                    if (fileDiv) {
+                        fileDiv.remove();
+                    }
+                    
+                    // Restore scroll position
+                    window.scrollTo(0, scrollPosition);
                 
                 // Update ZIP button visibility
                 updateZipButton();

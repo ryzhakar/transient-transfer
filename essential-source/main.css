@@ -71,9 +71,11 @@ body {
     color: var(--color-text);
     background: var(--color-surface);
     margin: 0;
-    padding: var(--space-lg);
-    max-width: 42rem; /* Optimal reading measure */
-    margin: 0 auto;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
     font-feature-settings: 
         'zero' 1,    /* Slashed zero */
         'ss01' 1,    /* Alternate lowercase g */
@@ -119,40 +121,11 @@ p, label, input, button {
 
 /* === LAYOUT STRUCTURE === */
 
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-xl);
-    padding-bottom: var(--space-lg);
-    border-bottom: 1px solid var(--color-border-light);
-}
-
-header h1 {
-    margin: 0;
-    font-size: var(--scale-lg);
-}
-
-header h1 a {
-    color: var(--color-text);
-    text-decoration: none;
-}
-
-header nav a {
-    color: var(--color-action);
-    text-decoration: none;
-    font-size: var(--scale-sm);
-    font-weight: 500;
-    letter-spacing: 0.01em;
-    text-transform: uppercase;
-}
-
-header nav a:hover {
-    color: var(--color-action-hover);
-}
-
 main {
-    margin-bottom: var(--space-xl);
+    width: 100%;
+    max-width: 42rem; /* Optimal reading measure */
+    padding: var(--space-lg);
+    margin-top: var(--space-xl); /* Initial centering offset */
 }
 
 section {

@@ -8,17 +8,10 @@
     <link rel="stylesheet" href="/styles/main.css">
 </head>
 <body>
-    <header>
-        <h1><a href="/">{{.Hostname}}</a></h1>
-        <nav>
-            <a href="/">Share Files</a>
-        </nav>
-    </header>
-    
     <main>
         <section>
             <div class="file-name">{{.Filename}}</div>
-            <div class="file-details">{{.ContentType}} • {{.ContentLength | format "#,###."}} bytes</div>
+            <div class="file-details">{{.ContentType}} • <span id="file-size"></span></div>
             
             <div style="margin: 2rem 0;">
                 <video controls style="max-width: 100%; height: auto; border-radius: 0.25rem;">
@@ -76,6 +69,14 @@
             }, 1500);
         }
     }
+    
+    // Format file size on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileSizeElement = document.getElementById('file-size');
+        if (fileSizeElement) {
+            fileSizeElement.textContent = formatFileSize({{.ContentLength}});
+        }
+    });
     </script>
 </body>
 </html>
