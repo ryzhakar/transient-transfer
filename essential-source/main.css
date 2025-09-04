@@ -219,6 +219,7 @@ input[type="file"]:focus {
     
     .file-actions button {
         width: 100%;
+        min-width: 10rem; /* Fixed width, not dependent on content */
         justify-content: center;
         /* Maintain hierarchy on mobile */
     }
@@ -400,7 +401,7 @@ button.danger:hover {
 
 .file-actions button {
     flex: none;
-    min-width: calc(var(--space-xl) * 2); /* Golden ratio-based width */
+    min-width: 12rem; /* Fixed width, not dependent on content */
     display: inline-flex;
     justify-content: center;
     align-items: center;
@@ -445,6 +446,7 @@ button.danger:hover {
 #copy-zip-btn {
     margin-top: var(--space-md);
     width: 100%;
+    min-width: 12rem; /* Fixed width, not dependent on content */
     justify-content: center;
     font-size: var(--scale-base); /* Prominent collective action */
     font-weight: 600; /* Clear importance */
