@@ -172,7 +172,7 @@ body.has-files #parcel-header {
 }
 
 body.has-files main {
-    height: 100vh;
+    height: auto;
     padding: var(--space-xxl);
 }
 
@@ -508,8 +508,8 @@ button.danger:hover {
     }
     
     main {
-        padding: var(--space-xl);
-        min-height: calc(100vh - 8rem); /* Smaller header on mobile */
+        padding: 0 var(--space-xl) var(--space-xl);
+        flex: 1;
     }
     
     body {
