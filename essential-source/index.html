@@ -11,19 +11,27 @@
     <!-- Skip to main content for keyboard users -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
     
+    <!-- State: Empty (header + fullscreen upload) -->
+    <header id="parcel-header">
+        <h1>PARCEL</h1>
+    </header>
+    
     <main id="main-content">
-        <section>
+        <section id="upload-section">
             <div id="drop-area">
                 <input type="file" id="file-input" multiple>
                 <div id="drop-text">
                     <span>Drag files here or <strong>choose files</strong></span>
                 </div>
             </div>
-            
-            <button id="copy-zip-btn" onclick="copyZipLink()" style="display: none;">Copy All Files</button>
         </section>
         
-        <section id="file-list-section">
+        <!-- State: With files (hidden initially) -->
+        <section id="controls-section" style="display: none;">
+            <button id="copy-zip-btn" onclick="copyZipLink()">Copy All Files</button>
+        </section>
+        
+        <section id="file-list-section" style="display: none;">
             <div id="file-list">
                 <!-- Files appear here after upload -->
             </div>
@@ -101,6 +109,9 @@
             fileList.innerHTML = '';
         }
         
+        // Check if this is the first upload - trigger transformation
+        const isFirstUpload = uploadedFiles.length === 0;
+        
         for (const file of files) {
             // Add file to list immediately
             const fileDiv = document.createElement('div');
@@ -112,10 +123,6 @@
                     <span class="progress-text">Uploading...</span>
                 </div>
             `;
-            
-            // Show file list section and insert file at beginning
-            const fileListSection = document.getElementById('file-list-section');
-            fileListSection.classList.add('has-files');
             
             if (fileList.firstChild) {
                 fileList.insertBefore(fileDiv, fileList.firstChild);
@@ -193,6 +200,11 @@
                 `;
             }
         }
+        
+        // Trigger sequential transformation if this is the first upload
+        if (isFirstUpload && files.length > 0) {
+            setTimeout(() => transformToFileState(), 100);
+        }
     });
     
     // Copy to clipboard function
@@ -235,6 +247,51 @@
         } else {
             zipBtn.style.display = 'none';
         }
+    }
+    
+    // Sequential transformation: empty state -> file state
+    async function transformToFileState() {
+        // Step A: Header disappears
+        await slideUpElement('#parcel-header');
+        
+        // Step B: Upload area shrinks + Step C: Copy button appears + Step D: Item area appears
+        document.body.classList.add('has-files');
+        await slideDownElement('#controls-section');
+        await slideDownElement('#file-list-section');
+    }
+    
+    // Sequential transformation: file state -> empty state  
+    async function transformToEmptyState() {
+        // Reverse: item area disappears -> buttons disappear -> upload area expands -> header appears
+        await slideUpElement('#file-list-section');
+        await slideUpElement('#controls-section');
+        document.body.classList.remove('has-files');
+        await slideDownElement('#parcel-header');
+    }
+    
+    // Animation helpers
+    function slideUpElement(selector) {
+        return new Promise(resolve => {
+            const element = document.querySelector(selector);
+            element.classList.add('slide-up-out');
+            setTimeout(() => {
+                element.style.display = 'none';
+                element.classList.remove('slide-up-out');
+                resolve();
+            }, 300);
+        });
+    }
+    
+    function slideDownElement(selector) {
+        return new Promise(resolve => {
+            const element = document.querySelector(selector);
+            element.style.display = 'block';
+            element.classList.add('slide-down-in');
+            setTimeout(() => {
+                element.classList.remove('slide-down-in');
+                resolve();
+            }, 300);
+        });
     }
     
     // Copy ZIP link functionality
@@ -314,11 +371,9 @@
                 // Update ZIP button visibility
                 updateZipButton();
                 
-                // If no files left, hide file list section
-                const fileList = document.getElementById('file-list');
-                const fileListSection = document.getElementById('file-list-section');
-                if (fileList.children.length === 0) {
-                    fileListSection.classList.remove('has-files');
+                // If no files left, transform back to empty state
+                if (uploadedFiles.length === 0) {
+                    setTimeout(() => transformToEmptyState(), 100);
                 }
             } else {
                 button.textContent = `Delete failed (${response.status})`;
