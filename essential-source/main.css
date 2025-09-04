@@ -37,25 +37,23 @@
     --space-lg: calc(var(--base-unit) * var(--phi) * var(--phi));  /* φ² = 2.618rem */
     --space-xl: calc(var(--base-unit) * var(--phi) * var(--phi) * var(--phi)); /* φ³ = 4.236rem */
     
-    /* Typography Scale - pure golden ratio computation */
-    --scale-xs: calc(var(--base-unit) / var(--phi) / var(--phi));  /* 1/φ² = 0.382rem */
-    --scale-sm: calc(var(--base-unit) / var(--phi));               /* 1/φ = 0.618rem */
-    --scale-base: var(--base-unit);                                /* 1rem */
-    --scale-md: calc(var(--base-unit) * var(--phi));               /* φ = 1.618rem */
-    --scale-lg: calc(var(--base-unit) * var(--phi) * var(--phi));  /* φ² = 2.618rem */
-    --scale-xl: calc(var(--base-unit) * var(--phi) * var(--phi) * var(--phi)); /* φ³ = 4.236rem */
-    --scale-xxl: calc(var(--base-unit) * var(--phi) * var(--phi) * var(--phi) * var(--phi)); /* φ⁴ = 6.854rem */
+    /* Typography Scale - Business-appropriate sizes (REWRITE_PLAN compliant) */
+    --scale-xs: 0.75rem;   /* 12px - Metadata only */
+    --scale-sm: 0.875rem;  /* 14px - Secondary details */
+    --scale-base: 1rem;    /* 16px - Primary content (default) */
+    --scale-md: 1.25rem;   /* 20px - Section headings only */
+    --scale-lg: 2rem;      /* 32px - Page title only */
     
-    /* Honest material palette - inspired by Braun design */
+    /* Business tool palette - REWRITE_PLAN compliant */
     --color-text: #000;
     --color-text-secondary: #4a4a4a;
     --color-text-tertiary: #888;
-    --color-action: #000;
-    --color-action-hover: #333;
+    --color-action: #0066cc;        /* Blue for interactive elements */
+    --color-action-hover: #0052a3;  /* Darker blue on hover */
     --color-secondary: #666;
     --color-secondary-hover: #333;
-    --color-danger: #d00;
-    --color-danger-hover: #a00;
+    --color-danger: #dc3545;        /* Red for errors (REWRITE_PLAN compliant) */
+    --color-danger-hover: #c82333;
     --color-surface: #fff;
     --color-surface-elevated: #fafafa;
     --color-border: #ddd;
@@ -87,8 +85,8 @@ body {
 /* === TYPOGRAPHIC HIERARCHY === */
 
 h1 {
-    font-size: var(--scale-xxl);
-    font-weight: 750;  /* Extra bold, but not black */
+    font-size: var(--scale-lg);     /* 32px - Page title only */
+    font-weight: 600;
     letter-spacing: -0.025em;
     line-height: 1.1;
     margin: 0 0 var(--space-base) 0;
@@ -96,8 +94,8 @@ h1 {
 }
 
 h2 {
-    font-size: var(--scale-xl);
-    font-weight: 650;  /* Bold, but not extra bold */
+    font-size: var(--scale-md);     /* 20px - Section headings only */
+    font-weight: 600;
     letter-spacing: -0.02em;
     line-height: 1.2;
     margin: var(--space-lg) 0 var(--space-base) 0;
@@ -105,8 +103,8 @@ h2 {
 }
 
 h3 {
-    font-size: var(--scale-lg);
-    font-weight: 600;  /* Semi-bold */
+    font-size: var(--scale-base);   /* 16px - Primary content */
+    font-weight: 600;
     letter-spacing: -0.015em;
     line-height: 1.3;
     margin: var(--space-md) 0 var(--space-sm) 0;
@@ -203,12 +201,12 @@ input[type="file"]:focus {
     }
     
     .file-name {
-        font-size: var(--scale-base); /* Proportional scaling */
-        margin-bottom: calc(var(--space-xs) / var(--phi));
+        font-size: var(--scale-sm); /* 14px on mobile - Secondary details */
+        margin-bottom: var(--space-xs);
     }
     
     .file-details {
-        font-size: var(--scale-xs); /* Proportional scaling */
+        font-size: var(--scale-xs); /* 12px on mobile - Metadata */
         margin-bottom: var(--space-sm);
     }
     
@@ -374,10 +372,10 @@ button.danger:hover {
 }
 
 .file-name {
-    font-size: var(--scale-md); /* Modest, not competing with actions */
-    font-weight: 600; /* Clear but not dominant */
+    font-size: var(--scale-base); /* 16px - Primary content, not competing with actions */
+    font-weight: 500; /* Clear but not dominant */
     color: var(--color-text);
-    margin-bottom: calc(var(--space-xs) / var(--phi)); /* Tighter spacing */
+    margin-bottom: var(--space-xs);
     word-break: break-word;
     line-height: 1.3;
     letter-spacing: -0.012em;
