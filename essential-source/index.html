@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{.Hostname}} - File Sharing</title>
-    <meta name="description" content="Share files quickly and securely">
+    <title>Transfer Files</title>
     <link rel="stylesheet" href="/styles/main.css">
 </head>
 <body>
@@ -39,104 +38,326 @@
     </main>
 
     <script>
-    // Track uploaded files for ZIP functionality
-    let uploadedFiles = [];
-    
-    // Format file size consistently: GB > MB > KB
-    function formatFileSize(bytes) {
-        if (bytes >= 1024 * 1024 * 1024) {
-            return (bytes / (1024 * 1024 * 1024)).toFixed(1) + 'GB';
-        } else if (bytes >= 1024 * 1024) {
-            return (bytes / (1024 * 1024)).toFixed(1) + 'MB';
-        } else {
-            return Math.round(bytes / 1024) + 'KB';
-        }
-    }
-    
-    // Drag and Drop functionality
-    const dropArea = document.getElementById('drop-area');
-    const fileInput = document.getElementById('file-input');
-    
-    // Prevent default drag behaviors
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, preventDefaults, false);
-        document.body.addEventListener(eventName, preventDefaults, false);
-    });
-    
-    // Highlight drop area when item is dragged over it
-    ['dragenter', 'dragover'].forEach(eventName => {
-        dropArea.addEventListener(eventName, highlight, false);
-    });
-    
-    ['dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, unhighlight, false);
-    });
-    
-    // Handle dropped files
-    dropArea.addEventListener('drop', handleDrop, false);
-    
-    function preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-    
-    function highlight(e) {
-        dropArea.classList.add('drag-over');
-    }
-    
-    function unhighlight(e) {
-        dropArea.classList.remove('drag-over');
-    }
-    
-    function handleDrop(e) {
-        const dt = e.dataTransfer;
-        const files = dt.files;
-        
-        // Simulate file input change
-        fileInput.files = files;
-        fileInput.dispatchEvent(new Event('change', { bubbles: true }));
-    }
-    
-    // Minimal upload functionality - required due to PUT-only API
-    document.getElementById('file-input').addEventListener('change', async function(e) {
-        const files = e.target.files;
-        const fileList = document.getElementById('file-list');
-        
-        if (files.length === 0) return;
-        
-        // Clear empty state if present
-        if (fileList.innerHTML.includes('No files shared yet')) {
-            fileList.innerHTML = '';
+    /**
+     * Sequential Animation Manager using Web Animations API
+     * Adapted for transfer.sh backend integration
+     */
+    class TransferSequentialAnimationManager {
+        constructor() {
+            this.state = 'EMPTY';
+            this.isAnimating = false;
+            this.activeAnimations = [];
+            this.uploadedFiles = [];
+            
+            // Cache DOM elements
+            this.elements = {
+                header: document.getElementById('parcel-header'),
+                uploadSection: document.getElementById('upload-section'),
+                dropArea: document.getElementById('drop-area'),
+                controlsSection: document.getElementById('controls-section'),
+                fileListSection: document.getElementById('file-list-section'),
+                fileList: document.getElementById('file-list'),
+                copyZipBtn: document.getElementById('copy-zip-btn'),
+                fileInput: document.getElementById('file-input')
+            };
+            
+            // Store initial measurements for restoration
+            this.initialMeasurements = {
+                headerHeight: this.elements.header.offsetHeight
+            };
+            
+            this.setupEventListeners();
         }
         
-        // Check if this is the first upload - trigger transformation
-        const isFirstUpload = uploadedFiles.length === 0;
+        /**
+         * Web Animations API wrapper with Promise-based control
+         */
+        async animate(element, keyframes, options = {}) {
+            const defaultOptions = {
+                duration: 300,
+                easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+                fill: 'forwards'
+            };
+            
+            const animation = element.animate(keyframes, { ...defaultOptions, ...options });
+            this.activeAnimations.push(animation);
+            
+            try {
+                await animation.finished;
+            } catch (error) {
+                console.log('Animation cancelled:', error);
+            } finally {
+                this.activeAnimations = this.activeAnimations.filter(a => a !== animation);
+            }
+            
+            return animation;
+        }
         
-        for (const file of files) {
-            // Add file to list immediately
+        /**
+         * Measure element's natural height
+         */
+        measureAutoHeight(element) {
+            const originalHeight = element.style.height;
+            const originalDisplay = element.style.display;
+            
+            element.style.height = 'auto';
+            element.style.display = element.style.display || 'block';
+            const autoHeight = element.offsetHeight;
+            
+            element.style.height = originalHeight;
+            element.style.display = originalDisplay;
+            return autoHeight;
+        }
+        
+        /**
+         * CRITICAL: Sequential transformation EMPTY → HAS_FILES
+         * Each step waits for the previous to complete
+         */
+        async transformToFileState() {
+            if (this.isAnimating) return;
+            this.isAnimating = true;
+            this.state = 'TRANSITIONING';
+            
+            try {
+                // STEP A: Header disappears (slide up + opacity + height collapse)
+                await Promise.all([
+                    this.animate(this.elements.header, [
+                        { opacity: 1, transform: 'translateY(0)' },
+                        { opacity: 0, transform: 'translateY(-50px)' }
+                    ], { duration: 300 }),
+                    this.animate(this.elements.header, [
+                        { 
+                            height: `${this.elements.header.offsetHeight}px`,
+                            paddingTop: 'var(--space-xxl)',
+                            paddingBottom: 'var(--space-xxl)'
+                        },
+                        { 
+                            height: '0px',
+                            paddingTop: '0px',
+                            paddingBottom: '0px'
+                        }
+                    ], { duration: 400 })
+                ]);
+                
+                this.elements.header.style.display = 'none';
+                
+                // STEP B: Upload area shrinks to compact size
+                const currentHeight = this.elements.uploadSection.offsetHeight;
+                const compactHeight = 120;
+                
+                await this.animate(this.elements.uploadSection, [
+                    { height: `${currentHeight}px`, flex: '1 1 auto' },
+                    { height: `${compactHeight}px`, flex: '0 0 auto' }
+                ], { duration: 400 });
+                
+                this.elements.uploadSection.style.height = `${compactHeight}px`;
+                this.elements.uploadSection.style.flex = '0 0 auto';
+                
+                // STEP C: Controls appear (slide down)
+                this.elements.controlsSection.style.display = 'block';
+                await this.animate(this.elements.controlsSection, [
+                    { opacity: 0, transform: 'translateY(-20px)' },
+                    { opacity: 1, transform: 'translateY(0)' }
+                ], { duration: 300 });
+                
+                // STEP D: File list appears
+                this.elements.fileListSection.style.display = 'block';
+                await this.animate(this.elements.fileListSection, [
+                    { opacity: 0 },
+                    { opacity: 1 }
+                ], { duration: 200 });
+                
+                // Enable scrolling
+                document.body.style.overflow = 'auto';
+                document.body.style.height = 'auto';
+                
+                this.state = 'HAS_FILES';
+            } finally {
+                this.isAnimating = false;
+            }
+        }
+        
+        /**
+         * CRITICAL: Sequential transformation HAS_FILES → EMPTY (reverse order)
+         */
+        async transformToEmptyState() {
+            if (this.isAnimating) return;
+            this.isAnimating = true;
+            this.state = 'TRANSITIONING';
+            
+            try {
+                // STEP A: File list disappears
+                await this.animate(this.elements.fileListSection, [
+                    { opacity: 1 },
+                    { opacity: 0 }
+                ], { duration: 200 });
+                this.elements.fileListSection.style.display = 'none';
+                
+                // STEP B: Controls disappear
+                await this.animate(this.elements.controlsSection, [
+                    { opacity: 1, transform: 'translateY(0)' },
+                    { opacity: 0, transform: 'translateY(-20px)' }
+                ], { duration: 300 });
+                this.elements.controlsSection.style.display = 'none';
+                
+                // STEP C: Upload area expands to full size
+                const targetHeight = window.innerHeight - this.initialMeasurements.headerHeight - 128;
+                await this.animate(this.elements.uploadSection, [
+                    { height: `${this.elements.uploadSection.offsetHeight}px`, flex: '0 0 auto' },
+                    { height: `${targetHeight}px`, flex: '1 1 auto' }
+                ], { duration: 400 });
+                
+                this.elements.uploadSection.style.height = '';
+                this.elements.uploadSection.style.flex = '1';
+                
+                // STEP D: Header reappears (height expand + fade in)
+                this.elements.header.style.display = 'flex';
+                
+                await this.animate(this.elements.header, [
+                    { 
+                        height: '0px',
+                        paddingTop: '0px',
+                        paddingBottom: '0px'
+                    },
+                    { 
+                        height: `${this.initialMeasurements.headerHeight}px`,
+                        paddingTop: 'var(--space-xxl)',
+                        paddingBottom: 'var(--space-xxl)'
+                    }
+                ], { duration: 400 });
+                
+                this.elements.header.style.height = '';
+                
+                await this.animate(this.elements.header, [
+                    { opacity: 0, transform: 'translateY(-50px)' },
+                    { opacity: 1, transform: 'translateY(0)' }
+                ], { duration: 300 });
+                
+                // Reset body styles
+                document.body.style.overflow = 'hidden';
+                document.body.style.height = '100vh';
+                
+                this.state = 'EMPTY';
+            } finally {
+                this.isAnimating = false;
+            }
+        }
+        
+        /**
+         * Animate file item appearing
+         */
+        async animateFileIn(fileElement) {
+            await this.animate(fileElement, [
+                { opacity: 0, transform: 'translateY(20px)' },
+                { opacity: 1, transform: 'translateY(0)' }
+            ], { duration: 250 });
+        }
+        
+        /**
+         * Animate file item disappearing
+         */
+        async animateFileOut(fileElement) {
+            await this.animate(fileElement, [
+                { opacity: 1, transform: 'translateY(0)' },
+                { opacity: 0, transform: 'translateY(-20px)' }
+            ], { duration: 250 });
+        }
+        
+        /**
+         * Format file size consistently: GB > MB > KB
+         */
+        formatFileSize(bytes) {
+            if (bytes >= 1024 * 1024 * 1024) {
+                return (bytes / (1024 * 1024 * 1024)).toFixed(1) + 'GB';
+            } else if (bytes >= 1024 * 1024) {
+                return (bytes / (1024 * 1024)).toFixed(1) + 'MB';
+            } else {
+                return Math.round(bytes / 1024) + 'KB';
+            }
+        }
+        
+        /**
+         * Setup all event listeners
+         */
+        setupEventListeners() {
+            // File input change
+            this.elements.fileInput.addEventListener('change', (e) => {
+                this.handleFiles(e.target.files);
+                e.target.value = ''; // Reset input
+            });
+            
+            // Drag and drop setup
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                this.elements.dropArea.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+            });
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                this.elements.dropArea.addEventListener(eventName, () => {
+                    this.elements.dropArea.classList.add('drag-over');
+                });
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                this.elements.dropArea.addEventListener(eventName, () => {
+                    this.elements.dropArea.classList.remove('drag-over');
+                });
+            });
+            
+            this.elements.dropArea.addEventListener('drop', (e) => {
+                this.handleFiles(e.dataTransfer.files);
+            });
+        }
+        
+        /**
+         * Handle file uploads with backend integration
+         */
+        async handleFiles(files) {
+            const isFirstUpload = this.uploadedFiles.length === 0;
+            
+            // Transform UI if this is the first upload
+            if (isFirstUpload && files.length > 0 && this.state === 'EMPTY') {
+                await this.transformToFileState();
+            }
+            
+            // Process each file
+            for (const file of files) {
+                await this.uploadFile(file);
+            }
+            
+            this.updateZipButton();
+        }
+        
+        /**
+         * Upload single file with progress tracking
+         */
+        async uploadFile(file) {
+            // Create file display element
             const fileDiv = document.createElement('div');
             fileDiv.innerHTML = `
                 <div class="file-name">${file.name}</div>
-                <div class="file-details">${formatFileSize(file.size)}</div>
+                <div class="file-details">${this.formatFileSize(file.size)}</div>
                 <div class="file-progress">
                     <div class="progress-bar" style="width: 0%"></div>
                     <span class="progress-text">Uploading...</span>
                 </div>
             `;
             
-            if (fileList.firstChild) {
-                fileList.insertBefore(fileDiv, fileList.firstChild);
-            } else {
-                fileList.appendChild(fileDiv);
-            }
+            // Add to DOM (top of list)
+            this.elements.fileList.insertBefore(fileDiv, this.elements.fileList.firstChild);
+            
+            // Animate file appearing
+            await this.animateFileIn(fileDiv);
             
             try {
-                // Create XMLHttpRequest for upload progress
+                // Upload using XMLHttpRequest for progress tracking
                 const xhr = new XMLHttpRequest();
                 const progressBar = fileDiv.querySelector('.progress-bar');
                 const progressText = fileDiv.querySelector('.progress-text');
                 
-                // Upload progress handler
+                // Upload progress
                 xhr.upload.addEventListener('progress', (e) => {
                     if (e.lengthComputable) {
                         const percentComplete = Math.round((e.loaded / e.total) * 100);
@@ -145,54 +366,51 @@
                     }
                 });
                 
-                // Upload complete handler
-                const uploadPromise = new Promise((resolve, reject) => {
-                    xhr.onload = () => {
-                        if (xhr.status >= 200 && xhr.status < 300) {
-                            resolve(xhr);
-                        } else {
-                            reject(new Error(`Upload failed: ${xhr.status}`));
-                        }
-                    };
-                    xhr.onerror = () => reject(new Error('Network error'));
+                // Upload complete
+                xhr.addEventListener('load', () => {
+                    if (xhr.status === 200) {
+                        const response = xhr.responseText.trim();
+                        const downloadUrl = response;
+                        const deleteUrl = xhr.getResponseHeader('X-Url-Delete');
+                        
+                        // Update file display with actions
+                        fileDiv.innerHTML = `
+                            <div class="file-name">${file.name}</div>
+                            <div class="file-details">${this.formatFileSize(file.size)}</div>
+                            <div class="file-actions">
+                                <button onclick="animationManager.copyToClipboard('${downloadUrl}', this)">Copy Link</button>
+                                <button class="danger" onclick="animationManager.deleteFile('${deleteUrl}', this, '${file.name}')">Delete</button>
+    </div>
+                        `;
+                        
+                        // Add to uploaded files array
+                        this.uploadedFiles.push({
+                            name: file.name,
+                            downloadUrl: downloadUrl,
+                            deleteUrl: deleteUrl,
+                            element: fileDiv
+                        });
+                        
+                        this.updateZipButton();
+                    } else {
+                        fileDiv.innerHTML = `
+                            <div class="file-name">${file.name}</div>
+                            <div class="error-message">Upload failed (${xhr.status}) <button class="error-dismiss" onclick="this.parentElement.parentElement.remove()">×</button></div>
+                        `;
+                    }
+                });
+                
+                xhr.addEventListener('error', () => {
+                    fileDiv.innerHTML = `
+                        <div class="file-name">${file.name}</div>
+                        <div class="error-message">Upload failed: Network error <button class="error-dismiss" onclick="this.parentElement.parentElement.remove()">×</button></div>
+                    `;
                 });
                 
                 // Start upload
-                xhr.open('PUT', `/${encodeURIComponent(file.name)}`);
+                xhr.open('PUT', `/${encodeURIComponent(file.name)}`, true);
                 xhr.send(file);
                 
-                // Wait for upload to complete
-                const xhr_response = await uploadPromise;
-                
-                if (xhr_response.status >= 200 && xhr_response.status < 300) {
-                    const downloadUrl = xhr_response.responseText;
-                    const deleteUrl = xhr_response.getResponseHeader('X-Url-Delete');
-                    
-                    // Add to uploaded files array for ZIP functionality
-                    uploadedFiles.push({
-                        name: file.name,
-                        url: downloadUrl.trim(),
-                        deleteUrl: deleteUrl
-                    });
-                    
-                    // Remove progress bar and show actions
-                    fileDiv.innerHTML = `
-                        <div class="file-name">${file.name}</div>
-                        <div class="file-details">${formatFileSize(file.size)}</div>
-                        <div class="file-actions">
-                            <button onclick="copyToClipboard('${downloadUrl.trim()}', this)">Copy Link</button>
-                            <button class="danger" onclick="deleteFile('${deleteUrl}', this, '${file.name}')">Delete</button>
-    </div>
-                    `;
-                    
-                    // Show ZIP button if we have files
-                    updateZipButton();
-                } else {
-                    fileDiv.innerHTML = `
-                        <div class="file-name">${file.name}</div>
-                        <div class="error-message">Upload failed (${xhr_response.status}) <button class="error-dismiss" onclick="this.parentElement.parentElement.remove()">×</button></div>
-                    `;
-                }
             } catch (error) {
                 fileDiv.innerHTML = `
                     <div class="file-name">${file.name}</div>
@@ -201,189 +419,123 @@
             }
         }
         
-        // Trigger sequential transformation if this is the first upload
-        if (isFirstUpload && files.length > 0) {
-            setTimeout(() => transformToFileState(), 100);
-        }
-    });
-    
-    // Copy to clipboard function
-    async function copyToClipboard(text, button) {
-        try {
-            await navigator.clipboard.writeText(text);
-            const originalText = button.textContent;
-            button.textContent = 'Copied!';
-            button.style.backgroundColor = '#28a745';
-            setTimeout(() => {
-                button.textContent = originalText;
-                button.style.backgroundColor = '';
-            }, 1500);
-        } catch (error) {
-            // Fallback for older browsers
-            const textArea = document.createElement('textarea');
-            textArea.value = text;
-            textArea.style.position = 'fixed';
-            textArea.style.opacity = '0';
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
+        /**
+         * Delete file with animation
+         */
+        async deleteFile(deleteUrl, button, fileName) {
+            if (!confirm('Delete this file? This cannot be undone.')) {
+                return;
+            }
             
-            const originalText = button.textContent;
-            button.textContent = 'Copied!';
-            button.style.backgroundColor = '#28a745';
-            setTimeout(() => {
-                button.textContent = originalText;
-                button.style.backgroundColor = '';
-            }, 1500);
-        }
-    }
-    
-    // Update ZIP button visibility
-    function updateZipButton() {
-        const zipBtn = document.getElementById('copy-zip-btn');
-        if (uploadedFiles.length > 0) {
-            zipBtn.style.display = 'block';
-        } else {
-            zipBtn.style.display = 'none';
-        }
-    }
-    
-    // Sequential transformation: empty state -> file state
-    async function transformToFileState() {
-        // Step A: Header disappears
-        await slideUpElement('#parcel-header');
-        
-        // Step B: Upload area shrinks + Step C: Copy button appears + Step D: Item area appears
-        document.body.classList.add('has-files');
-        await slideDownElement('#controls-section');
-        await slideDownElement('#file-list-section');
-    }
-    
-    // Sequential transformation: file state -> empty state  
-    async function transformToEmptyState() {
-        // Reverse: item area disappears -> buttons disappear -> upload area expands -> header appears
-        await slideUpElement('#file-list-section');
-        await slideUpElement('#controls-section');
-        document.body.classList.remove('has-files');
-        await slideDownElement('#parcel-header');
-    }
-    
-    // Animation helpers
-    function slideUpElement(selector) {
-        return new Promise(resolve => {
-            const element = document.querySelector(selector);
-            element.classList.add('slide-up-out');
-            setTimeout(() => {
-                element.style.display = 'none';
-                element.classList.remove('slide-up-out');
-                resolve();
-            }, 300);
-        });
-    }
-    
-    function slideDownElement(selector) {
-        return new Promise(resolve => {
-            const element = document.querySelector(selector);
-            element.style.display = 'block';
-            element.classList.add('slide-down-in');
-            setTimeout(() => {
-                element.classList.remove('slide-down-in');
-                resolve();
-            }, 300);
-        });
-    }
-    
-    // Copy ZIP link functionality
-    async function copyZipLink() {
-        if (uploadedFiles.length === 0) return;
-        
-        // Create ZIP URL using transfer.sh syntax: /(file1,file2).zip
-        const filePaths = uploadedFiles.map(file => {
-            const url = new URL(file.url);
-            return url.pathname.substring(1); // Remove leading slash
-        });
-        
-        const zipUrl = `${window.location.origin}/(${filePaths.join(',')}).zip`;
-        
-        try {
-            await navigator.clipboard.writeText(zipUrl);
-            const btn = document.getElementById('copy-zip-btn');
-            const originalText = btn.textContent;
-            btn.textContent = 'Copied!';
-            btn.style.backgroundColor = '#28a745';
-            setTimeout(() => {
-                btn.textContent = originalText;
-                btn.style.backgroundColor = '';
-            }, 1500);
-        } catch (error) {
-            // Fallback for older browsers
-            const textArea = document.createElement('textarea');
-            textArea.value = zipUrl;
-            textArea.style.position = 'fixed';
-            textArea.style.opacity = '0';
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
+            button.textContent = 'Deleting...';
+            button.disabled = true;
             
-            const btn = document.getElementById('copy-zip-btn');
-            const originalText = btn.textContent;
-            btn.textContent = 'Copied!';
-            btn.style.backgroundColor = '#28a745';
-            setTimeout(() => {
-                btn.textContent = originalText;
-                btn.style.backgroundColor = '';
-            }, 1500);
-        }
-    }
-    
-    // Delete file function
-    async function deleteFile(deleteUrl, button, fileName) {
-        if (!confirm('Delete this file? This cannot be undone.')) {
-            return;
-        }
-        
-        button.textContent = 'Deleting...';
-        button.disabled = true;
-        
-        try {
-            const response = await fetch(deleteUrl, {
-                method: 'DELETE'
-            });
-            
-            if (response.ok) {
-                                    // Store scroll position to maintain it during DOM changes
-                    const scrollPosition = window.scrollY;
-                    
-                    // Remove from uploaded files array
-                    uploadedFiles = uploadedFiles.filter(file => file.name !== fileName);
-                    
-                    // Smoothly remove the file div from the page
-                    const fileDiv = button.closest('#file-list > div');
-                    if (fileDiv) {
-                        fileDiv.remove();
+            try {
+                const response = await fetch(deleteUrl, { method: 'DELETE' });
+                
+                if (response.ok) {
+                    // Find and remove file
+                    const fileIndex = this.uploadedFiles.findIndex(f => f.name === fileName);
+                    if (fileIndex !== -1) {
+                        const fileData = this.uploadedFiles[fileIndex];
+                        
+                        // Animate file disappearing
+                        await this.animateFileOut(fileData.element);
+                        fileData.element.remove();
+                        
+                        // Remove from array
+                        this.uploadedFiles.splice(fileIndex, 1);
+                        
+                        // Transform back to empty state if no files left
+                        if (this.uploadedFiles.length === 0) {
+                            await this.transformToEmptyState();
+                        }
+                        
+                        this.updateZipButton();
                     }
-                    
-                    // Restore scroll position
-                    window.scrollTo(0, scrollPosition);
-                
-                // Update ZIP button visibility
-                updateZipButton();
-                
-                // If no files left, transform back to empty state
-                if (uploadedFiles.length === 0) {
-                    setTimeout(() => transformToEmptyState(), 100);
+                } else {
+                    button.textContent = `Delete failed (${response.status})`;
+                    button.disabled = false;
                 }
-            } else {
-                button.textContent = `Delete failed (${response.status})`;
+            } catch (error) {
+                button.textContent = `Delete failed: ${error.message}`;
                 button.disabled = false;
             }
-        } catch (error) {
-            button.textContent = `Delete failed: ${error.message}`;
-            button.disabled = false;
+        }
+        
+        /**
+         * Copy text to clipboard
+         */
+        async copyToClipboard(text, button) {
+            try {
+                await navigator.clipboard.writeText(text);
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.style.backgroundColor = '#28a745';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.backgroundColor = '';
+                }, 1500);
+            } catch (error) {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.opacity = '0';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.style.backgroundColor = '#28a745';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.backgroundColor = '';
+                }, 1500);
+            }
+        }
+        
+        /**
+         * Update ZIP button visibility and functionality
+         */
+        updateZipButton() {
+            if (this.uploadedFiles.length > 0) {
+                this.elements.copyZipBtn.style.display = 'block';
+                this.elements.copyZipBtn.onclick = () => this.copyZipLink();
+            } else {
+                this.elements.copyZipBtn.style.display = 'none';
+            }
+        }
+        
+        /**
+         * Copy ZIP link for all files
+         */
+        async copyZipLink() {
+            if (this.uploadedFiles.length === 0) return;
+            
+            // Construct ZIP URL from file tokens
+            const zipParts = this.uploadedFiles.map(file => {
+                const url = new URL(file.downloadUrl);
+                const pathParts = url.pathname.split('/');
+                const token = pathParts[1];
+                const filename = pathParts[2];
+                return `${token}/${filename}`;
+            });
+            
+            const zipUrl = `${window.location.origin}/(${zipParts.join(',')}).zip`;
+            
+            await this.copyToClipboard(zipUrl, this.elements.copyZipBtn);
         }
     }
+    
+    // Initialize the animation manager
+    const animationManager = new TransferSequentialAnimationManager();
+    
+    // Expose globally for onclick handlers
+    window.animationManager = animationManager;
     </script>
 </body>
 </html>
