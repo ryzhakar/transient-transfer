@@ -168,9 +168,10 @@
                     { opacity: 1 }
                 ], { duration: 200 });
                 
-                // Enable scrolling
+                // Enable scrolling and add top spacing since header is gone
                 document.body.style.overflow = 'auto';
                 document.body.style.height = 'auto';
+                this.elements.uploadSection.parentElement.style.paddingTop = 'var(--space-xxl)';
                 
                 this.state = 'HAS_FILES';
             } finally {
@@ -236,9 +237,10 @@
                 
                 this.elements.header.style.height = '';
                 
-                // Reset body styles
+                // Reset body styles and main padding (header is back)
                 document.body.style.overflow = 'hidden';
                 document.body.style.height = '100vh';
+                this.elements.uploadSection.parentElement.style.paddingTop = '';
                 
                 this.state = 'EMPTY';
             } finally {
@@ -402,7 +404,7 @@
                             <div class="file-actions">
                                 <button onclick="animationManager.copyToClipboard('${downloadUrl}', this)">Copy Link</button>
                                 <button class="danger" onclick="animationManager.deleteFile('${deleteUrl}', this, '${file.name}')">Delete</button>
-                            </div>
+    </div>
                         `;
                         
                         // Add to uploaded files array
