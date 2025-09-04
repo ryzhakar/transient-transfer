@@ -101,12 +101,12 @@
             this.state = 'TRANSITIONING';
             
             try {
-                // STEP 1: Hide header
+                // STEP 1: Hide header (keep space to prevent layout shift)
                 await this.animate(this.elements.header, [
                     { opacity: 1 },
                     { opacity: 0 }
                 ], { duration: 300 });
-                this.elements.header.style.display = 'none';
+                this.elements.header.style.visibility = 'hidden';
                 
                 // STEP 2: Show controls
                 this.elements.controlsSection.style.display = 'block';
@@ -122,10 +122,9 @@
                     { opacity: 1 }
                 ], { duration: 300 });
                 
-                // Enable scrolling and add spacing
+                // Enable scrolling (no extra spacing needed - header space preserved)
                 document.body.style.overflow = 'auto';
                 document.body.style.height = 'auto';
-                this.elements.uploadSection.parentElement.style.paddingTop = 'var(--space-xxl)';
                 
                 this.state = 'HAS_FILES';
             } finally {
@@ -156,17 +155,16 @@
                 ], { duration: 300 });
                 this.elements.controlsSection.style.display = 'none';
                 
-                // STEP 3: Show header
-                this.elements.header.style.display = 'flex';
+                // STEP 3: Show header (restore visibility)
+                this.elements.header.style.visibility = 'visible';
                 await this.animate(this.elements.header, [
                     { opacity: 0 },
                     { opacity: 1 }
                 ], { duration: 300 });
                 
-                // Reset body styles
+                // Reset body styles  
                 document.body.style.overflow = 'hidden';
                 document.body.style.height = '100vh';
-                this.elements.uploadSection.parentElement.style.paddingTop = '';
                 
                 this.state = 'EMPTY';
             } finally {

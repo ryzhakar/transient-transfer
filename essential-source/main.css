@@ -85,7 +85,8 @@ body.download-page main {
     padding: var(--space-xxl);
     text-align: center;
     transition: all 0.3s ease;
-    /* No fixed height - let content determine size */
+    /* Fixed height to prevent layout shifts when hidden */
+    min-height: calc(var(--text-parcel) + 2 * var(--space-xxl));
     display: flex;
     align-items: center;
     justify-content: center;
