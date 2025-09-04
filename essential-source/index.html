@@ -13,16 +13,13 @@
     
     <header>
         <h1>{{.Hostname}}</h1>
-        <p>Share files quickly and securely</p>
     </header>
     
     <main id="main-content">
         <section>
-            <h2>Share Files</h2>
-            <label for="file-input">Choose files to upload:</label>
             <input type="file" id="file-input" multiple>
             
-            <button id="copy-zip-btn" onclick="copyZipLink()" style="display: none;">Copy ZIP Link</button>
+            <button id="copy-zip-btn" onclick="copyZipLink()" style="display: none;">Copy All Files</button>
         </section>
         
         <section>
@@ -53,20 +50,57 @@
             const fileDiv = document.createElement('div');
             fileDiv.innerHTML = `
                 <div class="file-name">${file.name}</div>
-                <div class="file-details">${Math.round(file.size/1024)}KB - Uploading...</div>
+                <div class="file-details">${Math.round(file.size/1024)}KB</div>
+                <div class="file-progress">
+                    <div class="progress-bar" style="width: 0%"></div>
+                    <span class="progress-text">Uploading...</span>
+                </div>
             `;
-            fileList.appendChild(fileDiv);
+            
+            // Insert at the beginning to show newest first
+            if (fileList.firstChild && fileList.firstChild.tagName !== 'P') {
+                fileList.insertBefore(fileDiv, fileList.firstChild);
+            } else {
+                fileList.appendChild(fileDiv);
+            }
             
             try {
-                // Upload file using transfer.sh API
-                const response = await fetch(`/${encodeURIComponent(file.name)}`, {
-                    method: 'PUT',
-                    body: file
+                // Create XMLHttpRequest for upload progress
+                const xhr = new XMLHttpRequest();
+                const progressBar = fileDiv.querySelector('.progress-bar');
+                const progressText = fileDiv.querySelector('.progress-text');
+                
+                // Upload progress handler
+                xhr.upload.addEventListener('progress', (e) => {
+                    if (e.lengthComputable) {
+                        const percentComplete = Math.round((e.loaded / e.total) * 100);
+                        progressBar.style.width = `${percentComplete}%`;
+                        progressText.textContent = `${percentComplete}%`;
+                    }
                 });
                 
-                if (response.ok) {
-                    const downloadUrl = await response.text();
-                    const deleteUrl = response.headers.get('X-Url-Delete');
+                // Upload complete handler
+                const uploadPromise = new Promise((resolve, reject) => {
+                    xhr.onload = () => {
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            resolve(xhr);
+                        } else {
+                            reject(new Error(`Upload failed: ${xhr.status}`));
+                        }
+                    };
+                    xhr.onerror = () => reject(new Error('Network error'));
+                });
+                
+                // Start upload
+                xhr.open('PUT', `/${encodeURIComponent(file.name)}`);
+                xhr.send(file);
+                
+                // Wait for upload to complete
+                const xhr_response = await uploadPromise;
+                
+                if (xhr_response.status >= 200 && xhr_response.status < 300) {
+                    const downloadUrl = xhr_response.responseText;
+                    const deleteUrl = xhr_response.getResponseHeader('X-Url-Delete');
                     
                     // Add to uploaded files array for ZIP functionality
                     uploadedFiles.push({
@@ -75,13 +109,14 @@
                         deleteUrl: deleteUrl
                     });
                     
+                    // Remove progress bar and show actions
                     fileDiv.innerHTML = `
                         <div class="file-name">${file.name}</div>
                         <div class="file-details">${Math.round(file.size/1024)}KB</div>
                         <div class="file-actions">
-                            <button onclick="copyToClipboard('${downloadUrl.trim()}', this)">Copy Link</button>
-                            <button onclick="window.open('${downloadUrl.trim()}', '_blank')">Open</button>
-                            ${deleteUrl ? `<button onclick="deleteFile('${deleteUrl}', this, '${file.name}')">Delete</button>` : ''}
+                            <button onclick="copyToClipboard('${downloadUrl.trim()}', this)">Copy</button>
+                            <button class="secondary" onclick="window.open('${downloadUrl.trim()}', '_blank')">Open</button>
+                            ${deleteUrl ? `<button class="danger" onclick="deleteFile('${deleteUrl}', this, '${file.name}')">Delete</button>` : ''}
                         </div>
                     `;
                     
@@ -90,13 +125,13 @@
                 } else {
                     fileDiv.innerHTML = `
                         <div class="file-name">${file.name}</div>
-                        <div class="file-details" style="color: #dc3545;">Upload failed (${response.status})</div>
+                        <div class="file-details" style="color: var(--color-danger);">Upload failed (${xhr_response.status})</div>
                     `;
                 }
             } catch (error) {
                 fileDiv.innerHTML = `
                     <div class="file-name">${file.name}</div>
-                    <div class="file-details" style="color: #dc3545;">Upload failed: ${error.message}</div>
+                    <div class="file-details" style="color: var(--color-danger);">Upload failed: ${error.message}</div>
                 `;
             }
         }
