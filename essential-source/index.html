@@ -125,8 +125,8 @@
                         <div class="file-name">${file.name}</div>
                         <div class="file-details">${formatFileSize(file.size)}</div>
                         <div class="file-actions">
-                            <button onclick="copyToClipboard('${downloadUrl.trim()}', this)">Link</button>
-                            <button class="danger" onclick="deleteFile('${deleteUrl}', this, '${file.name}')">Del</button>
+                            <button onclick="copyToClipboard('${downloadUrl.trim()}', this)">Copy Link</button>
+                            <button class="danger" onclick="deleteFile('${deleteUrl}', this, '${file.name}')">Delete</button>
                         </div>
                     `;
                     
