@@ -61,20 +61,9 @@
                 fileInput: document.getElementById('file-input')
             };
             
-            // Store initial measurements for restoration
-            this.updateMeasurements();
+            // No complex measurements needed for simple animations
             
             this.setupEventListeners();
-        }
-        
-        /**
-         * Update measurements for current viewport
-         */
-        updateMeasurements() {
-            this.initialMeasurements = {
-                headerHeight: this.elements.header.offsetHeight,
-                uploadSectionHeight: this.elements.uploadSection.offsetHeight
-            };
         }
         
         /**
@@ -101,25 +90,10 @@
             return animation;
         }
         
-        /**
-         * Measure element's natural height
-         */
-        measureAutoHeight(element) {
-            const originalHeight = element.style.height;
-            const originalDisplay = element.style.display;
-            
-            element.style.height = 'auto';
-            element.style.display = element.style.display || 'block';
-            const autoHeight = element.offsetHeight;
-            
-            element.style.height = originalHeight;
-            element.style.display = originalDisplay;
-            return autoHeight;
-        }
+        // Removed complex height measurement - not needed for simple animations
         
         /**
-         * CRITICAL: Sequential transformation EMPTY → HAS_FILES
-         * Each step waits for the previous to complete
+         * SIMPLE: Transform to file state - hide header, show file UI
          */
         async transformToFileState() {
             if (this.isAnimating) return;
@@ -127,57 +101,28 @@
             this.state = 'TRANSITIONING';
             
             try {
-                // STEP A: Header disappears (slide up + opacity + height collapse)
-                await Promise.all([
-                    this.animate(this.elements.header, [
-                        { opacity: 1, transform: 'translateY(0)' },
-                        { opacity: 0, transform: 'translateY(-50px)' }
-                    ], { duration: 300 }),
-                    this.animate(this.elements.header, [
-                        { 
-                            height: `${this.elements.header.offsetHeight}px`,
-                            paddingTop: 'var(--space-xxl)',
-                            paddingBottom: 'var(--space-xxl)'
-                        },
-                        { 
-                            height: '0px',
-                            paddingTop: '0px',
-                            paddingBottom: '0px'
-                        }
-                    ], { duration: 400 })
-                ]);
-                
+                // STEP 1: Hide header
+                await this.animate(this.elements.header, [
+                    { opacity: 1 },
+                    { opacity: 0 }
+                ], { duration: 300 });
                 this.elements.header.style.display = 'none';
                 
-                // STEP B: Upload area shrinks to compact size
-                const currentHeight = this.elements.uploadSection.offsetHeight;
-                // Responsive compact height: 120px desktop, 80px mobile
-                const compactHeight = window.innerWidth <= 768 ? 80 : 120;
-                
-                // Only animate height, keep flex separate to prevent overshooting
-                await this.animate(this.elements.uploadSection, [
-                    { height: `${currentHeight}px` },
-                    { height: `${compactHeight}px` }
-                ], { duration: 400 });
-                
-                this.elements.uploadSection.style.height = `${compactHeight}px`;
-                this.elements.uploadSection.style.flex = '0 0 auto';
-                
-                // STEP C: Controls appear (slide down)
+                // STEP 2: Show controls
                 this.elements.controlsSection.style.display = 'block';
                 await this.animate(this.elements.controlsSection, [
-                    { opacity: 0, transform: 'translateY(-20px)' },
-                    { opacity: 1, transform: 'translateY(0)' }
+                    { opacity: 0 },
+                    { opacity: 1 }
                 ], { duration: 300 });
                 
-                // STEP D: File list appears
+                // STEP 3: Show file list
                 this.elements.fileListSection.style.display = 'block';
                 await this.animate(this.elements.fileListSection, [
                     { opacity: 0 },
                     { opacity: 1 }
-                ], { duration: 200 });
+                ], { duration: 300 });
                 
-                // Enable scrolling and add top spacing since header is gone
+                // Enable scrolling and add spacing
                 document.body.style.overflow = 'auto';
                 document.body.style.height = 'auto';
                 this.elements.uploadSection.parentElement.style.paddingTop = 'var(--space-xxl)';
@@ -189,7 +134,7 @@
         }
         
         /**
-         * CRITICAL: Sequential transformation HAS_FILES → EMPTY (reverse order)
+         * SIMPLE: Transform to empty state - hide file UI, show header
          */
         async transformToEmptyState() {
             if (this.isAnimating) return;
@@ -197,60 +142,28 @@
             this.state = 'TRANSITIONING';
             
             try {
-                // STEP A: File list disappears
+                // STEP 1: Hide file list
                 await this.animate(this.elements.fileListSection, [
                     { opacity: 1 },
                     { opacity: 0 }
-                ], { duration: 200 });
+                ], { duration: 300 });
                 this.elements.fileListSection.style.display = 'none';
                 
-                // STEP B: Controls disappear
+                // STEP 2: Hide controls
                 await this.animate(this.elements.controlsSection, [
-                    { opacity: 1, transform: 'translateY(0)' },
-                    { opacity: 0, transform: 'translateY(-20px)' }
+                    { opacity: 1 },
+                    { opacity: 0 }
                 ], { duration: 300 });
                 this.elements.controlsSection.style.display = 'none';
                 
-                // STEP C: Upload area expands to full size
-                const currentHeight = this.elements.uploadSection.offsetHeight;
-                // Calculate target height: viewport minus header minus main padding
-                const mainPadding = window.innerWidth <= 768 ? 48 : 64; // mobile vs desktop padding
-                const targetHeight = window.innerHeight - this.initialMeasurements.headerHeight - mainPadding;
-                
-                // Only animate height, avoid flex animation
-                await this.animate(this.elements.uploadSection, [
-                    { height: `${currentHeight}px` },
-                    { height: `${targetHeight}px` }
-                ], { duration: 400 });
-                
-                this.elements.uploadSection.style.height = '';
-                this.elements.uploadSection.style.flex = '1';
-                
-                // STEP D: Header reappears (height expand + fade in)
+                // STEP 3: Show header
                 this.elements.header.style.display = 'flex';
+                await this.animate(this.elements.header, [
+                    { opacity: 0 },
+                    { opacity: 1 }
+                ], { duration: 300 });
                 
-                await Promise.all([
-                    this.animate(this.elements.header, [
-                        { opacity: 0, transform: 'translateY(-50px)' },
-                        { opacity: 1, transform: 'translateY(0)' }
-                    ], { duration: 300 }),
-                    this.animate(this.elements.header, [
-                        { 
-                            height: '0px',
-                            paddingTop: '0px',
-                            paddingBottom: '0px'
-                        },
-                        { 
-                            height: `${this.initialMeasurements.headerHeight}px`,
-                            paddingTop: 'var(--space-xxl)',
-                            paddingBottom: 'var(--space-xxl)'
-                        }
-                    ], { duration: 400 })
-                ]);
-                
-                this.elements.header.style.height = '';
-                
-                // Reset body styles and main padding (header is back)
+                // Reset body styles
                 document.body.style.overflow = 'hidden';
                 document.body.style.height = '100vh';
                 this.elements.uploadSection.parentElement.style.paddingTop = '';
@@ -326,13 +239,6 @@
             
             this.elements.dropArea.addEventListener('drop', (e) => {
                 this.handleFiles(e.dataTransfer.files);
-            });
-            
-            // Update measurements on resize for responsive animations
-            window.addEventListener('resize', () => {
-                if (this.state === 'EMPTY') {
-                    this.updateMeasurements();
-                }
             });
         }
         
