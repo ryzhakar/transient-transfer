@@ -212,7 +212,9 @@ button.danger:hover {
     margin-bottom: var(--space-lg);
     transition: all 0.3s ease;
     opacity: 0;
-    animation: fadeIn 0.4s ease forwards;
+    height: 0;
+    overflow: hidden;
+    animation: expandAndFadeIn 0.5s ease forwards;
     outline: 1px solid transparent;
     outline-offset: -1px;
 }
@@ -241,21 +243,37 @@ button.danger:hover {
     border-color: var(--color-text-light);
 }
 
-@keyframes fadeIn {
+@keyframes expandAndFadeIn {
     from {
         opacity: 0;
+        height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        margin-bottom: 0;
     }
     to {
         opacity: 1;
+        height: auto;
+        padding-top: var(--space-xl);
+        padding-bottom: var(--space-xl);
+        margin-bottom: var(--space-lg);
     }
 }
 
-@keyframes fadeOut {
+@keyframes collapseAndFadeOut {
     from {
         opacity: 1;
+        height: auto;
+        padding-top: var(--space-xl);
+        padding-bottom: var(--space-xl);
+        margin-bottom: var(--space-lg);
     }
     to {
         opacity: 0;
+        height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        margin-bottom: 0;
     }
 }
 
