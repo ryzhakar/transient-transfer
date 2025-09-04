@@ -9,11 +9,10 @@ COPY go.mod go.sum bindata.go ./
 COPY essential-source ./essential-source
 
 RUN rm -rf dist && \
-    mkdir -p dist/styles dist/scripts && \
+    mkdir -p dist/styles && \
     cp essential-source/*.html dist/ && \
     cp essential-source/*.txt dist/ && \
     cp essential-source/main.css dist/styles/ && \
-    cp essential-source/main.js dist/scripts/ && \
     cp essential-source/robots.txt dist/ && \
     go generate .
 

@@ -1,18 +1,11 @@
 /**
- * Transfer.sh - Ramsian Design System
+ * Transfer.sh - Minimal Ramsian Implementation
  * 
- * "Good design is as little design as possible" - but that little design
- * must be beautiful, precise, and honest to its material.
- * 
- * Principles:
- * - Aesthetic: Beauty through proportion and restraint
- * - Honest: Form follows function without pretense  
- * - Minimal: Every element justified by necessity
- * - Understandable: Self-explanatory through visual hierarchy
+ * "Good design is as little design as possible"
+ * Every rule serves user workflow: upload → share → done
  */
 
-/* === FOUNDATION: Typography & Rhythm === */
-
+/* Modern font for identity and trust */
 @font-face {
     font-family: 'Inter';
     font-weight: 100 900;
@@ -22,302 +15,128 @@
 
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 :root {
-    /* Golden Ratio (φ = 1.618) - all values computed mathematically */
-    --phi: 1.618;
-    --base-unit: 1rem;     /* 16px */
+    /* Typography scale - functional hierarchy */
+    --text-xs: 0.75rem;   /* 12px - metadata */
+    --text-sm: 0.875rem;  /* 14px - secondary */
+    --text-base: 1rem;    /* 16px - primary */
+    --text-lg: 1.5rem;    /* 24px - headings */
+    --text-xl: 2rem;      /* 32px - page title */
     
-    /* Spacing Scale - pure golden ratio computation */
-    --space-xs: calc(var(--base-unit) / var(--phi) / var(--phi));  /* 1/φ² = 0.382rem */
-    --space-sm: calc(var(--base-unit) / var(--phi));               /* 1/φ = 0.618rem */
-    --space-base: var(--base-unit);                                /* 1rem */
-    --space-md: calc(var(--base-unit) * var(--phi));               /* φ = 1.618rem */
-    --space-lg: calc(var(--base-unit) * var(--phi) * var(--phi));  /* φ² = 2.618rem */
-    --space-xl: calc(var(--base-unit) * var(--phi) * var(--phi) * var(--phi)); /* φ³ = 4.236rem */
+    /* Spacing scale - functional relationships */
+    --space-xs: 0.5rem;   /* 8px */
+    --space-sm: 0.75rem;  /* 12px */
+    --space-base: 1rem;   /* 16px */
+    --space-lg: 1.5rem;   /* 24px */
+    --space-xl: 2rem;     /* 32px */
     
-    /* Typography Scale - pure golden ratio computation */
-    --scale-xs: calc(var(--base-unit) / var(--phi) / var(--phi));  /* 1/φ² = 0.382rem */
-    --scale-sm: calc(var(--base-unit) / var(--phi));               /* 1/φ = 0.618rem */
-    --scale-base: var(--base-unit);                                /* 1rem */
-    --scale-md: calc(var(--base-unit) * var(--phi));               /* φ = 1.618rem */
-    --scale-lg: calc(var(--base-unit) * var(--phi) * var(--phi));  /* φ² = 2.618rem */
-    --scale-xl: calc(var(--base-unit) * var(--phi) * var(--phi) * var(--phi)); /* φ³ = 4.236rem */
-    --scale-xxl: calc(var(--base-unit) * var(--phi) * var(--phi) * var(--phi) * var(--phi)); /* φ⁴ = 6.854rem */
-    
-    /* Honest material palette - inspired by Braun design */
+    /* Colors - minimal functional palette */
     --color-text: #000;
-    --color-text-secondary: #4a4a4a;
-    --color-text-tertiary: #888;
-    --color-action: #000;
-    --color-action-hover: #333;
-    --color-secondary: #666;
-    --color-secondary-hover: #333;
+    --color-text-light: #666;
+    --color-surface: #fff;
+    --color-border: #ddd;
     --color-danger: #d00;
     --color-danger-hover: #a00;
-    --color-surface: #fff;
-    --color-surface-elevated: #fafafa;
-    --color-border: #ddd;
-    --color-border-light: #eee;
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-    font-size: var(--scale-base);
-    font-weight: 400;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: var(--text-base);
     line-height: 1.6;
-    letter-spacing: -0.011em;  /* Subtle optical spacing */
     color: var(--color-text);
     background: var(--color-surface);
-    margin: 0;
-    padding: 0;
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-feature-settings: 
-        'zero' 1,    /* Slashed zero */
-        'ss01' 1,    /* Alternate lowercase g */
-        'ss02' 1,    /* Alternate a */
-        'cv05' 1,    /* Alternate lowercase l */
-        'cv10' 1;    /* Alternate punctuation */
 }
-
-/* === TYPOGRAPHIC HIERARCHY === */
-
-h1 {
-    font-size: var(--scale-xxl);
-    font-weight: 750;  /* Extra bold, but not black */
-    letter-spacing: -0.025em;
-    line-height: 1.1;
-    margin: 0 0 var(--space-base) 0;
-    color: var(--color-text);
-}
-
-h2 {
-    font-size: var(--scale-xl);
-    font-weight: 650;  /* Bold, but not extra bold */
-    letter-spacing: -0.02em;
-    line-height: 1.2;
-    margin: var(--space-lg) 0 var(--space-base) 0;
-    color: var(--color-text);
-}
-
-h3 {
-    font-size: var(--scale-lg);
-    font-weight: 600;  /* Semi-bold */
-    letter-spacing: -0.015em;
-    line-height: 1.3;
-    margin: var(--space-md) 0 var(--space-sm) 0;
-    color: var(--color-text-secondary);
-}
-
-p, label, input, button {
-    font-weight: 400;
-    letter-spacing: -0.011em;
-    line-height: 1.6;
-}
-
-/* === LAYOUT STRUCTURE === */
 
 main {
     width: 100%;
-    max-width: 56rem; /* Desktop: larger for better presence */
+    max-width: 56rem;
     padding: var(--space-xl);
-    margin: 0;
 }
 
-/* Responsive sizing based on viewport */
-@media (max-width: 768px) {
-    main {
-        max-width: 100%;
-        padding: var(--space-md);
-    }
-    
-    body {
-        font-size: var(--scale-sm); /* Mobile: much smaller */
-    }
+/* Typography hierarchy */
+h1 {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: var(--space-base);
 }
 
-section {
-    margin-bottom: var(--space-lg);
+h2 {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    line-height: 1.3;
+    margin: var(--space-lg) 0 var(--space-base) 0;
 }
 
-/* === FORM ELEMENTS === */
-
-label {
-    display: block;
-    font-size: var(--scale-sm);
-    font-weight: 500;
-    color: var(--color-text);
-    margin-bottom: var(--space-sm);
-    letter-spacing: 0.01em;
-    text-transform: uppercase;
-}
-
+/* File input */
 input[type="file"] {
     width: 100%;
-    min-height: calc(var(--space-xl) * 2); /* More generous touch target */
+    min-height: 8rem;
     padding: var(--space-lg);
     border: 2px dashed var(--color-border);
-    border-radius: calc(var(--space-base) / var(--phi)); /* Golden ratio radius */
-    background: var(--color-surface-elevated);
-    font-size: var(--scale-md);
-    font-weight: 450;
-    letter-spacing: -0.009em;
-    color: var(--color-text-secondary);
+    border-radius: 0.5rem;
+    background: #fafafa;
+    font-size: var(--text-lg);
+    color: var(--color-text-light);
     cursor: pointer;
-    transition: all 0.2s ease;
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: border-color 0.2s;
 }
 
-input[type="file"]:hover {
-    border-color: var(--color-action);
-    background: var(--color-surface);
-    color: var(--color-text);
-}
-
+input[type="file"]:hover,
 input[type="file"]:focus {
+    border-color: var(--color-text);
     outline: none;
-    border-color: var(--color-action);
-    border-style: solid;
-    box-shadow: 0 0 0 calc(var(--space-xs) / 2) rgba(0, 0, 0, 0.1);
 }
 
-/* Mobile adaptation */
-@media (max-width: 768px) {
-    input[type="file"] {
-        min-height: var(--space-xl);
-        padding: var(--space-md);
-        font-size: var(--scale-base);
-    }
-    
-    #file-list > div,
-    .file-container {
-        padding: var(--space-md); /* Smaller padding on mobile */
-        margin-bottom: var(--space-sm);
-    }
-    
-    .file-name {
-        font-size: var(--scale-base); /* Proportional scaling */
-        margin-bottom: calc(var(--space-xs) / var(--phi));
-    }
-    
-    .file-details {
-        font-size: var(--scale-xs); /* Proportional scaling */
-        margin-bottom: var(--space-sm);
-    }
-    
-    .file-actions {
-        flex-direction: column;
-        gap: var(--space-xs);
-    }
-    
-    .file-actions button {
-        width: 100%;
-        min-width: 10rem; /* Fixed width, not dependent on content */
-        justify-content: center;
-        /* Maintain hierarchy on mobile */
-    }
-    
-    .file-actions button:first-child {
-        font-size: var(--scale-base); /* Primary remains prominent */
-        padding: var(--space-base) var(--space-md);
-        font-weight: 700;
-    }
-    
-    button.secondary,
-    button.danger {
-        font-size: var(--scale-xs); /* Secondary actions smaller */
-        padding: var(--space-sm) var(--space-base);
-    }
-    
-    #copy-zip-btn {
-        font-size: var(--scale-xs);
-        padding: var(--space-xs) var(--space-sm);
-    }
-    
-    .file-preview {
-        margin-top: var(--space-md); /* Less space on mobile */
-    }
-}
-
-/* === BUTTON SYSTEM === */
-
+/* Button system */
 button {
     display: inline-flex;
     align-items: center;
-    gap: var(--space-xs);
-    padding: var(--space-sm) var(--space-md);
-    border: 1px solid var(--color-action);
+    justify-content: center;
+    min-width: 12rem;
+    padding: var(--space-base) var(--space-lg);
+    border: 1px solid var(--color-text);
     border-radius: 0.25rem;
-    background: var(--color-action);
+    background: var(--color-text);
     color: white;
-    font-size: var(--scale-sm);
-    font-weight: 650;  /* Bold weight */
-    letter-spacing: 0.01em;  /* Slight positive tracking for buttons */
+    font-size: var(--text-base);
+    font-weight: 600;
     text-transform: uppercase;
+    letter-spacing: 0.025em;
     cursor: pointer;
-    transition: all 0.1s ease;
-    line-height: 1;
+    transition: background-color 0.1s;
 }
 
 button:hover {
-    background: var(--color-action-hover);
-    border-color: var(--color-action-hover);
+    background: #333;
+    border-color: #333;
 }
 
-button:active {
-    background: var(--color-action);
-    border-color: var(--color-action);
-}
-
-button:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2);
-}
-
-button:disabled {
-    background: var(--color-text-tertiary);
-    border-color: var(--color-text-tertiary);
-    cursor: not-allowed;
-}
-
-/* Button hierarchy - Primary action dominates */
-.file-actions button:first-child {
-    font-weight: 700; /* Extra bold for primary action */
-    font-size: calc(var(--scale-base) * 1.1); /* Slightly larger */
-    padding: calc(var(--space-base) * 1.2) var(--space-md); /* More generous */
-}
-
-/* Secondary actions - clearly subdued */
 button.secondary {
     background: var(--color-surface);
-    color: var(--color-text-secondary);
+    color: var(--color-text);
     border-color: var(--color-border);
-    font-weight: 450; /* Lighter weight than primary */
-    font-size: var(--scale-sm); /* Smaller than primary */
-    padding: calc(var(--space-base) * 0.8) var(--space-sm); /* Less padding */
 }
 
 button.secondary:hover {
-    background: var(--color-surface-elevated);
-    color: var(--color-text);
-    border-color: var(--color-text-secondary);
+    background: #f5f5f5;
 }
 
-/* Danger actions - important but not dominant */
 button.danger {
     background: var(--color-danger);
-    color: white;
     border-color: var(--color-danger);
-    font-weight: 500; /* Medium weight */
-    font-size: var(--scale-sm); /* Smaller than primary */
-    padding: calc(var(--space-base) * 0.8) var(--space-sm); /* Less padding */
 }
 
 button.danger:hover {
@@ -325,72 +144,36 @@ button.danger:hover {
     border-color: var(--color-danger-hover);
 }
 
-/* === FILE DISPLAY SYSTEM === */
-
+/* File list */
 #file-list-section {
     margin-top: var(--space-lg);
-    display: none; /* Hidden until files are uploaded */
+    display: none;
 }
 
 #file-list-section.has-files {
     display: block;
 }
 
-#file-list {
-    /* Container for uploaded files - styling applied to children */
-    margin: 0;
-}
-
-/* File container styling - applies to upload files and download pages */
 #file-list > div,
 .file-container {
     background: var(--color-surface);
-    border: 1px solid var(--color-border-light);
-    border-radius: calc(var(--space-base) / var(--phi)); /* Golden ratio radius */
-    padding: var(--space-lg); /* More generous padding */
-    margin-bottom: var(--space-md); /* Consistent spacing */
-}
-
-/* Download page specific styling */
-.file-container {
-    margin-bottom: var(--space-lg); /* More space before preview */
-}
-
-.file-preview {
-    margin-top: var(--space-lg);
-    text-align: center;
-}
-
-.file-preview img,
-.file-preview video {
-    max-width: 100%;
-    height: auto;
-    border-radius: calc(var(--space-base) / var(--phi));
-    box-shadow: 0 calc(var(--space-xs) / 2) var(--space-base) rgba(0, 0, 0, 0.1);
-}
-
-.file-preview audio {
-    width: 100%;
-    border-radius: calc(var(--space-xs) / var(--phi));
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    padding: var(--space-lg);
+    margin-bottom: var(--space-base);
 }
 
 .file-name {
-    font-size: var(--scale-md); /* Modest, not competing with actions */
-    font-weight: 600; /* Clear but not dominant */
-    color: var(--color-text);
-    margin-bottom: calc(var(--space-xs) / var(--phi)); /* Tighter spacing */
+    font-size: var(--text-lg);
+    font-weight: 600;
+    margin-bottom: var(--space-xs);
     word-break: break-word;
-    line-height: 1.3;
-    letter-spacing: -0.012em;
 }
 
 .file-details {
-    font-size: var(--scale-sm); /* Supporting information */
-    color: var(--color-text-secondary);
-    margin-bottom: var(--space-md);
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.006em;
-    line-height: 1.4;
+    font-size: var(--text-sm);
+    color: var(--color-text-light);
+    margin-bottom: var(--space-base);
 }
 
 .file-actions {
@@ -401,87 +184,73 @@ button.danger:hover {
 
 .file-actions button {
     flex: none;
-    min-width: 12rem; /* Fixed width, not dependent on content */
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    white-space: nowrap;
-    text-align: center;
-    text-transform: uppercase;
-    padding: var(--space-base) var(--space-md); /* More generous padding */
-    font-size: var(--scale-base); /* Prominent, action-oriented */
-    font-weight: 600; /* Strong for clear hierarchy */
-    letter-spacing: 0.025em; /* Better spacing for prominence */
-    line-height: 1;
 }
 
-/* Upload progress styling */
+/* Copy ZIP button */
+#copy-zip-btn {
+    margin-top: var(--space-base);
+    width: 100%;
+}
+
+/* Upload progress */
 .file-progress {
-    position: relative;
-    background: var(--color-border-light);
-    border-radius: calc(var(--space-xs) / 2);
-    height: calc(var(--space-xs) / 1.618);
+    background: var(--color-border);
+    border-radius: 0.25rem;
+    height: 0.5rem;
     margin: var(--space-sm) 0;
     overflow: hidden;
 }
 
 .progress-bar {
     height: 100%;
-    background: var(--color-action);
-    border-radius: calc(var(--space-xs) / 2);
+    background: var(--color-text);
+    border-radius: 0.25rem;
     transition: width 0.3s ease;
 }
 
 .progress-text {
     position: absolute;
-    top: calc(var(--space-base) * -1);
+    top: -1rem;
     right: 0;
-    font-size: var(--scale-xs);
-    color: var(--color-text-secondary);
-    font-weight: 500;
+    font-size: var(--text-xs);
+    color: var(--color-text-light);
 }
 
-/* === COPY ZIP FUNCTIONALITY === */
-
-#copy-zip-btn {
-    margin-top: var(--space-md);
-    width: 100%;
-    min-width: 12rem; /* Fixed width, not dependent on content */
-    justify-content: center;
-    font-size: var(--scale-base); /* Prominent collective action */
-    font-weight: 600; /* Clear importance */
-    padding: var(--space-base) var(--space-md); /* Generous padding */
+/* File preview */
+.file-preview {
+    margin-top: var(--space-lg);
+    text-align: center;
 }
 
-/* === MEDIA PREVIEWS === */
-
-img, video, audio {
+.file-preview img,
+.file-preview video {
     max-width: 100%;
     height: auto;
     border-radius: 0.5rem;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* === RESPONSIVE DESIGN === */
+.file-preview audio {
+    width: 100%;
+}
 
-@media (max-width: 640px) {
-    body {
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    main {
         padding: var(--space-base);
-        font-size: var(--scale-sm);
     }
     
-    header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--space-base);
+    body {
+        font-size: var(--text-sm);
     }
     
     h1 {
-        font-size: var(--scale-xl);
+        font-size: var(--text-lg);
     }
     
-    h2 {
-        font-size: var(--scale-lg);
+    input[type="file"] {
+        min-height: 6rem;
+        font-size: var(--text-base);
     }
     
     .file-actions {
@@ -490,78 +259,22 @@ img, video, audio {
     
     .file-actions button {
         width: 100%;
-        justify-content: center;
+        min-width: 10rem;
     }
 }
 
-/* === ACCESSIBILITY === */
-
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-}
-
-.skip-link {
-    position: absolute;
-    top: -40px;
-    left: 6px;
-    background: var(--color-text);
-    color: var(--color-surface);
-    padding: 8px;
-    text-decoration: none;
-    border-radius: 0.25rem;
-    z-index: 1000;
-}
-
-.skip-link:focus {
-    top: 6px;
-}
-
-/* Focus indicators */
+/* Accessibility */
 *:focus-visible {
-    outline: 2px solid var(--color-action);
+    outline: 2px solid var(--color-text);
     outline-offset: 2px;
 }
 
-/* === MOTION PREFERENCES === */
-
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
     *::after {
         animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
-    }
-}
-
-/* === PRINT STYLES === */
-
-@media print {
-    * {
-        background: transparent !important;
-        color: black !important;
-        box-shadow: none !important;
-        text-shadow: none !important;
-    }
-    
-    button {
-        display: none;
-    }
-    
-    a {
-        text-decoration: underline;
-    }
-    
-    a[href]:after {
-        content: " (" attr(href) ")";
     }
 }
