@@ -24,6 +24,7 @@
         
         <section>
             <h2>Your Shared Files</h2>
+            <button id="copy-zip-btn" onclick="copyZipLink()" style="display: none;">Copy ZIP Link</button>
             <div id="file-list">
                 <p>No files shared yet. Upload files to see them here.</p>
             </div>
@@ -31,6 +32,9 @@
     </main>
 
     <script>
+    // Track uploaded files for ZIP functionality
+    let uploadedFiles = [];
+    
     // Minimal upload functionality - required due to PUT-only API
     document.getElementById('file-input').addEventListener('change', async function(e) {
         const files = e.target.files;
@@ -38,8 +42,10 @@
         
         if (files.length === 0) return;
         
-        // Clear empty state
-        fileList.innerHTML = '';
+        // Clear empty state if present
+        if (fileList.innerHTML.includes('No files shared yet')) {
+            fileList.innerHTML = '';
+        }
         
         for (const file of files) {
             // Add file to list immediately
@@ -60,11 +66,21 @@
                     const downloadUrl = await response.text();
                     const deleteUrl = response.headers.get('X-Url-Delete');
                     
+                    // Add to uploaded files array for ZIP functionality
+                    uploadedFiles.push({
+                        name: file.name,
+                        url: downloadUrl.trim(),
+                        deleteUrl: deleteUrl
+                    });
+                    
                     fileDiv.innerHTML = `
                         <p><strong>${file.name}</strong> (${Math.round(file.size/1024)}KB)</p>
                         <p><a href="${downloadUrl.trim()}">${downloadUrl.trim()}</a></p>
-                        ${deleteUrl ? `<p><small><button onclick="deleteFile('${deleteUrl}', this)">Delete File</button></small></p>` : ''}
+                        ${deleteUrl ? `<p><small><button onclick="deleteFile('${deleteUrl}', this, '${file.name}')">Delete File</button></small></p>` : ''}
                     `;
+                    
+                    // Show ZIP button if we have files
+                    updateZipButton();
                 } else {
                     fileDiv.innerHTML = `
                         <p><strong>${file.name}</strong> - Upload failed (${response.status})</p>
@@ -78,8 +94,58 @@
         }
     });
     
+    // Update ZIP button visibility
+    function updateZipButton() {
+        const zipBtn = document.getElementById('copy-zip-btn');
+        if (uploadedFiles.length > 0) {
+            zipBtn.style.display = 'block';
+        } else {
+            zipBtn.style.display = 'none';
+        }
+    }
+    
+    // Copy ZIP link functionality
+    async function copyZipLink() {
+        if (uploadedFiles.length === 0) return;
+        
+        // Create ZIP URL using transfer.sh syntax: /(file1,file2).zip
+        const filePaths = uploadedFiles.map(file => {
+            const url = new URL(file.url);
+            return url.pathname.substring(1); // Remove leading slash
+        });
+        
+        const zipUrl = `${window.location.origin}/(${filePaths.join(',')}).zip`;
+        
+        try {
+            await navigator.clipboard.writeText(zipUrl);
+            const btn = document.getElementById('copy-zip-btn');
+            const originalText = btn.textContent;
+            btn.textContent = 'ZIP Link Copied!';
+            setTimeout(() => {
+                btn.textContent = originalText;
+            }, 2000);
+        } catch (error) {
+            // Fallback for older browsers
+            const textArea = document.createElement('textarea');
+            textArea.value = zipUrl;
+            textArea.style.position = 'fixed';
+            textArea.style.opacity = '0';
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            const btn = document.getElementById('copy-zip-btn');
+            const originalText = btn.textContent;
+            btn.textContent = 'ZIP Link Copied!';
+            setTimeout(() => {
+                btn.textContent = originalText;
+            }, 2000);
+        }
+    }
+    
     // Delete file function
-    async function deleteFile(deleteUrl, button) {
+    async function deleteFile(deleteUrl, button, fileName) {
         if (!confirm('Delete this file? This cannot be undone.')) {
             return;
         }
@@ -93,8 +159,14 @@
             });
             
             if (response.ok) {
+                // Remove from uploaded files array
+                uploadedFiles = uploadedFiles.filter(file => file.name !== fileName);
+                
                 // Remove the file div from the page
                 button.closest('div').remove();
+                
+                // Update ZIP button visibility
+                updateZipButton();
                 
                 // If no files left, show empty state
                 const fileList = document.getElementById('file-list');
