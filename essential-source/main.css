@@ -51,35 +51,33 @@ body {
     line-height: 1.6;
     color: var(--color-text);
     background: var(--color-surface);
-    height: 100vh;
     margin: 0;
     padding: 0;
-    overflow: hidden;
 }
 
 main {
     width: 100%;
     max-width: 56rem;
+    margin: 0 auto;
     padding: var(--space-xxl);
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    box-sizing: border-box;
+    justify-content: center;
 }
 
-/* Upload area - FIXED position at top */
+/* Upload section - starts centered, can scroll */
 main > section:first-child {
     flex-shrink: 0;
-    background: var(--color-background);
-    z-index: 10;
-    padding-bottom: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-lg);
 }
 
-/* File list - SCROLLABLE area below */
+/* File list section - flows below upload area */
 #file-list-section {
-    flex: 1;
-    overflow-y: auto;
-    min-height: 0;
+    margin-top: var(--space-xl);
 }
 
 /* Typography hierarchy */
