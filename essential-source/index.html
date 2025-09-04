@@ -62,12 +62,19 @@
             };
             
             // Store initial measurements for restoration
+            this.updateMeasurements();
+            
+            this.setupEventListeners();
+        }
+        
+        /**
+         * Update measurements for current viewport
+         */
+        updateMeasurements() {
             this.initialMeasurements = {
                 headerHeight: this.elements.header.offsetHeight,
                 uploadSectionHeight: this.elements.uploadSection.offsetHeight
             };
-            
-            this.setupEventListeners();
         }
         
         /**
@@ -313,6 +320,13 @@
             
             this.elements.dropArea.addEventListener('drop', (e) => {
                 this.handleFiles(e.dataTransfer.files);
+            });
+            
+            // Update measurements on resize for responsive animations
+            window.addEventListener('resize', () => {
+                if (this.state === 'EMPTY') {
+                    this.updateMeasurements();
+                }
             });
         }
         
