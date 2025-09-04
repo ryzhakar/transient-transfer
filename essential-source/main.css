@@ -21,7 +21,7 @@
 
 :root {
     /* Typography scale - proper visual hierarchy */
-    --text-parcel: 12rem; /* 192px - PARCEL heading only */
+    --text-parcel: clamp(2rem, 8vw, 12rem); /* Scales with viewport: 32px-192px */
     --text-xs: 0.75rem;   /* 12px - metadata */
     --text-sm: 0.875rem;  /* 14px - secondary */
     --text-base: 1rem;    /* 16px - primary */
@@ -452,8 +452,18 @@ button.danger:hover {
 /* Mobile responsiveness */
 @media (max-width: 768px) {
     :root {
-        --text-parcel: 3rem; /* Mobile: 48px instead of 96px */
-        --space-xxl: 2rem; /* Reduce giant spacing on mobile */
+        /* Much smaller mobile font scale */
+        --text-xs: 0.625rem;  /* 10px */
+        --text-sm: 0.75rem;   /* 12px */
+        --text-base: 0.875rem; /* 14px */
+        --text-lg: 1rem;      /* 16px */
+        --text-xl: 1.25rem;   /* 20px */
+        --text-xxl: 1.5rem;   /* 24px */
+        
+        /* Smaller mobile spacing */
+        --space-xxl: 1.5rem; /* Reduce giant spacing */
+        --space-xl: 1.5rem;
+        --space-lg: 1rem;
     }
     
     #parcel-header {
@@ -478,13 +488,21 @@ button.danger:hover {
     }
     
     #drop-area {
-        min-height: 8rem; /* Smaller on mobile */
-        padding: var(--space-lg); /* Less padding */
-        font-size: var(--text-base); /* Smaller text */
+        min-height: 6rem; /* Much smaller on mobile */
+        padding: var(--space-base); /* Minimal padding */
+        font-size: var(--text-sm); /* Small text */
     }
     
     #drop-text {
-        font-size: var(--text-base);
+        font-size: var(--text-sm);
+    }
+    
+    .file-name {
+        font-size: var(--text-base); /* Smaller file names */
+    }
+    
+    .file-details {
+        font-size: var(--text-xs); /* Tiny details */
     }
     
     .file-actions {
@@ -493,16 +511,18 @@ button.danger:hover {
     
     .file-actions button {
         width: 100%;
-        min-width: 10rem;
+        min-width: 8rem; /* Smaller buttons */
+        padding: var(--space-sm) var(--space-base);
+        font-size: var(--text-sm);
     }
     
     .file-preview {
-        min-height: 150px; /* Smaller preview on mobile */
+        min-height: 120px; /* Much smaller preview */
     }
     
     #file-list > div,
     .file-container {
-        padding: var(--space-lg);
+        padding: var(--space-base);
     }
 }
 

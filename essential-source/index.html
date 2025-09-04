@@ -151,11 +151,13 @@
                 
                 // STEP B: Upload area shrinks to compact size
                 const currentHeight = this.elements.uploadSection.offsetHeight;
-                const compactHeight = 120;
+                // Responsive compact height: 120px desktop, 80px mobile
+                const compactHeight = window.innerWidth <= 768 ? 80 : 120;
                 
+                // Only animate height, keep flex separate to prevent overshooting
                 await this.animate(this.elements.uploadSection, [
-                    { height: `${currentHeight}px`, flex: '1 1 auto' },
-                    { height: `${compactHeight}px`, flex: '0 0 auto' }
+                    { height: `${currentHeight}px` },
+                    { height: `${compactHeight}px` }
                 ], { duration: 400 });
                 
                 this.elements.uploadSection.style.height = `${compactHeight}px`;
@@ -211,10 +213,14 @@
                 
                 // STEP C: Upload area expands to full size
                 const currentHeight = this.elements.uploadSection.offsetHeight;
-                const targetHeight = this.initialMeasurements.uploadSectionHeight;
+                // Calculate target height: viewport minus header minus main padding
+                const mainPadding = window.innerWidth <= 768 ? 48 : 64; // mobile vs desktop padding
+                const targetHeight = window.innerHeight - this.initialMeasurements.headerHeight - mainPadding;
+                
+                // Only animate height, avoid flex animation
                 await this.animate(this.elements.uploadSection, [
-                    { height: `${currentHeight}px`, flex: '0 0 auto' },
-                    { height: `${targetHeight}px`, flex: '1 1 auto' }
+                    { height: `${currentHeight}px` },
+                    { height: `${targetHeight}px` }
                 ], { duration: 400 });
                 
                 this.elements.uploadSection.style.height = '';
