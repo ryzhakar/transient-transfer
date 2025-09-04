@@ -25,22 +25,25 @@
 }
 
 :root {
-    /* Modular scale based on golden ratio (1.618) with Inter's precision */
-    --scale-xs: 0.618rem;   /* 9.9px */
-    --scale-sm: 0.75rem;    /* 12px */
-    --scale-base: 1rem;     /* 16px */
-    --scale-md: 1.25rem;    /* 20px */
-    --scale-lg: 1.618rem;   /* 25.9px */
-    --scale-xl: 2rem;       /* 32px */
-    --scale-xxl: 2.618rem;  /* 41.9px */
+    /* Golden Ratio (1.618) based scaling */
+    --base-unit: 1rem;     /* 16px */
     
-    /* Rhythmic spacing system */
-    --space-xs: 0.25rem;    /* 4px */
-    --space-sm: 0.5rem;     /* 8px */
-    --space-base: 1rem;     /* 16px */
-    --space-md: 1.5rem;     /* 24px */
-    --space-lg: 2.5rem;     /* 40px */
-    --space-xl: 4rem;       /* 64px */
+    /* Spacing Scale */
+    --space-xs: calc(var(--base-unit) / 1.618);     /* 0.618rem */
+    --space-sm: var(--base-unit);                   /* 1rem */
+    --space-base: calc(var(--base-unit) * 1.618);   /* 1.618rem */
+    --space-md: calc(var(--base-unit) * 2.618);     /* 2.618rem */
+    --space-lg: calc(var(--base-unit) * 4.236);     /* 4.236rem */
+    --space-xl: calc(var(--base-unit) * 6.854);     /* 6.854rem */
+    
+    /* Typography Scale */
+    --scale-xs: calc(var(--base-unit) / 1.618);     /* 0.618rem */
+    --scale-sm: var(--base-unit);                   /* 1rem */
+    --scale-base: calc(var(--base-unit) * 1.618);   /* 1.618rem */
+    --scale-md: calc(var(--base-unit) * 2.618);     /* 2.618rem */
+    --scale-lg: calc(var(--base-unit) * 4.236);     /* 4.236rem */
+    --scale-xl: calc(var(--base-unit) * 6.854);     /* 6.854rem */
+    --scale-xxl: calc(var(--base-unit) * 11.09);    /* 11.09rem */
     
     /* Honest material palette - inspired by Braun design */
     --color-text: #000;
@@ -295,6 +298,14 @@ button.danger:hover {
 
 .file-actions button {
     flex: none;
+    width: 6rem;  /* Fixed width for all buttons */
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    white-space: nowrap;
+    text-align: center;
+    text-transform: uppercase;
+    padding: var(--space-sm);
 }
 
 /* Upload progress styling */

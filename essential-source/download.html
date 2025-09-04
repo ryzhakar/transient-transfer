@@ -18,11 +18,11 @@
     <main>
         <section>
             <div class="file-name">{{.Filename}}</div>
-            <div class="file-details">{{.ContentType}} • {{.ContentLength | format "#,###."}} bytes</div>
+            <div class="file-details">{{.ContentType}} • {{.ContentLength | formatFileSize}}</div>
             
             <div class="file-actions">
-                <button onclick="window.location.href='{{.URLGet}}'">Download</button>
-                <button class="secondary" onclick="copyToClipboard('{{.URL}}', this)">Copy</button>
+                <button onclick="window.location.href='{{.URLGet}}'">DL</button>
+                <button class="secondary" onclick="copyToClipboard('{{.URL}}', this)">Link</button>
             </div>
         </section>
     </main>
