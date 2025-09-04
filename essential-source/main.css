@@ -1,332 +1,791 @@
-/* Transfer.sh - Minimal Interface */
-/* Following Dieter Rams principles: functional, minimal, honest */
+/**
+ * Transfer.sh - Semantic Bento System
+ * 
+ * Philosophy: Rectangular bento serving workflow, not aesthetics
+ * Based on: Semantic content hierarchy within grid constraints
+ * Constraints: Non-negotiable rectangular bento layout
+ */
 
-/* Layer 1: Typography and Spacing */
-* {
+/* ================================================================
+   FOUNDATION: HUMAN-FIRST DESIGN TOKENS
+   ================================================================ */
+
+:root {
+    /* Spacing System: Based on Human Factors, Not Mathematical Ratios */
+    
+    /* Touch Targets: 44px minimum (Apple HIG) / 48px comfortable (Google Material) */
+    --space-touch-min: 2.75rem;     /* 44px - absolute minimum */
+    --space-touch-comfort: 3rem;    /* 48px - comfortable interaction */
+    --space-touch-generous: 3.5rem; /* 56px - generous, accessible */
+    
+    /* Reading Flow: Based on Cognitive Processing */
+    --space-scan: 0.5rem;          /* 8px - tight association */
+    --space-relate: 0.75rem;       /* 12px - clear relationship */
+    --space-separate: 1rem;        /* 16px - distinct separation */
+    --space-section: 1.5rem;       /* 24px - section boundaries */
+    --space-major: 2rem;           /* 32px - major divisions */
+    --space-dramatic: 3rem;        /* 48px - dramatic separation */
+    
+    /* Typography Scale: Based on Visual Hierarchy Needs */
+    --font-size-support: 0.75rem;  /* 12px - fine print, metadata */
+    --font-size-small: 0.875rem;   /* 14px - secondary content */
+    --font-size-base: 1rem;        /* 16px - primary content */
+    --font-size-emphasis: 1.125rem; /* 18px - emphasized content */
+    --font-size-heading-3: 1.25rem; /* 20px - tertiary headings */
+    --font-size-heading-2: 1.5rem;  /* 24px - secondary headings */
+    --font-size-heading-1: 2rem;    /* 32px - primary headings */
+    
+    /* Line Height: Optimized for Reading and Interaction */
+    --line-height-tight: 1.25;     /* Headings, labels */
+    --line-height-base: 1.5;       /* Body text, readable */
+    --line-height-loose: 1.75;     /* Relaxed reading */
+    
+    /* Color System: Functional, Not Decorative */
+    --color-text-primary: #0a0a0a;      /* Maximum contrast */
+    --color-text-secondary: #404040;     /* Clear hierarchy */
+    --color-text-tertiary: #737373;     /* Supporting information */
+    --color-text-disabled: #a3a3a3;     /* Disabled states */
+    
+    --color-surface-primary: #ffffff;    /* Primary background */
+    --color-surface-secondary: #f8f9fa;  /* Secondary background */
+    --color-surface-tertiary: #e9ecef;   /* Tertiary background */
+    
+    --color-action-primary: #0066cc;     /* Primary actions */
+    --color-action-primary-hover: #0052a3; /* Primary action hover */
+    --color-action-secondary: #6c757d;   /* Secondary actions */
+    --color-action-danger: #dc3545;      /* Destructive actions */
+    
+    --color-feedback-success: #28a745;   /* Success states */
+    --color-feedback-warning: #ffc107;   /* Warning states */
+    --color-feedback-error: #dc3545;     /* Error states */
+    --color-feedback-info: #17a2b8;      /* Informational states */
+    
+    --color-border-subtle: #e9ecef;      /* Subtle borders */
+    --color-border-default: #dee2e6;     /* Default borders */
+    --color-border-emphasis: #adb5bd;    /* Emphasized borders */
+    
+    /* Interaction Timing: Based on User Expectation */
+    --timing-immediate: 0.1s;        /* Immediate feedback */
+    --timing-quick: 0.2s;           /* Quick transitions */
+    --timing-standard: 0.3s;        /* Standard animations */
+    --timing-deliberate: 0.5s;      /* Deliberate state changes */
+    
+    /* Border Radius: Minimal, Functional */
+    --radius-small: 0.125rem;       /* 2px - subtle softening */
+    --radius-default: 0.25rem;      /* 4px - standard elements */
+    --radius-large: 0.5rem;         /* 8px - prominent elements */
+    
+    /* Shadows: Subtle Depth, Not Decoration */
+    --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-default: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-emphasis: 0 4px 6px rgba(0, 0, 0, 0.07);
+}
+
+/* ================================================================
+   RESET: BROWSER DEFAULT ELIMINATION
+   ================================================================ */
+
+*,
+*::before,
+*::after {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 100%; /* Respect user font size preferences */
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
 }
 
 body {
-    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-    line-height: 1.6;
-    max-width: 65ch;
-    margin: 0 auto;
-    padding: 1rem;
-    color: #1a1a1a;
-    background: #ffffff;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    color: var(--color-text-primary);
+    background-color: var(--color-surface-primary);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-/* Layer 2: Hierarchy */
-h1 {
-    font-size: 2rem;
+/* ================================================================
+   LAYOUT: SEMANTIC BENTO GRID SYSTEM
+   ================================================================ */
+
+.bento-workspace {
+    min-height: 100vh;
+    padding: var(--space-section);
+    display: grid;
+    gap: var(--space-section);
+    
+    /* Bento Grid: Content-first areas */
+    grid-template-areas:
+        "main"
+        "status"
+        "results"
+        "context";
+    
+    /* Progressive enhancement: Larger screens get true bento layout */
+}
+
+@media (min-width: 64em) {
+    .bento-workspace {
+        grid-template-columns: 2fr 1fr;
+        grid-template-areas:
+            "main status"
+            "results results"
+            "context context";
+    }
+}
+
+@media (min-width: 80em) {
+    .bento-workspace {
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-areas:
+            "main main status"
+            "results results status"
+            "context context context";
+    }
+}
+
+/* Bento Blocks: Semantic, not decorative */
+.bento-block {
+    background: var(--color-surface-primary);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-default);
+    padding: var(--space-section);
+    min-height: var(--space-touch-generous);
+}
+
+.bento-primary {
+    grid-area: main;
+    background: var(--color-surface-secondary);
+}
+
+.bento-secondary {
+    grid-area: status;
+}
+
+.bento-results {
+    grid-area: results;
+}
+
+.bento-context {
+    grid-area: context;
+    background: var(--color-surface-tertiary);
+}
+
+/* ================================================================
+   TYPOGRAPHY: HIERARCHY THROUGH FUNCTION
+   ================================================================ */
+
+h1, h2, h3, h4, h5, h6 {
+    line-height: var(--line-height-tight);
     font-weight: 600;
-    margin: 0 0 0.5rem 0;
+    color: var(--color-text-primary);
+}
+
+h1 {
+    font-size: var(--font-size-heading-1);
+    margin-bottom: var(--space-separate);
 }
 
 h2 {
-    font-size: 1.25rem;
-    font-weight: 500;
-    margin: 2rem 0 1rem 0;
+    font-size: var(--font-size-heading-2);
+    margin-bottom: var(--space-relate);
 }
 
 h3 {
-    font-size: 1rem;
+    font-size: var(--font-size-heading-3);
+    margin-bottom: var(--space-relate);
+}
+
+p {
+    margin-bottom: var(--space-separate);
+    max-width: 65ch; /* Optimal reading line length */
+}
+
+small {
+    font-size: var(--font-size-small);
+    color: var(--color-text-secondary);
+}
+
+.text-support {
+    font-size: var(--font-size-support);
+    color: var(--color-text-tertiary);
+}
+
+.text-emphasis {
+    font-size: var(--font-size-emphasis);
     font-weight: 500;
-    margin: 1rem 0 0.5rem 0;
 }
 
-header p {
-    margin: 0 0 2rem 0;
-    color: #4a4a4a;
-}
+/* ================================================================
+   FORMS: TRUST-BUILDING INTERACTIONS
+   ================================================================ */
 
-/* Layer 3: Forms and Interactions */
 form {
-    margin: 0 0 2rem 0;
+    max-width: 100%;
 }
 
-.upload-area {
-    border: 2px dashed #d1d5db;
-    border-radius: 0.5rem;
-    padding: 2rem;
-    text-align: center;
-    margin: 0 0 1rem 0;
-    transition: border-color 0.2s ease;
+fieldset {
+    border: none;
+    padding: 0;
+    margin-bottom: var(--space-section);
 }
 
-.upload-area:hover,
-.upload-area:focus-within {
-    border-color: #2563eb;
+legend {
+    font-size: var(--font-size-heading-2);
+    font-weight: 600;
+    margin-bottom: var(--space-section);
+    color: var(--color-text-primary);
 }
 
 label {
     display: block;
     font-weight: 500;
-    margin: 0 0 0.25rem 0;
+    margin-bottom: var(--space-scan);
+    color: var(--color-text-primary);
 }
 
 input[type="file"] {
     width: 100%;
-    padding: 0.5rem;
-    margin: 0.5rem 0;
+    padding: var(--space-relate);
+    border: 2px solid var(--color-border-default);
+    border-radius: var(--radius-default);
+    font-size: var(--font-size-base);
+    background-color: var(--color-surface-primary);
+    transition: border-color var(--timing-quick) ease;
 }
 
+input[type="file"]:focus {
+    outline: none;
+    border-color: var(--color-action-primary);
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
 
+/* ================================================================
+   BUTTONS: CLEAR ACTION HIERARCHY
+   ================================================================ */
 
-button {
-    background: #2563eb;
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.25rem;
-    font-size: 1rem;
+button,
+.button {
+    /* Base button styles */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-scan);
+    
+    /* Sizing for accessibility */
+    min-height: var(--space-touch-comfort);
+    padding: var(--space-relate) var(--space-section);
+    
+    /* Typography */
+    font-size: var(--font-size-base);
     font-weight: 500;
+    text-decoration: none;
+    
+    /* Interaction */
+    border: none;
+    border-radius: var(--radius-default);
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: all var(--timing-quick) ease;
+    
+    /* Prevent text selection */
+    user-select: none;
+    -webkit-user-select: none;
 }
 
-button:hover {
-    background: #1d4ed8;
+/* Primary Action: High Confidence */
+.button-primary,
+button:not([class]) {
+    background-color: var(--color-action-primary);
+    color: white;
 }
 
-button:focus {
-    outline: 2px solid #2563eb;
+.button-primary:hover,
+button:not([class]):hover {
+    background-color: var(--color-action-primary-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-emphasis);
+}
+
+.button-primary:active,
+button:not([class]):active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-default);
+}
+
+/* Secondary Action: Lower Confidence */
+.button-secondary {
+    background-color: transparent;
+    color: var(--color-action-primary);
+    border: 2px solid var(--color-action-primary);
+}
+
+.button-secondary:hover {
+    background-color: var(--color-action-primary);
+    color: white;
+}
+
+/* Destructive Action: Clear Warning */
+.button-danger {
+    background-color: var(--color-action-danger);
+    color: white;
+}
+
+.button-danger:hover {
+    background-color: #c82333;
+}
+
+/* Disabled State: Clear Unavailability */
+button:disabled,
+.button:disabled {
+    background-color: var(--color-text-disabled);
+    color: white;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Focus States: Accessibility First */
+button:focus-visible,
+.button:focus-visible {
+    outline: 2px solid var(--color-action-primary);
     outline-offset: 2px;
 }
 
-button:disabled {
-    background: #9ca3af;
-    cursor: not-allowed;
+/* ================================================================
+   BENTO BLOCK CONTENT: WORKFLOW-CENTERED COMPONENTS
+   ================================================================ */
+
+/* Upload Area: Within Bento Primary Block */
+.upload-area {
+    border: 2px dashed var(--color-border-default);
+    border-radius: var(--radius-default);
+    padding: var(--space-major);
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    min-height: 8rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-relate);
+    transition: border-color var(--timing-quick) ease;
 }
 
-/* Progress indicator */
-.upload-progress {
-    padding: 1rem;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.25rem;
-    margin: 1rem 0;
+.upload-area:hover,
+.upload-area:focus-within {
+    border-color: var(--color-action-primary);
+    background-color: rgba(0, 102, 204, 0.02);
 }
 
-progress {
-    width: 100%;
-    height: 0.5rem;
-    margin: 0.5rem 0;
+/* Upload form labels and inputs */
+.upload-title {
+    display: block;
+    font-size: var(--font-size-heading-3);
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-scan);
 }
 
-/* File list */
-.file-list {
-    border: 1px solid #e5e7eb;
-    border-radius: 0.25rem;
-    padding: 1rem;
-    min-height: 3rem;
+.upload-hint {
+    display: block;
+    font-size: var(--font-size-small);
+    color: var(--color-text-secondary);
 }
 
-.file-item {
+/* Hidden file input for progressive enhancement */
+.upload-area input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Drag state enhancement */
+.upload-area.dragover {
+    border-color: var(--color-action-primary);
+    background-color: rgba(0, 102, 204, 0.05);
+}
+
+/* Quick Actions: Compact helper block */
+.quick-actions {
+    padding: var(--space-relate);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-small);
+}
+
+/* Results Header with Copy All */
+.results-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid #f3f4f6;
+    margin-bottom: var(--space-section);
 }
 
-.file-item:last-child {
-    border-bottom: none;
+.results-header h2 {
+    margin-bottom: 0;
 }
+
+.copy-all-btn {
+    font-size: var(--font-size-small);
+    padding: var(--space-scan) var(--space-relate);
+    min-height: auto;
+}
+
+/* File Grid: True Bento Layout for Files */
+.file-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: var(--space-relate);
+    margin-bottom: var(--space-section);
+}
+
+/* File Item: Grid Card Layout */
+.file-item {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-section);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-default);
+    background: var(--color-surface-primary);
+    cursor: pointer;
+    transition: all var(--timing-quick) ease;
+    position: relative;
+}
+
+.file-item:hover {
+    border-color: var(--color-action-primary);
+    box-shadow: var(--shadow-default);
+}
+
+.file-item[data-copied="true"] {
+    background: rgba(40, 167, 69, 0.05);
+    border-color: var(--color-feedback-success);
+}
+
+/* File Item States */
+.file-item.uploading {
+    background: rgba(0, 102, 204, 0.02);
+    border-color: var(--color-action-primary);
+    pointer-events: none;
+}
+
+.file-item.success {
+    background: var(--color-surface-primary);
+    cursor: pointer;
+}
+
+.file-item.error {
+    background: rgba(220, 53, 69, 0.02);
+    border-color: var(--color-feedback-error);
+    pointer-events: none;
+}
+
+/* Per-item progress */
+.upload-progress {
+    margin-top: var(--space-scan);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 0.25rem;
+    background: var(--color-surface-tertiary);
+    border-radius: var(--radius-small);
+    overflow: hidden;
+    margin-bottom: var(--space-scan);
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--color-action-primary);
+    transition: width var(--timing-quick) ease;
+    border-radius: var(--radius-small);
+}
+
+.progress-text {
+    font-size: var(--font-size-support);
+    color: var(--color-text-secondary);
+}
+
+.file-error {
+    font-size: var(--font-size-support);
+    color: var(--color-feedback-error);
+    font-weight: 500;
+}
+
+/* File Type Icon */
+.file-type-icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radius-small);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-small);
+    font-weight: 600;
+    color: white;
+    margin-bottom: var(--space-relate);
+    flex-shrink: 0;
+}
+
+.file-type-icon[data-type="image"] { background: #10b981; }
+.file-type-icon[data-type="video"] { background: #3b82f6; }  
+.file-type-icon[data-type="audio"] { background: #8b5cf6; }
+.file-type-icon[data-type="document"] { background: #f59e0b; }
+.file-type-icon[data-type="archive"] { background: #ef4444; }
+.file-type-icon[data-type="other"] { background: var(--color-text-disabled); }
 
 .file-info {
     flex: 1;
+    min-width: 0;
 }
 
 .file-name {
     font-weight: 500;
-    margin: 0 0 0.25rem 0;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-scan);
+    font-size: var(--font-size-small);
+    line-height: var(--line-height-tight);
+    /* Advanced text wrapping for filenames */
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    hyphens: auto;
 }
 
 .file-details {
-    font-size: 0.875rem;
-    color: #6b7280;
-    margin: 0;
+    font-size: var(--font-size-support);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-tight);
+}
+
+.file-size {
+    font-weight: 500;
+}
+
+.file-time {
+    opacity: 0.8;
 }
 
 .file-actions {
+    margin-top: var(--space-relate);
     display: flex;
-    gap: 0.5rem;
+    gap: var(--space-scan);
+    flex-shrink: 0;
 }
 
 .file-actions button {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
-    background: transparent;
-    color: #2563eb;
-    border: 1px solid #2563eb;
+    padding: var(--space-scan) var(--space-relate);
+    font-size: var(--font-size-support);
+    min-height: auto;
 }
 
-.file-actions button:hover {
-    background: #2563eb;
+/* Copy feedback */
+.copy-feedback {
+    position: absolute;
+    top: var(--space-scan);
+    right: var(--space-scan);
+    background: var(--color-feedback-success);
     color: white;
+    padding: var(--space-scan);
+    border-radius: var(--radius-small);
+    font-size: var(--font-size-support);
+    font-weight: 500;
+    opacity: 0;
+    transform: translateY(-0.5rem);
+    transition: all var(--timing-quick) ease;
+    pointer-events: none;
 }
 
-button.delete-btn {
-    background: transparent;
-    color: #dc2626;
-    border: 1px solid #dc2626;
+.copy-feedback.show {
+    opacity: 1;
+    transform: translateY(0);
 }
 
-button.delete-btn:hover {
-    background: #dc2626;
+.batch-download {
+    background: var(--color-surface-tertiary);
+    border-color: var(--color-border-emphasis);
+}
+
+.empty-state {
+    color: var(--color-text-tertiary);
+    font-style: italic;
+    text-align: center;
+    padding: var(--space-major);
+}
+
+/* ================================================================
+   RESPONSIVE DESIGN: DEVICE-APPROPRIATE EXPERIENCES
+   ================================================================ */
+
+/* Download Page Styles */
+.download-actions {
+    display: flex;
+    gap: var(--space-relate);
+    margin: var(--space-major) 0;
+    flex-wrap: wrap;
+}
+
+.file-info-list {
+    margin: 0;
+}
+
+.file-info-list dt {
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin: var(--space-relate) 0 var(--space-scan) 0;
+}
+
+.file-info-list dd {
+    margin: 0 0 var(--space-relate) 0;
+    color: var(--color-text-secondary);
+    word-break: break-word;
+}
+
+/* Mobile: Touch-First Design */
+@media (max-width: 48em) {
+    .bento-workspace {
+        padding: var(--space-separate);
+    }
+    
+    .upload-area {
+        min-height: 6rem;
+        padding: var(--space-section);
+    }
+    
+    .file-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .results-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-relate);
+    }
+    
+    .copy-all-btn {
+        align-self: center;
+    }
+    
+    /* Larger touch targets on mobile */
+    button,
+    .button {
+        min-height: var(--space-touch-generous);
+        padding: var(--space-section) var(--space-major);
+    }
+}
+
+/* ================================================================
+   ACCESSIBILITY: UNIVERSAL USABILITY
+   ================================================================ */
+
+/* Reduced Motion: Respect User Preferences */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .upload-area:hover,
+    .upload-area.dragover {
+        transform: none;
+    }
+    
+    .button-primary:hover,
+    button:not([class]):hover {
+        transform: none;
+    }
+}
+
+/* High Contrast: Enhanced Visibility */
+@media (prefers-contrast: high) {
+    :root {
+        --color-text-primary: #000000;
+        --color-text-secondary: #1a1a1a;
+        --color-border-default: #000000;
+        --color-action-primary: #0000ee;
+    }
+    
+    button,
+    .button,
+    input,
+    .file-item,
+    .upload-area {
+        border-width: 2px;
+    }
+    
+    .upload-area {
+        border-style: solid;
+    }
+}
+
+/* Dark Mode: System Preference Support */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-text-primary: #f8f9fa;
+        --color-text-secondary: #e9ecef;
+        --color-text-tertiary: #adb5bd;
+        --color-text-disabled: #6c757d;
+        
+        --color-surface-primary: #212529;
+        --color-surface-secondary: #343a40;
+        --color-surface-tertiary: #495057;
+        
+        --color-border-subtle: #495057;
+        --color-border-default: #6c757d;
+        --color-border-emphasis: #adb5bd;
+        
+        --color-action-primary: #0d6efd;
+        --color-action-primary-hover: #0b5ed7;
+    }
+}
+
+/* Focus Management: Keyboard Navigation */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: var(--color-action-primary);
     color: white;
+    padding: 8px;
+    text-decoration: none;
+    border-radius: var(--radius-default);
 }
 
+.skip-link:focus {
+    top: 6px;
+}
+
+/* Screen Reader: Essential Information */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
 
 /* Utility classes */
-small {
-    color: #6b7280;
-    font-size: 0.875rem;
-}
-
 [hidden] {
     display: none !important;
 }
 
-/* Footer */
-footer {
-    margin-top: 3rem;
-    padding-top: 2rem;
-    border-top: 1px solid #e5e7eb;
-    color: #6b7280;
-    font-size: 0.875rem;
-}
-
-/* Layer 4: Responsive Design */
-@media (max-width: 640px) {
-    body {
-        padding: 0.75rem;
-    }
-    
-    h1 {
-        font-size: 1.75rem;
-    }
-    
-    .upload-area {
-        padding: 1.5rem 1rem;
-    }
-    
-    .file-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
-    
-    .file-actions {
-        align-self: stretch;
-        justify-content: flex-end;
-    }
-}
-
-/* Accessibility improvements */
-@media (prefers-reduced-motion: reduce) {
-    * {
-        transition: none !important;
-    }
-}
-
-/* Focus visible for better accessibility */
-:focus-visible {
-    outline: 2px solid #2563eb;
-    outline-offset: 2px;
-}
-
-/* Download page styles */
-
-.download-actions {
-    display: flex;
-    gap: 1rem;
-    margin: 2rem 0;
-    flex-wrap: wrap;
-}
-
-a.button {
-    background: #2563eb;
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.25rem;
-    font-size: 1rem;
-    font-weight: 500;
-    text-decoration: none;
-    display: inline-block;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-a.button:hover {
-    background: #1d4ed8;
-}
-
-button {
-    background: #2563eb;
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.25rem;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-button:hover {
-    background: #1d4ed8;
-}
-
-button:focus {
-    outline: 2px solid #2563eb;
-    outline-offset: 2px;
-}
-
-button:disabled {
-    background: #9ca3af;
-    cursor: not-allowed;
-}
-
-button.secondary {
-    background: transparent;
-    color: #2563eb;
-    border: 1px solid #2563eb;
-}
-
-button.secondary:hover {
-    background: #2563eb;
-    color: white;
-}
-
-.file-preview {
-    margin: 2rem 0;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.25rem;
-    overflow: hidden;
-}
-
-.file-preview img,
-.file-preview video,
-.file-preview audio {
-    max-width: 100%;
-    height: auto;
-    display: block;
-}
-
-.actions {
-    margin: 2rem 0;
-}
-
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-    .upload-area {
-        border-width: 3px;
-    }
-    
-    button, .download-btn {
-        border: 2px solid #1d4ed8;
-    }
-}
+/**
+ * Design System Philosophy Summary:
+ * 
+ * This implements rectangular bento layout while maintaining semantic honesty.
+ * The grid serves content hierarchy, not aesthetic preference.
+ * Every element is justified by user workflow needs within the constraint.
+ */
