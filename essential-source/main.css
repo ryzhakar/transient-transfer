@@ -60,6 +60,23 @@ body {
     flex-direction: column;
 }
 
+/* Download pages - override upload page layout */
+body.download-page {
+    height: auto;
+    min-height: 100vh;
+    overflow: auto;
+    justify-content: center;
+    align-items: center;
+    padding: var(--space-xxl);
+}
+
+body.download-page main {
+    flex: none;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+}
+
 /* PARCEL Header - Size based on text + padding only */
 #parcel-header {
     width: 100%;
