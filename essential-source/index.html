@@ -93,7 +93,7 @@
         // Removed complex height measurement - not needed for simple animations
         
         /**
-         * SIMPLE: Transform to file state - hide header, show file UI
+         * WAAPI REWRITE: Transform to file state with proper sequential animations
          */
         async transformToFileState() {
             if (this.isAnimating) return;
@@ -101,28 +101,68 @@
             this.state = 'TRANSITIONING';
             
             try {
-                // STEP 1: Hide header (keep space to prevent layout shift)
-                await this.animate(this.elements.header, [
-                    { opacity: 1 },
-                    { opacity: 0 }
-                ], { duration: 300 });
-                this.elements.header.style.visibility = 'hidden';
+                // Create all animations in parallel but execute sequentially
+                const headerSlideUp = this.elements.header.animate([
+                    { transform: 'translateY(0)', opacity: 1 },
+                    { transform: 'translateY(-100%)', opacity: 0 }
+                ], {
+                    duration: 400,
+                    easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+                    fill: 'forwards'
+                });
                 
-                // STEP 2: Show controls
+                // Wait for header to complete
+                await headerSlideUp.finished;
+                
+                // Prepare file UI sections (make them visible but transparent)
                 this.elements.controlsSection.style.display = 'block';
-                await this.animate(this.elements.controlsSection, [
+                this.elements.controlsSection.style.opacity = '0';
+                this.elements.fileListSection.style.display = 'block';  
+                this.elements.fileListSection.style.opacity = '0';
+                
+                // Animate upload area resize and UI appearance together
+                const uploadResize = this.elements.uploadSection.animate([
+                    { height: '100%' },
+                    { height: '120px' }
+                ], {
+                    duration: 500,
+                    easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+                    fill: 'forwards'
+                });
+                
+                const controlsAppear = this.elements.controlsSection.animate([
+                    { opacity: 0, transform: 'translateY(-20px)' },
+                    { opacity: 1, transform: 'translateY(0)' }
+                ], {
+                    duration: 400,
+                    delay: 200,
+                    easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+                    fill: 'forwards'
+                });
+                
+                const fileListAppear = this.elements.fileListSection.animate([
                     { opacity: 0 },
                     { opacity: 1 }
-                ], { duration: 300 });
+                ], {
+                    duration: 300,
+                    delay: 300,
+                    easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+                    fill: 'forwards'
+                });
                 
-                // STEP 3: Show file list
-                this.elements.fileListSection.style.display = 'block';
-                await this.animate(this.elements.fileListSection, [
-                    { opacity: 0 },
-                    { opacity: 1 }
-                ], { duration: 300 });
+                // Wait for all animations to complete
+                await Promise.all([
+                    uploadResize.finished,
+                    controlsAppear.finished,
+                    fileListAppear.finished
+                ]);
                 
-                // Enable scrolling (no extra spacing needed - header space preserved)
+                // Apply final styles
+                this.elements.uploadSection.style.height = '120px';
+                this.elements.controlsSection.style.opacity = '1';
+                this.elements.fileListSection.style.opacity = '1';
+                
+                // Enable scrolling
                 document.body.style.overflow = 'auto';
                 document.body.style.height = 'auto';
                 
@@ -133,7 +173,7 @@
         }
         
         /**
-         * SIMPLE: Transform to empty state - hide file UI, show header
+         * WAAPI REWRITE: Transform to empty state with proper reverse sequence
          */
         async transformToEmptyState() {
             if (this.isAnimating) return;
@@ -141,28 +181,62 @@
             this.state = 'TRANSITIONING';
             
             try {
-                // STEP 1: Hide file list
-                await this.animate(this.elements.fileListSection, [
+                // Reverse sequence: UI elements disappear first
+                const fileListDisappear = this.elements.fileListSection.animate([
                     { opacity: 1 },
                     { opacity: 0 }
-                ], { duration: 300 });
+                ], {
+                    duration: 300,
+                    easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+                    fill: 'forwards'
+                });
+                
+                const controlsDisappear = this.elements.controlsSection.animate([
+                    { opacity: 1, transform: 'translateY(0)' },
+                    { opacity: 0, transform: 'translateY(-20px)' }
+                ], {
+                    duration: 400,
+                    delay: 100,
+                    easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+                    fill: 'forwards'
+                });
+                
+                // Upload area expands back to full size
+                const uploadExpand = this.elements.uploadSection.animate([
+                    { height: '120px' },
+                    { height: '100%' }
+                ], {
+                    duration: 500,
+                    delay: 200,
+                    easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+                    fill: 'forwards'
+                });
+                
+                // Wait for UI to disappear and upload to expand
+                await Promise.all([
+                    fileListDisappear.finished,
+                    controlsDisappear.finished,
+                    uploadExpand.finished
+                ]);
+                
+                // Hide UI sections
                 this.elements.fileListSection.style.display = 'none';
-                
-                // STEP 2: Hide controls
-                await this.animate(this.elements.controlsSection, [
-                    { opacity: 1 },
-                    { opacity: 0 }
-                ], { duration: 300 });
                 this.elements.controlsSection.style.display = 'none';
+                this.elements.uploadSection.style.height = '';
                 
-                // STEP 3: Show header (restore visibility)
-                this.elements.header.style.visibility = 'visible';
-                await this.animate(this.elements.header, [
-                    { opacity: 0 },
-                    { opacity: 1 }
-                ], { duration: 300 });
+                // Finally, bring header back
+                const headerSlideDown = this.elements.header.animate([
+                    { transform: 'translateY(-100%)', opacity: 0 },
+                    { transform: 'translateY(0)', opacity: 1 }
+                ], {
+                    duration: 400,
+                    easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+                    fill: 'forwards'
+                });
                 
-                // Reset body styles  
+                await headerSlideDown.finished;
+                
+                // Reset styles
                 document.body.style.overflow = 'hidden';
                 document.body.style.height = '100vh';
                 

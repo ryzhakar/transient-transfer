@@ -79,17 +79,18 @@ body.download-page main {
 
 /* PARCEL Header - Size based on text + padding only */
 #parcel-header {
+    position: relative;
     width: 100%;
     max-width: 56rem;
     margin: 0 auto;
     padding: var(--space-xxl);
     text-align: center;
-    transition: all 0.3s ease;
-    /* Fixed height to prevent layout shifts when hidden */
-    min-height: calc(var(--text-parcel) + 2 * var(--space-xxl));
     display: flex;
     align-items: center;
     justify-content: center;
+    /* Enable hardware acceleration for smooth transforms */
+    will-change: transform;
+    transform: translateZ(0);
 }
 
 #parcel-header h1 {
@@ -119,7 +120,9 @@ main {
     align-items: center;
     /* Take full height of main container */
     flex: 1;
-    transition: all 0.3s ease;
+    /* Enable hardware acceleration for smooth height animations */
+    will-change: height;
+    transform: translateZ(0);
 }
 
 /* Controls section - Hidden initially */
