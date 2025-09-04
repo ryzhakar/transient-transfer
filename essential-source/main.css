@@ -1,19 +1,9 @@
 /**
- * Phase 3: Minimal CSS Enhancement
- * Following Dieter Rams Protocol: Typography and Spacing Only
- * 
- * Rules:
- * - Typography hierarchy through size and weight only
- * - Spacing for reading rhythm and visual breathing
- * - NO decoration, NO colors beyond necessity, NO visual effects
- * - System fonts only - no external dependencies
- * - Responsive behavior through content reflow only
+ * Transfer.sh - Minimal Professional Interface
+ * Following Dieter Rams: Typography, spacing, and clarity only
  */
 
-/* ================================================================
-   FOUNDATION: BROWSER RESET
-   ================================================================ */
-
+/* Reset and base */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -21,41 +11,36 @@
 }
 
 html {
-    font-size: 100%; /* Respect user font size preferences */
+    font-size: 100%;
 }
-
-/* ================================================================
-   TYPOGRAPHY: HIERARCHY THROUGH FUNCTION
-   ================================================================ */
 
 body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    font-size: 1rem; /* 16px base */
-    line-height: 1.5;
-    color: #000;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #333;
     background: #fff;
-    max-width: 65ch; /* Optimal reading line length */
+    max-width: 50rem;
     margin: 0 auto;
-    padding: 1rem;
+    padding: 2rem 1rem;
 }
 
-/* Typography Scale - Functional Hierarchy Only */
+/* Typography hierarchy */
 h1 {
-    font-size: 2rem; /* 32px - Page title */
+    font-size: 1.5rem;
     font-weight: 600;
-    line-height: 1.2;
     margin-bottom: 0.5rem;
+    color: #000;
 }
 
 h2 {
-    font-size: 1.25rem; /* 20px - Section headings */
+    font-size: 1.125rem;
     font-weight: 600;
-    line-height: 1.3;
-    margin-bottom: 1rem;
-    margin-top: 2rem;
+    margin: 2rem 0 1rem 0;
+    color: #000;
 }
 
-h2:first-child {
+h2:first-of-type {
     margin-top: 0;
 }
 
@@ -63,56 +48,44 @@ p {
     margin-bottom: 1rem;
 }
 
-/* ================================================================
-   FORMS: FUNCTIONAL INPUT STYLING
-   ================================================================ */
-
+/* Form elements */
 label {
     display: block;
     font-weight: 500;
     margin-bottom: 0.5rem;
+    color: #000;
 }
 
 input[type="file"] {
     width: 100%;
-    padding: 0.75rem;
-    border: 2px solid #ccc;
-    border-radius: 4px;
+    padding: 1rem;
+    border: 2px solid #ddd;
+    border-radius: 0.25rem;
     font-size: 1rem;
-    font-family: inherit;
-    background: #fff;
+    margin-bottom: 1rem;
 }
 
 input[type="file"]:focus {
-    outline: 2px solid #0066cc;
-    outline-offset: 2px;
+    outline: none;
     border-color: #0066cc;
 }
 
-/* ================================================================
-   BUTTONS: SINGLE TREATMENT
-   ================================================================ */
-
+/* Buttons */
 button {
     font-family: inherit;
-    font-size: 1rem;
+    font-size: 0.875rem;
     font-weight: 500;
     padding: 0.75rem 1rem;
     border: none;
-    border-radius: 4px;
+    border-radius: 0.25rem;
     background: #0066cc;
     color: #fff;
     cursor: pointer;
-    margin: 0.25rem 0.25rem 0.25rem 0;
+    margin-bottom: 1rem;
 }
 
 button:hover {
     background: #0052a3;
-}
-
-button:focus {
-    outline: 2px solid #0066cc;
-    outline-offset: 2px;
 }
 
 button:disabled {
@@ -120,155 +93,129 @@ button:disabled {
     cursor: not-allowed;
 }
 
-/* ================================================================
-   LINKS: CLEAR INTERACTIVE ELEMENTS
-   ================================================================ */
-
-a {
-    color: #0066cc;
-    text-decoration: underline;
+/* File list styling */
+#file-list {
+    margin-top: 1rem;
 }
-
-a:hover {
-    color: #0052a3;
-}
-
-a:focus {
-    outline: 2px solid #0066cc;
-    outline-offset: 2px;
-}
-
-/* ================================================================
-   SECTIONS: BREATHING ROOM
-   ================================================================ */
-
-section {
-    margin-bottom: 2rem;
-}
-
-section:last-child {
-    margin-bottom: 0;
-}
-
-/* ================================================================
-   FILE LIST: FUNCTIONAL LAYOUT
-   ================================================================ */
 
 #file-list > div {
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 1rem;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 0.25rem;
+    padding: 1.5rem;
     margin-bottom: 1rem;
-    background: #fff;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 #file-list > div:last-child {
     margin-bottom: 0;
 }
 
-#file-list p {
-    margin-bottom: 0.5rem;
-}
-
-#file-list p:last-child {
-    margin-bottom: 0;
-}
-
-/* Strong text for filenames */
-strong {
+/* File information */
+.file-name {
     font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: #000;
 }
 
-/* Small text for secondary information */
-small {
+.file-details {
     font-size: 0.875rem;
     color: #666;
+    margin-bottom: 1rem;
 }
 
-/* ================================================================
-   RESPONSIVE: CONTENT REFLOW ONLY
-   ================================================================ */
+/* URL styling - make them readable */
+.file-url {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 0.25rem;
+    padding: 0.75rem;
+    font-family: ui-monospace, Monaco, monospace;
+    font-size: 0.75rem;
+    color: #0066cc;
+    word-break: break-all;
+    margin-bottom: 1rem;
+    cursor: pointer;
+}
 
+.file-url:hover {
+    background: #f8f9fa;
+}
+
+/* File actions */
+.file-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.file-actions button {
+    margin-bottom: 0;
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
+}
+
+/* Links */
+a {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive */
 @media (max-width: 48rem) {
     body {
-        padding: 0.75rem;
+        padding: 1rem 0.75rem;
     }
     
     h1 {
-        font-size: 1.75rem;
-    }
-    
-    h2 {
-        font-size: 1.125rem;
-    }
-    
-    button {
-        width: 100%;
-        margin-bottom: 0.5rem;
-    }
-}
-
-/* ================================================================
-   ACCESSIBILITY: ESSENTIAL SUPPORT
-   ================================================================ */
-
-/* Skip link for keyboard navigation */
-.skip-link {
-    position: absolute;
-    top: -40px;
-    left: 8px;
-    background: #000;
-    color: #fff;
-    padding: 8px;
-    text-decoration: none;
-    border-radius: 4px;
-}
-
-.skip-link:focus {
-    top: 8px;
-}
-
-/* Respect user motion preferences */
-@media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-    }
-}
-
-/* Support high contrast mode */
-@media (prefers-contrast: high) {
-    button {
-        border: 2px solid #000;
-    }
-    
-    input[type="file"] {
-        border: 2px solid #000;
+        font-size: 1.25rem;
     }
     
     #file-list > div {
-        border: 2px solid #000;
+        padding: 1rem;
+    }
+    
+    .file-actions {
+        flex-direction: column;
+    }
+    
+    .file-actions button {
+        width: 100%;
     }
 }
 
-/**
- * Phase 3 Complete: Typography and Spacing Only
- * 
- * What this CSS does:
- * - Creates clear information hierarchy through typography
- * - Provides reading rhythm through consistent spacing
- * - Ensures accessibility through proper focus states
- * - Maintains responsive behavior through content reflow
- * 
- * What this CSS does NOT do:
- * - No decorative elements or visual effects
- * - No complex layouts or grid systems
- * - No colors beyond functional necessity
- * - No animations or transitions
- * - No external font dependencies
- * 
- * Total: ~150 lines of essential styling
- * Replaces: 791 lines of complex bento grid system
- * Reduction: ~80% while maintaining full functionality
- */
+/* Accessibility */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 1rem;
+    background: #000;
+    color: #fff;
+    padding: 0.5rem;
+    text-decoration: none;
+    border-radius: 0.25rem;
+}
+
+.skip-link:focus {
+    top: 1rem;
+}
+
+button:focus,
+input:focus,
+a:focus {
+    outline: 2px solid #0066cc;
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}

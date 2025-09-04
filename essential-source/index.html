@@ -52,7 +52,8 @@
             // Add file to list immediately
             const fileDiv = document.createElement('div');
             fileDiv.innerHTML = `
-                <p><strong>${file.name}</strong> (${Math.round(file.size/1024)}KB) - Uploading...</p>
+                <div class="file-name">${file.name}</div>
+                <div class="file-details">${Math.round(file.size/1024)}KB - Uploading...</div>
             `;
             fileList.appendChild(fileDiv);
             
@@ -75,25 +76,63 @@
                     });
                     
                     fileDiv.innerHTML = `
-                        <p><strong>${file.name}</strong> (${Math.round(file.size/1024)}KB)</p>
-                        <p><a href="${downloadUrl.trim()}">${downloadUrl.trim()}</a></p>
-                        ${deleteUrl ? `<p><small><button onclick="deleteFile('${deleteUrl}', this, '${file.name}')">Delete File</button></small></p>` : ''}
+                        <div class="file-name">${file.name}</div>
+                        <div class="file-details">${Math.round(file.size/1024)}KB</div>
+                        <div class="file-url" onclick="copyToClipboard('${downloadUrl.trim()}', this)" title="Click to copy">${downloadUrl.trim()}</div>
+                        <div class="file-actions">
+                            <button onclick="window.open('${downloadUrl.trim()}', '_blank')">Open</button>
+                            ${deleteUrl ? `<button onclick="deleteFile('${deleteUrl}', this, '${file.name}')">Delete</button>` : ''}
+                        </div>
                     `;
                     
                     // Show ZIP button if we have files
                     updateZipButton();
                 } else {
                     fileDiv.innerHTML = `
-                        <p><strong>${file.name}</strong> - Upload failed (${response.status})</p>
+                        <div class="file-name">${file.name}</div>
+                        <div class="file-details" style="color: #dc3545;">Upload failed (${response.status})</div>
                     `;
                 }
             } catch (error) {
                 fileDiv.innerHTML = `
-                    <p><strong>${file.name}</strong> - Upload failed: ${error.message}</p>
+                    <div class="file-name">${file.name}</div>
+                    <div class="file-details" style="color: #dc3545;">Upload failed: ${error.message}</div>
                 `;
             }
         }
     });
+    
+    // Copy to clipboard function
+    async function copyToClipboard(text, element) {
+        try {
+            await navigator.clipboard.writeText(text);
+            const originalBg = element.style.backgroundColor;
+            element.style.backgroundColor = '#d4edda';
+            element.textContent = 'Copied!';
+            setTimeout(() => {
+                element.style.backgroundColor = originalBg;
+                element.textContent = text;
+            }, 1500);
+        } catch (error) {
+            // Fallback for older browsers
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.opacity = '0';
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            const originalBg = element.style.backgroundColor;
+            element.style.backgroundColor = '#d4edda';
+            element.textContent = 'Copied!';
+            setTimeout(() => {
+                element.style.backgroundColor = originalBg;
+                element.textContent = text;
+            }, 1500);
+        }
+    }
     
     // Update ZIP button visibility
     function updateZipButton() {
