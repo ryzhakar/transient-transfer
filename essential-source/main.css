@@ -25,25 +25,26 @@
 }
 
 :root {
-    /* Golden Ratio (1.618) based scaling - refined for practical use */
+    /* Golden Ratio (φ = 1.618) - all values computed mathematically */
+    --phi: 1.618;
     --base-unit: 1rem;     /* 16px */
     
-    /* Spacing Scale - more conservative progression */
-    --space-xs: calc(var(--base-unit) * 0.25);      /* 0.25rem = 4px */
-    --space-sm: calc(var(--base-unit) * 0.5);       /* 0.5rem = 8px */
-    --space-base: var(--base-unit);                 /* 1rem = 16px */
-    --space-md: calc(var(--base-unit) * 1.618);     /* 1.618rem = 25.9px */
-    --space-lg: calc(var(--base-unit) * 2.618);     /* 2.618rem = 41.9px */
-    --space-xl: calc(var(--base-unit) * 4.236);     /* 4.236rem = 67.8px */
+    /* Spacing Scale - pure golden ratio computation */
+    --space-xs: calc(var(--base-unit) / var(--phi) / var(--phi));  /* 1/φ² = 0.382rem */
+    --space-sm: calc(var(--base-unit) / var(--phi));               /* 1/φ = 0.618rem */
+    --space-base: var(--base-unit);                                /* 1rem */
+    --space-md: calc(var(--base-unit) * var(--phi));               /* φ = 1.618rem */
+    --space-lg: calc(var(--base-unit) * var(--phi) * var(--phi));  /* φ² = 2.618rem */
+    --space-xl: calc(var(--base-unit) * var(--phi) * var(--phi) * var(--phi)); /* φ³ = 4.236rem */
     
-    /* Typography Scale - golden ratio but practical */
-    --scale-xs: calc(var(--base-unit) * 0.618);     /* 0.618rem = 9.9px */
-    --scale-sm: calc(var(--base-unit) * 0.75);      /* 0.75rem = 12px */
-    --scale-base: var(--base-unit);                 /* 1rem = 16px */
-    --scale-md: calc(var(--base-unit) * 1.25);      /* 1.25rem = 20px */
-    --scale-lg: calc(var(--base-unit) * 1.618);     /* 1.618rem = 25.9px */
-    --scale-xl: calc(var(--base-unit) * 2);         /* 2rem = 32px */
-    --scale-xxl: calc(var(--base-unit) * 2.618);    /* 2.618rem = 41.9px */
+    /* Typography Scale - pure golden ratio computation */
+    --scale-xs: calc(var(--base-unit) / var(--phi) / var(--phi));  /* 1/φ² = 0.382rem */
+    --scale-sm: calc(var(--base-unit) / var(--phi));               /* 1/φ = 0.618rem */
+    --scale-base: var(--base-unit);                                /* 1rem */
+    --scale-md: calc(var(--base-unit) * var(--phi));               /* φ = 1.618rem */
+    --scale-lg: calc(var(--base-unit) * var(--phi) * var(--phi));  /* φ² = 2.618rem */
+    --scale-xl: calc(var(--base-unit) * var(--phi) * var(--phi) * var(--phi)); /* φ³ = 4.236rem */
+    --scale-xxl: calc(var(--base-unit) * var(--phi) * var(--phi) * var(--phi) * var(--phi)); /* φ⁴ = 6.854rem */
     
     /* Honest material palette - inspired by Braun design */
     --color-text: #000;
