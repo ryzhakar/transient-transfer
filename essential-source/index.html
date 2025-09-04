@@ -183,13 +183,13 @@
                 } else {
                     fileDiv.innerHTML = `
                         <div class="file-name">${file.name}</div>
-                        <div class="file-details" style="color: var(--color-danger);">Upload failed (${xhr_response.status})</div>
+                        <div class="error-message">Upload failed (${xhr_response.status}) <button class="error-dismiss" onclick="this.parentElement.parentElement.remove()">×</button></div>
                     `;
                 }
             } catch (error) {
                 fileDiv.innerHTML = `
                     <div class="file-name">${file.name}</div>
-                    <div class="file-details" style="color: var(--color-danger);">Upload failed: ${error.message}</div>
+                    <div class="error-message">Upload failed: ${error.message} <button class="error-dismiss" onclick="this.parentElement.parentElement.remove()">×</button></div>
                 `;
             }
         }
@@ -302,10 +302,13 @@
                     // Remove from uploaded files array
                     uploadedFiles = uploadedFiles.filter(file => file.name !== fileName);
                     
-                    // Remove the file div from the page - need to go up to the parent div
+                    // Smoothly remove the file div from the page
                     const fileDiv = button.closest('#file-list > div');
                     if (fileDiv) {
-                        fileDiv.remove();
+                        fileDiv.style.animation = 'slideOutDown 0.3s ease forwards';
+                        setTimeout(() => {
+                            fileDiv.remove();
+                        }, 300);
                     }
                     
                     // Restore scroll position
