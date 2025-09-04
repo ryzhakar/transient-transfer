@@ -10,20 +10,22 @@
 <body>
     <main>
         <section>
-            <div class="file-name">{{.Filename}}</div>
-            <div class="file-details">{{.ContentType}} • <span id="file-size"></span></div>
+            <div class="file-container">
+                <div class="file-name">{{.Filename}}</div>
+                <div class="file-details">{{.ContentType}} • <span id="file-size"></span></div>
+                
+                <div class="file-actions">
+                    <button onclick="window.location.href='{{.URLGet}}'">Download</button>
+                    <button class="secondary" onclick="copyToClipboard('{{.URL}}', this)">Copy Link</button>
+                </div>
+            </div>
             
-            <div style="margin: 2rem 0;">
-                <video controls style="max-width: 100%; height: auto; border-radius: 0.25rem;">
+            <div class="file-preview">
+                <video controls>
                     <source src="{{.URL}}" type="{{.ContentType}}">
                     Your browser does not support the video element.
                     <a href="{{.URLGet}}">Download video file</a>
                 </video>
-            </div>
-            
-            <div class="file-actions">
-                <button onclick="window.location.href='{{.URLGet}}'">Download</button>
-                <button class="secondary" onclick="copyToClipboard('{{.URL}}', this)">Copy Link</button>
             </div>
         </section>
     </main>

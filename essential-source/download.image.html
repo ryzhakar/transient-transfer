@@ -10,16 +10,18 @@
 <body>
     <main>
         <section>
-            <div class="file-name">{{.Filename}}</div>
-            <div class="file-details">{{.ContentType}} • <span id="file-size"></span></div>
-            
-            <div style="margin: 2rem 0; text-align: center;">
-                <img src="{{.URL}}" alt="{{.Filename}}" style="max-width: 100%; height: auto; border-radius: 0.25rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <div class="file-container">
+                <div class="file-name">{{.Filename}}</div>
+                <div class="file-details">{{.ContentType}} • <span id="file-size"></span></div>
+                
+                <div class="file-actions">
+                    <button onclick="window.location.href='{{.URLGet}}'">Download</button>
+                    <button class="secondary" onclick="copyToClipboard('{{.URL}}', this)">Copy Link</button>
+                </div>
             </div>
             
-            <div class="file-actions">
-                <button onclick="window.location.href='{{.URLGet}}'">Download</button>
-                <button class="secondary" onclick="copyToClipboard('{{.URL}}', this)">Copy Link</button>
+            <div class="file-preview">
+                <img src="{{.URL}}" alt="{{.Filename}}">
             </div>
         </section>
     </main>
