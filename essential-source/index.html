@@ -3,65 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{.Hostname}} - Share Creative Work</title>
-    <meta name="description" content="Share files with clients and collaborators instantly.">
-    <link rel="stylesheet" href="/styles/main.css">
+    <title>{{.Hostname}} - File Sharing</title>
+    <meta name="description" content="Share files quickly and securely">
 </head>
 <body>
-    <!-- Skip link for accessibility -->
-    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <!-- Skip to main content for keyboard users -->
+    <a href="#main-content">Skip to main content</a>
     
-    <!-- Bento Workspace: Semantic grid system -->
-    <div class="bento-workspace">
-        
-        <!-- Primary Bento Block: Core workflow -->
-        <main class="bento-block bento-primary" id="main-content" role="main">
-            <h1>Share Your Work</h1>
-            <p>Select files to instantly generate shareable links.</p>
-            
-            <form action="/upload" method="post" enctype="multipart/form-data" id="upload-form">
-                <fieldset class="upload-area">
-                    <legend class="sr-only">File Upload</legend>
-                    <label for="file-input">
-                        <span class="upload-title">Add Files</span>
-                        <span class="upload-hint">Select or drag to upload instantly</span>
-                    </label>
-                    <input type="file" id="file-input" name="files" multiple>
-                </fieldset>
-            </form>
-        </main>
-        
-        <!-- Secondary Bento Block: Quick actions -->
-        <aside class="bento-block bento-secondary" role="complementary">
-            <h2>Quick Actions</h2>
-            <div class="quick-actions">
-                <p>Select files to upload instantly</p>
-            </div>
-        </aside>
-        
-        <!-- Tertiary Bento Block: Results management -->
-        <section class="bento-block bento-results" role="region" aria-labelledby="results-heading">
-            <header class="results-header">
-                <h2 id="results-heading">Your Shared Files</h2>
-                <button type="button" class="button-primary copy-all-btn" id="copy-all-btn" hidden>
-                    Copy ZIP Link
-                </button>
-            </header>
-            <div class="file-grid" id="file-grid" role="list">
-                <p class="empty-state">No files shared yet</p>
-            </div>
+    <header>
+        <h1>{{.Hostname}}</h1>
+        <p>Share files quickly and securely</p>
+    </header>
+    
+    <main id="main-content">
+        <section>
+            <h2>Upload Files</h2>
+            <label for="file-input">Choose files to upload:</label>
+            <input type="file" id="file-input" multiple>
         </section>
         
-        <!-- Quaternary Bento Block: Context and trust -->
-        <footer class="bento-block bento-context">
-            <h2 class="sr-only">Service Information</h2>
-            <p>Files expire automatically. No accounts or tracking.</p>
-            <p><small>{{.Hostname}} - Simple file sharing</small></p>
-        </footer>
+        <section>
+            <h2>Your Shared Files</h2>
+            <div id="file-list">
+                <p>No files shared yet. Upload files to see them here.</p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+    // Minimal upload functionality - required due to PUT-only API
+    document.getElementById('file-input').addEventListener('change', async function(e) {
+        const files = e.target.files;
+        const fileList = document.getElementById('file-list');
         
-    </div>
+        if (files.length === 0) return;
+        
+        // Clear empty state
+        fileList.innerHTML = '';
+        
+        for (const file of files) {
+            // Add file to list immediately
+            const fileDiv = document.createElement('div');
+            fileDiv.innerHTML = `
+                <p><strong>${file.name}</strong> (${Math.round(file.size/1024)}KB) - Uploading...</p>
+            `;
+            fileList.appendChild(fileDiv);
+            
+            try {
+                // Upload file using transfer.sh API
+                const response = await fetch(`/${encodeURIComponent(file.name)}`, {
+                    method: 'PUT',
+                    body: file
+                });
+                
+                if (response.ok) {
+                    const downloadUrl = await response.text();
+                    const deleteUrl = response.headers.get('X-Url-Delete');
+                    
+                    fileDiv.innerHTML = `
+                        <p><strong>${file.name}</strong> (${Math.round(file.size/1024)}KB)</p>
+                        <p><a href="${downloadUrl.trim()}">${downloadUrl.trim()}</a></p>
+                        ${deleteUrl ? `<p><small><button onclick="deleteFile('${deleteUrl}', this)">Delete File</button></small></p>` : ''}
+                    `;
+                } else {
+                    fileDiv.innerHTML = `
+                        <p><strong>${file.name}</strong> - Upload failed (${response.status})</p>
+                    `;
+                }
+            } catch (error) {
+                fileDiv.innerHTML = `
+                    <p><strong>${file.name}</strong> - Upload failed: ${error.message}</p>
+                `;
+            }
+        }
+    });
     
-    <!-- Progressive enhancement -->
-    <script src="/scripts/main.js" defer></script>
+    // Delete file function
+    async function deleteFile(deleteUrl, button) {
+        if (!confirm('Delete this file? This cannot be undone.')) {
+            return;
+        }
+        
+        button.textContent = 'Deleting...';
+        button.disabled = true;
+        
+        try {
+            const response = await fetch(deleteUrl, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                // Remove the file div from the page
+                button.closest('div').remove();
+                
+                // If no files left, show empty state
+                const fileList = document.getElementById('file-list');
+                if (fileList.children.length === 0) {
+                    fileList.innerHTML = '<p>No files shared yet. Upload files to see them here.</p>';
+                }
+            } else {
+                button.textContent = `Delete failed (${response.status})`;
+                button.disabled = false;
+            }
+        } catch (error) {
+            button.textContent = `Delete failed: ${error.message}`;
+            button.disabled = false;
+        }
+    }
+    </script>
 </body>
 </html>

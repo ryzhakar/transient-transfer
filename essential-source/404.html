@@ -4,37 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>File Not Found - {{.Hostname}}</title>
-    <meta name="description" content="The requested file was not found or has expired.">
+    <meta name="description" content="The requested file was not found">
 </head>
 <body>
     <header>
-        <h1><a href="/">Transfer Files</a></h1>
+        <h1><a href="/">{{.Hostname}}</a></h1>
     </header>
-
+    
     <main>
         <section>
-            <h2>File Not Found</h2>
-            
-            <p>The file you're looking for doesn't exist or has expired.</p>
-            
-            <p>This could happen if:</p>
+            <h1>File Not Found</h1>
+            <p>The file you're looking for could not be found. This may be because:</p>
             <ul>
-                <li>The file has reached its download limit</li>
-                <li>The file has expired (files are automatically deleted)</li>
-                <li>The link was typed incorrectly</li>
-                <li>The file was manually deleted</li>
+                <li>The file has expired and been automatically deleted</li>
+                <li>The link is incorrect or incomplete</li>
+                <li>The file was manually removed</li>
             </ul>
-
-            <div class="actions">
-                <a href="/" class="button">Upload New Files</a>
-            </div>
+        </section>
+        
+        <section>
+            <h2>What You Can Do</h2>
+            <ul>
+                <li><a href="/">Upload new files</a></li>
+                <li>Check that you have the complete link</li>
+                <li>Contact the person who shared the file</li>
+            </ul>
         </section>
     </main>
-
-    <footer>
-        <p>Files are stored temporarily and deleted automatically.</p>
-    </footer>
-
-    <link rel="stylesheet" href="/styles/main.css">
 </body>
 </html>

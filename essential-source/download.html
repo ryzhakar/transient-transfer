@@ -4,75 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{.Filename}} - {{.Hostname}}</title>
-    <meta name="description" content="Download {{.Filename}} shared via Transfer.sh">
-    <link rel="stylesheet" href="/styles/main.css">
+    <meta name="description" content="Download {{.Filename}}">
 </head>
 <body>
-    <!-- Skip link for accessibility -->
-    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <header>
+        <h1><a href="/">{{.Hostname}}</a></h1>
+        <nav>
+            <a href="/">Upload New Files</a>
+        </nav>
+    </header>
     
-    <!-- Bento Workspace: Consistent with main page -->
-    <div class="bento-workspace">
-        
-        <!-- Primary Bento Block: Download content -->
-        <main class="bento-block bento-primary" id="main-content" role="main">
-            <h1><a href="/">{{.Hostname}}</a></h1>
-            <h2>{{.Filename}}</h2>
+    <main>
+        <article>
+            <h1>{{.Filename}}</h1>
             
-            <div class="download-actions">
-                <a href="{{.URLGet}}" class="button-primary" download>
-                    Download File
-                </a>
-                <button type="button" class="button-secondary" onclick="copyCurrentUrl(this)">
-                    Copy Link
-                </button>
-            </div>
-        </main>
-        
-        <!-- Secondary Bento Block: File info -->
-        <aside class="bento-block bento-secondary" role="complementary">
-            <h3>File Information</h3>
-            <dl class="file-info-list">
-                <dt>Filename:</dt>
-                <dd>{{.Filename}}</dd>
-                <dt>Shared via:</dt>
-                <dd>{{.Hostname}}</dd>
-            </dl>
-        </aside>
-        
-        <!-- Context block -->
-        <footer class="bento-block bento-context">
-            <p>Files expire automatically. <a href="/">Share your own files</a></p>
-        </footer>
-        
-    </div>
-
-
-    <script>
-        function copyCurrentUrl(button) {
-            const originalText = button.textContent;
-            const url = window.location.href;
-            navigator.clipboard.writeText(url).then(() => {
-                button.textContent = 'Copied!';
-                setTimeout(() => {
-                    button.textContent = originalText;
-                }, 2000);
-            }).catch(() => {
-                // Fallback for older browsers
-                const textArea = document.createElement('textarea');
-                textArea.value = url;
-                textArea.style.position = 'fixed';
-                textArea.style.opacity = '0';
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                button.textContent = 'Copied!';
-                setTimeout(() => {
-                    button.textContent = originalText;
-                }, 2000);
-            });
-        }
-    </script>
+            <section>
+                <h2>Download Options</h2>
+                <ul>
+                    <li><a href="{{.URLGet}}" download>Download {{.Filename}}</a></li>
+                    <li><a href="{{.URL}}" target="_blank">View in Browser</a></li>
+                    <li><a href="{{.URL}}">Copy Share Link</a></li>
+                </ul>
+            </section>
+            
+            <section>
+                <h2>File Information</h2>
+                <dl>
+                    <dt>Filename</dt>
+                    <dd>{{.Filename}}</dd>
+                    
+                    <dt>File Type</dt>
+                    <dd>{{.ContentType}}</dd>
+                    
+                    <dt>File Size</dt>
+                    <dd>{{.ContentLength | format "#,###."}} bytes</dd>
+                    
+                    <dt>Shared via</dt>
+                    <dd>{{.Hostname}}</dd>
+                </dl>
+            </section>
+            
+            <section>
+                <h2>Mobile Access</h2>
+                <p>Scan this QR code with your mobile device to access this file:</p>
+                <img src="data:image/png;base64,{{.QRCode}}" alt="QR Code for {{.URL}}" width="200" height="200">
+            </section>
+        </article>
+    </main>
 </body>
 </html>

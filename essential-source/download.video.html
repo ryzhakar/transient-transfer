@@ -4,58 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{.Filename}} - {{.Hostname}}</title>
-    <meta name="description" content="Watch and download {{.Filename}} shared via Transfer.sh">
-    <meta property="og:type" content="video">
+    <meta name="description" content="Watch and download {{.Filename}}">
 </head>
 <body>
     <header>
-        <h1><a href="/">Transfer Files</a></h1>
+        <h1><a href="/">{{.Hostname}}</a></h1>
+        <nav>
+            <a href="/">Upload New Files</a>
+        </nav>
     </header>
-
+    
     <main>
-        <section>
-            <div class="file-preview">
-                <video controls preload="metadata" width="100%">
+        <article>
+            <h1>{{.Filename}}</h1>
+            
+            <section>
+                <h2>Video Preview</h2>
+                <video controls style="max-width: 100%; height: auto;">
                     <source src="{{.URL}}" type="{{.ContentType}}">
-                    <p>Your browser doesn't support video playback. <a href="{{.URLGet}}" download>Download the video</a> to watch it.</p>
+                    Your browser does not support the video element.
+                    <a href="{{.URLGet}}">Download video file</a>
                 </video>
-            </div>
-
-            <div class="download-actions">
-                <a href="{{.URLGet}}" class="button" download>
-                    Download
-                </a>
-                <button type="button" class="secondary" onclick="copyCurrentUrl(this)">
-                    Copy Link
-                </button>
-            </div>
-        </section>
+            </section>
+            
+            <section>
+                <h2>Download Options</h2>
+                <ul>
+                    <li><a href="{{.URLGet}}" download>Download {{.Filename}}</a></li>
+                    <li><a href="{{.URL}}" target="_blank">Open in New Tab</a></li>
+                    <li><a href="{{.URL}}">Copy Share Link</a></li>
+                </ul>
+            </section>
+            
+            <section>
+                <h2>File Information</h2>
+                <dl>
+                    <dt>Filename</dt>
+                    <dd>{{.Filename}}</dd>
+                    
+                    <dt>File Type</dt>
+                    <dd>{{.ContentType}}</dd>
+                    
+                    <dt>File Size</dt>
+                    <dd>{{.ContentLength | format "#,###."}} bytes</dd>
+                    
+                    <dt>Shared via</dt>
+                    <dd>{{.Hostname}}</dd>
+                </dl>
+            </section>
+            
+            <section>
+                <h2>Mobile Access</h2>
+                <p>Scan this QR code with your mobile device to access this video:</p>
+                <img src="data:image/png;base64,{{.QRCode}}" alt="QR Code for {{.URL}}" width="200" height="200">
+            </section>
+        </article>
     </main>
-
-
-    <script>
-        function copyCurrentUrl(button) {
-            const originalText = button.textContent;
-            navigator.clipboard.writeText(window.location.href).then(() => {
-                button.textContent = 'Copied!';
-                setTimeout(() => {
-                    button.textContent = originalText;
-                }, 2000);
-            }).catch(() => {
-                // Fallback
-                const textArea = document.createElement('textarea');
-                textArea.value = window.location.href;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                button.textContent = 'Copied!';
-                setTimeout(() => {
-                    button.textContent = originalText;
-                }, 2000);
-            });
-        }
-    </script>
-    <link rel="stylesheet" href="/styles/main.css">
 </body>
 </html>
