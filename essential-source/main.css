@@ -75,7 +75,7 @@ body {
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
     font-feature-settings: 
         'zero' 1,    /* Slashed zero */
         'ss01' 1,    /* Alternate lowercase g */
@@ -123,9 +123,21 @@ p, label, input, button {
 
 main {
     width: 100%;
-    max-width: 42rem; /* Optimal reading measure */
-    padding: var(--space-lg);
-    margin-top: var(--space-xl); /* Initial centering offset */
+    max-width: 56rem; /* Desktop: larger for better presence */
+    padding: var(--space-xl);
+    margin: 0;
+}
+
+/* Responsive sizing based on viewport */
+@media (max-width: 768px) {
+    main {
+        max-width: 100%;
+        padding: var(--space-md);
+    }
+    
+    body {
+        font-size: var(--scale-sm); /* Mobile: much smaller */
+    }
 }
 
 section {
@@ -146,27 +158,60 @@ label {
 
 input[type="file"] {
     width: 100%;
-    padding: var(--space-md);
+    min-height: calc(var(--space-xl) * 2); /* More generous touch target */
+    padding: var(--space-lg);
     border: 2px dashed var(--color-border);
-    border-radius: 0.5rem;
+    border-radius: calc(var(--space-base) / var(--phi)); /* Golden ratio radius */
     background: var(--color-surface-elevated);
-    font-size: var(--scale-base);
-    font-weight: 450;  /* Book weight */
+    font-size: var(--scale-md);
+    font-weight: 450;
     letter-spacing: -0.009em;
     color: var(--color-text-secondary);
     cursor: pointer;
     transition: all 0.2s ease;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 input[type="file"]:hover {
     border-color: var(--color-action);
     background: var(--color-surface);
+    color: var(--color-text);
 }
 
 input[type="file"]:focus {
     outline: none;
     border-color: var(--color-action);
-    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+    border-style: solid;
+    box-shadow: 0 0 0 calc(var(--space-xs) / 2) rgba(0, 0, 0, 0.1);
+}
+
+/* Mobile adaptation */
+@media (max-width: 768px) {
+    input[type="file"] {
+        min-height: var(--space-xl);
+        padding: var(--space-md);
+        font-size: var(--scale-base);
+    }
+    
+    .file-actions {
+        flex-direction: column;
+        gap: var(--space-xs);
+    }
+    
+    .file-actions button {
+        width: 100%;
+        justify-content: center;
+        font-size: var(--scale-xs);
+        padding: var(--space-xs) var(--space-sm);
+    }
+    
+    #copy-zip-btn {
+        font-size: var(--scale-xs);
+        padding: var(--space-xs) var(--space-sm);
+    }
 }
 
 /* === BUTTON SYSTEM === */
@@ -236,8 +281,18 @@ button.danger:hover {
 
 /* === FILE DISPLAY SYSTEM === */
 
-#file-list {
+#file-list-section {
     margin-top: var(--space-lg);
+    display: none; /* Hidden until files are uploaded */
+}
+
+#file-list-section.has-files {
+    display: block;
+}
+
+#file-list {
+    /* Container for uploaded files - styling applied to children */
+    margin: 0;
 }
 
 #file-list > div {
@@ -287,8 +342,8 @@ button.danger:hover {
 .file-progress {
     position: relative;
     background: var(--color-border-light);
-    border-radius: 0.125rem;
-    height: 0.25rem;
+    border-radius: calc(var(--space-xs) / 2);
+    height: calc(var(--space-xs) / 1.618);
     margin: var(--space-sm) 0;
     overflow: hidden;
 }
@@ -296,16 +351,17 @@ button.danger:hover {
 .progress-bar {
     height: 100%;
     background: var(--color-action);
-    border-radius: 0.125rem;
+    border-radius: calc(var(--space-xs) / 2);
     transition: width 0.3s ease;
 }
 
 .progress-text {
     position: absolute;
-    top: -1.5rem;
+    top: calc(var(--space-base) * -1);
     right: 0;
     font-size: var(--scale-xs);
     color: var(--color-text-secondary);
+    font-weight: 500;
 }
 
 /* === COPY ZIP FUNCTIONALITY === */

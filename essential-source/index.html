@@ -18,9 +18,9 @@
             <button id="copy-zip-btn" onclick="copyZipLink()" style="display: none;">Copy All Files</button>
         </section>
         
-        <section>
+        <section id="file-list-section">
             <div id="file-list">
-                <p>No files shared yet. Upload files to see them here.</p>
+                <!-- Files appear here after upload -->
             </div>
         </section>
     </main>
@@ -64,8 +64,11 @@
                 </div>
             `;
             
-            // Insert at the beginning to show newest first
-            if (fileList.firstChild && fileList.firstChild.tagName !== 'P') {
+            // Show file list section and insert file at beginning
+            const fileListSection = document.getElementById('file-list-section');
+            fileListSection.classList.add('has-files');
+            
+            if (fileList.firstChild) {
                 fileList.insertBefore(fileDiv, fileList.firstChild);
             } else {
                 fileList.appendChild(fileDiv);
@@ -262,10 +265,11 @@
                 // Update ZIP button visibility
                 updateZipButton();
                 
-                // If no files left, show empty state
+                // If no files left, hide file list section
                 const fileList = document.getElementById('file-list');
+                const fileListSection = document.getElementById('file-list-section');
                 if (fileList.children.length === 0) {
-                    fileList.innerHTML = '<p>No files shared yet. Upload files to see them here.</p>';
+                    fileListSection.classList.remove('has-files');
                 }
             } else {
                 button.textContent = `Delete failed (${response.status})`;
