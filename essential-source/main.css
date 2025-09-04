@@ -203,19 +203,13 @@ button.danger:hover {
     display: block;
 }
 
-/* Upload page file items - animated entry */
+/* Upload page file items - no animation */
 #file-list > div {
     background: var(--color-surface);
     border: 2px solid var(--color-border);
     border-radius: 0.125rem;
-    /* Reserve space immediately to prevent layout shifts */
     padding: var(--space-xl);
     margin-bottom: var(--space-lg);
-    min-height: 120px;
-    /* Animate only visibility, not layout */
-    opacity: 0;
-    transform: translateY(10px);
-    animation: fadeInUp 0.6s ease forwards;
     outline: 1px solid transparent;
     outline-offset: -1px;
 }
@@ -244,35 +238,6 @@ button.danger:hover {
     border-color: var(--color-text-light);
 }
 
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeOutDown {
-    from {
-        opacity: 1;
-        transform: translateY(0);
-        max-height: 200px;
-        padding-top: var(--space-xl);
-        padding-bottom: var(--space-xl);
-        margin-bottom: var(--space-lg);
-    }
-    to {
-        opacity: 0;
-        transform: translateY(10px);
-        max-height: 0;
-        padding-top: 0;
-        padding-bottom: 0;
-        margin-bottom: 0;
-    }
-}
 
 /* Error states */
 .error-message {
