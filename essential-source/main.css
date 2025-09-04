@@ -25,25 +25,25 @@
 }
 
 :root {
-    /* Golden Ratio (1.618) based scaling */
+    /* Golden Ratio (1.618) based scaling - refined for practical use */
     --base-unit: 1rem;     /* 16px */
     
-    /* Spacing Scale */
-    --space-xs: calc(var(--base-unit) / 1.618);     /* 0.618rem */
-    --space-sm: var(--base-unit);                   /* 1rem */
-    --space-base: calc(var(--base-unit) * 1.618);   /* 1.618rem */
-    --space-md: calc(var(--base-unit) * 2.618);     /* 2.618rem */
-    --space-lg: calc(var(--base-unit) * 4.236);     /* 4.236rem */
-    --space-xl: calc(var(--base-unit) * 6.854);     /* 6.854rem */
+    /* Spacing Scale - more conservative progression */
+    --space-xs: calc(var(--base-unit) * 0.25);      /* 0.25rem = 4px */
+    --space-sm: calc(var(--base-unit) * 0.5);       /* 0.5rem = 8px */
+    --space-base: var(--base-unit);                 /* 1rem = 16px */
+    --space-md: calc(var(--base-unit) * 1.618);     /* 1.618rem = 25.9px */
+    --space-lg: calc(var(--base-unit) * 2.618);     /* 2.618rem = 41.9px */
+    --space-xl: calc(var(--base-unit) * 4.236);     /* 4.236rem = 67.8px */
     
-    /* Typography Scale */
-    --scale-xs: calc(var(--base-unit) / 1.618);     /* 0.618rem */
-    --scale-sm: var(--base-unit);                   /* 1rem */
-    --scale-base: calc(var(--base-unit) * 1.618);   /* 1.618rem */
-    --scale-md: calc(var(--base-unit) * 2.618);     /* 2.618rem */
-    --scale-lg: calc(var(--base-unit) * 4.236);     /* 4.236rem */
-    --scale-xl: calc(var(--base-unit) * 6.854);     /* 6.854rem */
-    --scale-xxl: calc(var(--base-unit) * 11.09);    /* 11.09rem */
+    /* Typography Scale - golden ratio but practical */
+    --scale-xs: calc(var(--base-unit) * 0.618);     /* 0.618rem = 9.9px */
+    --scale-sm: calc(var(--base-unit) * 0.75);      /* 0.75rem = 12px */
+    --scale-base: var(--base-unit);                 /* 1rem = 16px */
+    --scale-md: calc(var(--base-unit) * 1.25);      /* 1.25rem = 20px */
+    --scale-lg: calc(var(--base-unit) * 1.618);     /* 1.618rem = 25.9px */
+    --scale-xl: calc(var(--base-unit) * 2);         /* 2rem = 32px */
+    --scale-xxl: calc(var(--base-unit) * 2.618);    /* 2.618rem = 41.9px */
     
     /* Honest material palette - inspired by Braun design */
     --color-text: #000;

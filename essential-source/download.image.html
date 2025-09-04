@@ -18,7 +18,7 @@
     <main>
         <section>
             <div class="file-name">{{.Filename}}</div>
-            <div class="file-details">{{.ContentType}} • {{.ContentLength | formatFileSize}}</div>
+            <div class="file-details">{{.ContentType}} • {{.ContentLength | format "#,###."}} bytes</div>
             
             <div style="margin: 2rem 0; text-align: center;">
                 <img src="{{.URL}}" alt="{{.Filename}}" style="max-width: 100%; height: auto; border-radius: 0.25rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
@@ -32,6 +32,17 @@
     </main>
 
     <script>
+    // Format file size for display
+    function formatFileSize(bytes) {
+        if (bytes >= 1024 * 1024 * 1024) {
+            return (bytes / (1024 * 1024 * 1024)).toFixed(1) + 'GB';
+        } else if (bytes >= 1024 * 1024) {
+            return (bytes / (1024 * 1024)).toFixed(1) + 'MB';
+        } else {
+            return Math.round(bytes / 1024) + 'KB';
+        }
+    }
+    
     async function copyToClipboard(text, button) {
         try {
             await navigator.clipboard.writeText(text);
