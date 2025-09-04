@@ -21,7 +21,7 @@
             </div>
             
             <div class="file-preview">
-                <img src="{{.URL}}" alt="{{.Filename}}">
+                <img id="preview-image" alt="{{.Filename}}" style="display: none;">
             </div>
         </section>
     </main>
@@ -68,11 +68,26 @@
         }
     }
     
-    // Format file size on page load
+    // Format file size and load preview on page load
     document.addEventListener('DOMContentLoaded', function() {
         const fileSizeElement = document.getElementById('file-size');
         if (fileSizeElement) {
             fileSizeElement.textContent = formatFileSize({{.ContentLength}});
+        }
+        
+        // Load image preview asynchronously
+        const previewImage = document.getElementById('preview-image');
+        if (previewImage) {
+            previewImage.onload = function() {
+                previewImage.style.display = 'block';
+                previewImage.classList.add('loaded');
+            };
+            previewImage.onerror = function() {
+                // Hide preview area if image fails to load
+                previewImage.parentElement.style.display = 'none';
+            };
+            // Start loading the image
+            previewImage.src = '{{.URL}}';
         }
     });
     </script>

@@ -443,6 +443,11 @@ button.danger:hover {
 .file-preview {
     margin-top: var(--space-lg);
     text-align: center;
+    /* Reserve minimum space to prevent layout shift */
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .file-preview img,
@@ -451,10 +456,24 @@ button.danger:hover {
     height: auto;
     border-radius: 0.5rem;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    /* Prevent layout jumps while loading */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.file-preview img.loaded,
+.file-preview video.loaded {
+    opacity: 1;
 }
 
 .file-preview audio {
     width: 100%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.file-preview audio.loaded {
+    opacity: 1;
 }
 
 /* Mobile responsiveness */

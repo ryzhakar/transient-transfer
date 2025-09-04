@@ -21,8 +21,8 @@
             </div>
             
             <div class="file-preview">
-                <audio controls>
-                    <source src="{{.URL}}" type="{{.ContentType}}">
+                <audio id="preview-audio" controls style="display: none;">
+                    <source type="{{.ContentType}}">
                     Your browser does not support the audio element.
                     <a href="{{.URLGet}}">Download audio file</a>
                 </audio>
@@ -72,11 +72,30 @@
         }
     }
     
-    // Format file size on page load
+    // Format file size and load preview on page load
     document.addEventListener('DOMContentLoaded', function() {
         const fileSizeElement = document.getElementById('file-size');
         if (fileSizeElement) {
             fileSizeElement.textContent = formatFileSize({{.ContentLength}});
+        }
+        
+        // Load audio preview asynchronously
+        const previewAudio = document.getElementById('preview-audio');
+        if (previewAudio) {
+            const source = previewAudio.querySelector('source');
+            
+            previewAudio.onloadedmetadata = function() {
+                previewAudio.style.display = 'block';
+                previewAudio.classList.add('loaded');
+            };
+            previewAudio.onerror = function() {
+                // Hide preview area if audio fails to load
+                previewAudio.parentElement.style.display = 'none';
+            };
+            
+            // Start loading the audio
+            source.src = '{{.URL}}';
+            previewAudio.load();
         }
     });
     </script>

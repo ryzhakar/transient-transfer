@@ -21,8 +21,8 @@
             </div>
             
             <div class="file-preview">
-                <video controls>
-                    <source src="{{.URL}}" type="{{.ContentType}}">
+                <video id="preview-video" controls style="display: none;">
+                    <source type="{{.ContentType}}">
                     Your browser does not support the video element.
                     <a href="{{.URLGet}}">Download video file</a>
                 </video>
@@ -72,11 +72,30 @@
         }
     }
     
-    // Format file size on page load
+    // Format file size and load preview on page load
     document.addEventListener('DOMContentLoaded', function() {
         const fileSizeElement = document.getElementById('file-size');
         if (fileSizeElement) {
             fileSizeElement.textContent = formatFileSize({{.ContentLength}});
+        }
+        
+        // Load video preview asynchronously
+        const previewVideo = document.getElementById('preview-video');
+        if (previewVideo) {
+            const source = previewVideo.querySelector('source');
+            
+            previewVideo.onloadedmetadata = function() {
+                previewVideo.style.display = 'block';
+                previewVideo.classList.add('loaded');
+            };
+            previewVideo.onerror = function() {
+                // Hide preview area if video fails to load
+                previewVideo.parentElement.style.display = 'none';
+            };
+            
+            // Start loading the video
+            source.src = '{{.URL}}';
+            previewVideo.load();
         }
     });
     </script>
