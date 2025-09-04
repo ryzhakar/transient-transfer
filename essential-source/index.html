@@ -63,7 +63,8 @@
             
             // Store initial measurements for restoration
             this.initialMeasurements = {
-                headerHeight: this.elements.header.offsetHeight
+                headerHeight: this.elements.header.offsetHeight,
+                uploadSectionHeight: this.elements.uploadSection.offsetHeight
             };
             
             this.setupEventListeners();
@@ -201,9 +202,10 @@
                 this.elements.controlsSection.style.display = 'none';
                 
                 // STEP C: Upload area expands to full size
-                const targetHeight = window.innerHeight - this.initialMeasurements.headerHeight - 128;
+                const currentHeight = this.elements.uploadSection.offsetHeight;
+                const targetHeight = this.initialMeasurements.uploadSectionHeight;
                 await this.animate(this.elements.uploadSection, [
-                    { height: `${this.elements.uploadSection.offsetHeight}px`, flex: '0 0 auto' },
+                    { height: `${currentHeight}px`, flex: '0 0 auto' },
                     { height: `${targetHeight}px`, flex: '1 1 auto' }
                 ], { duration: 400 });
                 
@@ -213,25 +215,26 @@
                 // STEP D: Header reappears (height expand + fade in)
                 this.elements.header.style.display = 'flex';
                 
-                await this.animate(this.elements.header, [
-                    { 
-                        height: '0px',
-                        paddingTop: '0px',
-                        paddingBottom: '0px'
-                    },
-                    { 
-                        height: `${this.initialMeasurements.headerHeight}px`,
-                        paddingTop: 'var(--space-xxl)',
-                        paddingBottom: 'var(--space-xxl)'
-                    }
-                ], { duration: 400 });
+                await Promise.all([
+                    this.animate(this.elements.header, [
+                        { opacity: 0, transform: 'translateY(-50px)' },
+                        { opacity: 1, transform: 'translateY(0)' }
+                    ], { duration: 300 }),
+                    this.animate(this.elements.header, [
+                        { 
+                            height: '0px',
+                            paddingTop: '0px',
+                            paddingBottom: '0px'
+                        },
+                        { 
+                            height: `${this.initialMeasurements.headerHeight}px`,
+                            paddingTop: 'var(--space-xxl)',
+                            paddingBottom: 'var(--space-xxl)'
+                        }
+                    ], { duration: 400 })
+                ]);
                 
                 this.elements.header.style.height = '';
-                
-                await this.animate(this.elements.header, [
-                    { opacity: 0, transform: 'translateY(-50px)' },
-                    { opacity: 1, transform: 'translateY(0)' }
-                ], { duration: 300 });
                 
                 // Reset body styles
                 document.body.style.overflow = 'hidden';
