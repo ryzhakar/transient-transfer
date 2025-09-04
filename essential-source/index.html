@@ -11,26 +11,32 @@
     <!-- Skip to main content for keyboard users -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
     
-    <!-- Element 1: PARCEL Header -->
-    <div id="parcel-header">
+    <!-- State: Empty (header + fullscreen upload) -->
+    <header id="parcel-header">
         <h1>PARCEL</h1>
-    </div>
+    </header>
     
-    <!-- Element 2: Upload Area (contains everything else) -->
-    <div id="upload-area">
-        <div id="drop-area">
-            <input type="file" id="file-input" multiple>
-            <div id="drop-text">
-                <span>Drag files here or <strong>choose files</strong></span>
+    <main id="main-content">
+        <section id="upload-section">
+            <div id="drop-area">
+                <input type="file" id="file-input" multiple>
+                <div id="drop-text">
+                    <span>Drag files here or <strong>choose files</strong></span>
+                </div>
             </div>
-        </div>
+        </section>
         
-        <button id="copy-zip-btn" onclick="copyZipLink()" style="display: none;">Copy All Files</button>
+        <!-- State: With files (hidden initially) -->
+        <section id="controls-section" style="display: none;">
+            <button id="copy-zip-btn" onclick="copyZipLink()">Copy All Files</button>
+        </section>
         
-        <div id="file-list">
-            <!-- Files appear here after upload -->
-        </div>
-    </div>
+        <section id="file-list-section" style="display: none;">
+            <div id="file-list">
+                <!-- Files appear here after upload -->
+            </div>
+        </section>
+    </main>
 
     <script>
     // Track uploaded files for ZIP functionality

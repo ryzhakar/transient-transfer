@@ -21,6 +21,7 @@
 
 :root {
     /* Typography scale - proper visual hierarchy */
+    --text-parcel: 12rem; /* 192px - PARCEL heading only */
     --text-xs: 0.75rem;   /* 12px - metadata */
     --text-sm: 0.875rem;  /* 14px - secondary */
     --text-base: 1rem;    /* 16px - primary */
@@ -57,39 +58,94 @@ body {
     overflow: hidden;
 }
 
-/* Element 1: PARCEL Header */
+/* PARCEL Header - Size based on text + padding only */
 #parcel-header {
     width: 100%;
     max-width: 56rem;
     margin: 0 auto;
     padding: var(--space-xxl);
     text-align: center;
-    height: 20vh;
+    transition: all 0.3s ease;
+    /* No fixed height - let content determine size */
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
 }
 
 #parcel-header h1 {
-    font-size: 4rem;
+    font-size: var(--text-parcel);
     font-weight: 900;
     margin: 0;
     letter-spacing: 0.05em;
+    line-height: 1;
 }
 
-/* Element 2: Upload Area */
-#upload-area {
+main {
     width: 100%;
     max-width: 56rem;
     margin: 0 auto;
     padding: var(--space-xxl);
-    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    /* Fill remaining space after header */
+    min-height: calc(100vh - 16rem); /* Approximate header height */
+    flex: 1;
+}
+
+/* Upload section - Initially fills all remaining space */
+#upload-section {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    /* Take full height of main container */
+    height: 100%;
     transition: all 0.3s ease;
+}
+
+/* Controls section - Hidden initially */
+#controls-section {
+    padding: var(--space-lg) 0;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+/* File list section - Hidden initially */
+#file-list-section {
+    transition: all 0.3s ease;
+}
+
+/* Drop area - HUGE to fill upload section */
+#drop-area {
+    border: 3px dashed var(--color-border);
+    border-radius: 0.75rem;
+    padding: var(--space-xxl);
+    text-align: center;
+    background: #fafafa;
+    cursor: pointer;
+    font-size: var(--text-xl);
+    color: var(--color-text-light);
+    /* Make it HUGE - fill the entire upload section */
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: all 0.3s ease;
+    outline: 1px solid transparent;
+    outline-offset: -1px;
+    box-sizing: border-box;
+}
+
+#drop-area:hover {
+    border-color: var(--color-text-light);
+    background: #f0f0f0;
+}
+
+#drop-area.drag-over {
+    border-color: #2e7d32;
+    background: #e8f5e8;
 }
 
 /* Animation states for sequential transitions */
@@ -114,9 +170,16 @@ body.has-files #parcel-header {
     overflow: hidden;
 }
 
-body.has-files #upload-area {
+body.has-files main {
     height: 100vh;
+    padding: var(--space-xxl);
+}
+
+body.has-files #upload-section {
+    height: auto;
+    flex: none;
     justify-content: flex-start;
+    margin-bottom: var(--space-lg);
 }
 
 /* Typography hierarchy */
@@ -435,8 +498,17 @@ button.danger:hover {
 
 /* Mobile responsiveness */
 @media (max-width: 768px) {
+    :root {
+        --text-parcel: 6rem; /* Responsive PARCEL text */
+    }
+    
+    #parcel-header {
+        padding: var(--space-lg);
+    }
+    
     main {
         padding: var(--space-xl);
+        min-height: calc(100vh - 8rem); /* Smaller header on mobile */
     }
     
     body {
