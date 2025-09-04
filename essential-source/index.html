@@ -13,7 +13,12 @@
     
     <main id="main-content">
         <section>
-            <input type="file" id="file-input" multiple>
+            <div id="drop-area">
+                <input type="file" id="file-input" multiple>
+                <div id="drop-text">
+                    <span>Drag files here or <strong>choose files</strong></span>
+                </div>
+            </div>
             
             <button id="copy-zip-btn" onclick="copyZipLink()" style="display: none;">Copy All Files</button>
         </section>
@@ -38,6 +43,50 @@
         } else {
             return Math.round(bytes / 1024) + 'KB';
         }
+    }
+    
+    // Drag and Drop functionality
+    const dropArea = document.getElementById('drop-area');
+    const fileInput = document.getElementById('file-input');
+    
+    // Prevent default drag behaviors
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    // Highlight drop area when item is dragged over it
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, highlight, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unhighlight, false);
+    });
+    
+    // Handle dropped files
+    dropArea.addEventListener('drop', handleDrop, false);
+    
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    
+    function highlight(e) {
+        dropArea.classList.add('drag-over');
+    }
+    
+    function unhighlight(e) {
+        dropArea.classList.remove('drag-over');
+    }
+    
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        
+        // Simulate file input change
+        fileInput.files = files;
+        fileInput.dispatchEvent(new Event('change', { bubbles: true }));
     }
     
     // Minimal upload functionality - required due to PUT-only API

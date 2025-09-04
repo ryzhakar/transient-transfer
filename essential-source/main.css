@@ -78,39 +78,63 @@ h2 {
     margin: var(--space-xl) 0 var(--space-lg) 0;
 }
 
-/* File input - professional drag & drop area */
-input[type="file"] {
+/* Drag & Drop Area */
+#drop-area {
+    position: relative;
     width: 100%;
     min-height: 12rem;
-    padding: var(--space-xl);
     border: 3px dashed var(--color-border);
     border-radius: 0.75rem;
     background: #fafafa;
-    font-size: var(--text-lg);
-    font-weight: 500;
-    color: var(--color-text-light);
     cursor: pointer;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     transition: all 0.3s ease;
-    position: relative;
+    overflow: hidden;
 }
 
-input[type="file"]:hover {
+#drop-area:hover,
+#drop-area.drag-over {
     border-color: var(--color-text);
     background: #f0f0f0;
-    color: var(--color-text);
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
-input[type="file"]:focus {
-    border-color: var(--color-text);
+#drop-area.drag-over {
     border-style: solid;
-    outline: none;
-    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1);
+    background: #e8f5e8;
+    border-color: #4caf50;
+}
+
+#drop-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: var(--text-lg);
+    font-weight: 500;
+    color: var(--color-text-light);
+    text-align: center;
+    pointer-events: none;
+    transition: color 0.3s ease;
+}
+
+#drop-area:hover #drop-text,
+#drop-area.drag-over #drop-text {
+    color: var(--color-text);
+}
+
+#drop-area.drag-over #drop-text {
+    color: #2e7d32;
+}
+
+input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
 }
 
 /* Button system - professional and distinctive */
@@ -182,7 +206,17 @@ button.danger:hover {
     padding: var(--space-xl);
     margin-bottom: var(--space-lg);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    transition: box-shadow 0.2s ease;
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideInUp 0.4s ease forwards;
+}
+
+@keyframes slideInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .file-name {
@@ -277,10 +311,12 @@ button.danger:hover {
         font-size: var(--text-lg);
     }
     
-    input[type="file"] {
+    #drop-area {
         min-height: 10rem;
+    }
+    
+    #drop-text {
         font-size: var(--text-base);
-        padding: var(--space-lg);
     }
     
     .file-actions {
@@ -299,6 +335,24 @@ button.danger:hover {
 }
 
 /* Accessibility */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: var(--color-text);
+    color: var(--color-surface);
+    padding: 8px;
+    text-decoration: none;
+    border-radius: 0.25rem;
+    z-index: 1000;
+    font-size: var(--text-sm);
+    font-weight: 600;
+}
+
+.skip-link:focus {
+    top: 6px;
+}
+
 *:focus-visible {
     outline: 2px solid var(--color-text);
     outline-offset: 2px;
