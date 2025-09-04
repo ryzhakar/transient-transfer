@@ -1,18 +1,14 @@
-version: '3.8'
-
 services:
   builder:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: transfer-sh-builder
     volumes:
-      - ./dist:/app/dist:rw
-    restart: "no"
+      - ./dist:/output
+    working_dir: /app
 
   transfer-sh:
     image: dutchcoders/transfer.sh:v1.6.1-noroot
-    container_name: transfer-sh-custom
     restart: unless-stopped
     ports:
       - "8080:8080"

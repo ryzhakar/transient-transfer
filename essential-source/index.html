@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Hostname}} - File sharing</title>
+    <meta name="description" content="Simple, fast file sharing">
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+
+<nav id="navigation">
+    <div class="container">
+        <a href="/">
+            <h1>{{.Hostname}}</h1>
+        </a>
+    </div>
+</nav>
+
+<main>
+    <div class="container">
+        <div class="upload-area" id="upload-area">
+            <p class="upload-description">Drop files here or <a class="browse" href="#">browse</a></p>
+            <input type="file" multiple id="file-input" hidden>
+        </div>
+        
+        <div class="file-queue" id="file-queue">
+            <div class="queue-header">
+                <h3 class="queue-title">Files</h3>
+                <div class="queue-actions">
+                    <button id="download-all" class="download-all btn" disabled>Copy link</button>
+                    <button id="clear-all" class="clear-all btn" disabled>Clear</button>
+                </div>
+            </div>
+            <ul class="queue"></ul>
+            <div class="queue-empty">No files uploaded</div>
+        </div>
+    </div>
+</main>
+
+<script src="scripts/main.js"></script>
+
+</body>
+</html>
+
