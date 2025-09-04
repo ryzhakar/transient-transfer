@@ -57,14 +57,19 @@ body {
     overflow: hidden;
 }
 
-/* PARCEL Header - Initially visible, disappears on first upload */
+/* PARCEL Header - Initially visible, takes proper space */
 #parcel-header {
     width: 100%;
     max-width: 56rem;
     margin: 0 auto;
-    padding: var(--space-xxl) var(--space-xxl) 0;
+    padding: var(--space-xxl);
     text-align: center;
     transition: all 0.3s ease;
+    /* Take about 20% of screen height */
+    height: 20vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #parcel-header h1 {
@@ -81,16 +86,18 @@ main {
     padding: 0 var(--space-xxl) var(--space-xxl);
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 8rem); /* Account for header */
+    /* Fill remaining 80% of screen */
+    height: 80vh;
 }
 
-/* Upload section - Initially fills remaining space */
+/* Upload section - Initially fills all remaining space */
 #upload-section {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    flex: 1;
+    /* Take full height of main container */
+    height: 100%;
     transition: all 0.3s ease;
 }
 
@@ -129,13 +136,15 @@ body.has-files #parcel-header {
 }
 
 body.has-files main {
-    height: auto;
+    height: 100vh;
     padding: var(--space-xxl);
 }
 
 body.has-files #upload-section {
+    height: auto;
     flex: none;
     justify-content: flex-start;
+    margin-bottom: var(--space-lg);
 }
 
 /* Typography hierarchy */
