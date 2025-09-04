@@ -27,7 +27,7 @@
         
         <!-- State: With files (hidden initially) -->
         <section id="controls-section" style="display: none;">
-            <button id="copy-zip-btn" onclick="copyZipLink()">Copy All Files</button>
+            <button id="copy-zip-btn" style="display: none;" onclick="copyZipLink()">Copy All Files</button>
         </section>
         
         <section id="file-list-section" style="display: none;">
@@ -317,23 +317,33 @@
         async handleFiles(files) {
             const isFirstUpload = this.uploadedFiles.length === 0;
             
+            // Process each file first (add to DOM, start uploads)
+            const fileElements = [];
+            for (const file of files) {
+                const fileDiv = this.startFileUpload(file);
+                fileElements.push(fileDiv);
+            }
+            
             // Transform UI if this is the first upload
             if (isFirstUpload && files.length > 0 && this.state === 'EMPTY') {
                 await this.transformToFileState();
+                
+                // After transformation, animate files in
+                for (const fileDiv of fileElements) {
+                    await this.animateFileIn(fileDiv);
+                }
+            } else {
+                // If not first upload, animate files in immediately
+                for (const fileDiv of fileElements) {
+                    await this.animateFileIn(fileDiv);
+                }
             }
-            
-            // Process each file
-            for (const file of files) {
-                await this.uploadFile(file);
-            }
-            
-            this.updateZipButton();
         }
         
         /**
-         * Upload single file with progress tracking
+         * Start file upload - immediately add to DOM, then upload
          */
-        async uploadFile(file) {
+        startFileUpload(file) {
             // Create file display element
             const fileDiv = document.createElement('div');
             fileDiv.innerHTML = `
@@ -345,12 +355,21 @@
                 </div>
             `;
             
-            // Add to DOM (top of list)
+            // Add to DOM immediately (top of list) but keep invisible
+            fileDiv.style.opacity = '0';
+            fileDiv.style.transform = 'translateY(20px)';
             this.elements.fileList.insertBefore(fileDiv, this.elements.fileList.firstChild);
             
-            // Animate file appearing
-            await this.animateFileIn(fileDiv);
+            // Start upload process (don't await - run in background)
+            this.processFileUpload(file, fileDiv);
             
+            return fileDiv;
+        }
+        
+        /**
+         * Process file upload with progress tracking
+         */
+        async processFileUpload(file, fileDiv) {
             try {
                 // Upload using XMLHttpRequest for progress tracking
                 const xhr = new XMLHttpRequest();
@@ -380,7 +399,7 @@
                             <div class="file-actions">
                                 <button onclick="animationManager.copyToClipboard('${downloadUrl}', this)">Copy Link</button>
                                 <button class="danger" onclick="animationManager.deleteFile('${deleteUrl}', this, '${file.name}')">Delete</button>
-    </div>
+                            </div>
                         `;
                         
                         // Add to uploaded files array
@@ -391,6 +410,7 @@
                             element: fileDiv
                         });
                         
+                        // Update ZIP button after successful upload
                         this.updateZipButton();
                     } else {
                         fileDiv.innerHTML = `
