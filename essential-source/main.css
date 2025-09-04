@@ -203,12 +203,12 @@ input[type="file"]:focus {
     }
     
     .file-name {
-        font-size: var(--scale-md); /* Smaller on mobile */
-        margin-bottom: calc(var(--space-sm) / var(--phi));
+        font-size: var(--scale-base); /* Proportional scaling */
+        margin-bottom: calc(var(--space-xs) / var(--phi));
     }
     
     .file-details {
-        font-size: var(--scale-sm); /* Smaller on mobile */
+        font-size: var(--scale-xs); /* Proportional scaling */
         margin-bottom: var(--space-sm);
     }
     
@@ -220,8 +220,19 @@ input[type="file"]:focus {
     .file-actions button {
         width: 100%;
         justify-content: center;
-        font-size: var(--scale-xs);
-        padding: var(--space-xs) var(--space-sm);
+        /* Maintain hierarchy on mobile */
+    }
+    
+    .file-actions button:first-child {
+        font-size: var(--scale-base); /* Primary remains prominent */
+        padding: var(--space-base) var(--space-md);
+        font-weight: 700;
+    }
+    
+    button.secondary,
+    button.danger {
+        font-size: var(--scale-xs); /* Secondary actions smaller */
+        padding: var(--space-sm) var(--space-base);
     }
     
     #copy-zip-btn {
@@ -275,23 +286,37 @@ button:disabled {
     cursor: not-allowed;
 }
 
-/* Button variants */
+/* Button hierarchy - Primary action dominates */
+.file-actions button:first-child {
+    font-weight: 700; /* Extra bold for primary action */
+    font-size: calc(var(--scale-base) * 1.1); /* Slightly larger */
+    padding: calc(var(--space-base) * 1.2) var(--space-md); /* More generous */
+}
+
+/* Secondary actions - clearly subdued */
 button.secondary {
     background: var(--color-surface);
-    color: var(--color-secondary);
+    color: var(--color-text-secondary);
     border-color: var(--color-border);
+    font-weight: 450; /* Lighter weight than primary */
+    font-size: var(--scale-sm); /* Smaller than primary */
+    padding: calc(var(--space-base) * 0.8) var(--space-sm); /* Less padding */
 }
 
 button.secondary:hover {
     background: var(--color-surface-elevated);
-    color: var(--color-secondary-hover);
-    border-color: var(--color-border);
+    color: var(--color-text);
+    border-color: var(--color-text-secondary);
 }
 
+/* Danger actions - important but not dominant */
 button.danger {
     background: var(--color-danger);
     color: white;
     border-color: var(--color-danger);
+    font-weight: 500; /* Medium weight */
+    font-size: var(--scale-sm); /* Smaller than primary */
+    padding: calc(var(--space-base) * 0.8) var(--space-sm); /* Less padding */
 }
 
 button.danger:hover {
@@ -349,22 +374,22 @@ button.danger:hover {
 }
 
 .file-name {
-    font-size: var(--scale-lg); /* Larger, more confident */
-    font-weight: 650; /* Semi-bold for clarity */
+    font-size: var(--scale-md); /* Modest, not competing with actions */
+    font-weight: 600; /* Clear but not dominant */
     color: var(--color-text);
-    margin-bottom: var(--space-sm);
+    margin-bottom: calc(var(--space-xs) / var(--phi)); /* Tighter spacing */
     word-break: break-word;
     line-height: 1.3;
-    letter-spacing: -0.015em;
+    letter-spacing: -0.012em;
 }
 
 .file-details {
-    font-size: var(--scale-base); /* Consistent with body text */
+    font-size: var(--scale-sm); /* Supporting information */
     color: var(--color-text-secondary);
     margin-bottom: var(--space-md);
     font-variant-numeric: tabular-nums;
-    letter-spacing: -0.009em;
-    line-height: 1.5;
+    letter-spacing: -0.006em;
+    line-height: 1.4;
 }
 
 .file-actions {
@@ -382,10 +407,11 @@ button.danger:hover {
     white-space: nowrap;
     text-align: center;
     text-transform: uppercase;
-    padding: var(--space-sm) var(--space-md); /* Consistent padding */
-    font-size: var(--scale-sm); /* Consistent with design system */
-    font-weight: 500; /* Slightly bolder for better hierarchy */
-    letter-spacing: 0.02em; /* Better spacing for uppercase */
+    padding: var(--space-base) var(--space-md); /* More generous padding */
+    font-size: var(--scale-base); /* Prominent, action-oriented */
+    font-weight: 600; /* Strong for clear hierarchy */
+    letter-spacing: 0.025em; /* Better spacing for prominence */
+    line-height: 1;
 }
 
 /* Upload progress styling */
@@ -420,6 +446,9 @@ button.danger:hover {
     margin-top: var(--space-md);
     width: 100%;
     justify-content: center;
+    font-size: var(--scale-base); /* Prominent collective action */
+    font-weight: 600; /* Clear importance */
+    padding: var(--space-base) var(--space-md); /* Generous padding */
 }
 
 /* === MEDIA PREVIEWS === */
