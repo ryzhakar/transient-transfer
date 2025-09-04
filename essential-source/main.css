@@ -126,23 +126,7 @@ button:disabled {
     margin-bottom: 1rem;
 }
 
-/* URL styling - make them readable */
-.file-url {
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 0.25rem;
-    padding: 0.75rem;
-    font-family: ui-monospace, Monaco, monospace;
-    font-size: 0.75rem;
-    color: #0066cc;
-    word-break: break-all;
-    margin-bottom: 1rem;
-    cursor: pointer;
-}
-
-.file-url:hover {
-    background: #f8f9fa;
-}
+/* URLs removed - users don't need to see them */
 
 /* File actions */
 .file-actions {

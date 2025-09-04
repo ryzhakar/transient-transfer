@@ -78,8 +78,8 @@
                     fileDiv.innerHTML = `
                         <div class="file-name">${file.name}</div>
                         <div class="file-details">${Math.round(file.size/1024)}KB</div>
-                        <div class="file-url" onclick="copyToClipboard('${downloadUrl.trim()}', this)" title="Click to copy">${downloadUrl.trim()}</div>
                         <div class="file-actions">
+                            <button onclick="copyToClipboard('${downloadUrl.trim()}', this)">Copy Link</button>
                             <button onclick="window.open('${downloadUrl.trim()}', '_blank')">Open</button>
                             ${deleteUrl ? `<button onclick="deleteFile('${deleteUrl}', this, '${file.name}')">Delete</button>` : ''}
                         </div>
@@ -103,15 +103,15 @@
     });
     
     // Copy to clipboard function
-    async function copyToClipboard(text, element) {
+    async function copyToClipboard(text, button) {
         try {
             await navigator.clipboard.writeText(text);
-            const originalBg = element.style.backgroundColor;
-            element.style.backgroundColor = '#d4edda';
-            element.textContent = 'Copied!';
+            const originalText = button.textContent;
+            button.textContent = 'Copied!';
+            button.style.backgroundColor = '#28a745';
             setTimeout(() => {
-                element.style.backgroundColor = originalBg;
-                element.textContent = text;
+                button.textContent = originalText;
+                button.style.backgroundColor = '';
             }, 1500);
         } catch (error) {
             // Fallback for older browsers
@@ -124,12 +124,12 @@
             document.execCommand('copy');
             document.body.removeChild(textArea);
             
-            const originalBg = element.style.backgroundColor;
-            element.style.backgroundColor = '#d4edda';
-            element.textContent = 'Copied!';
+            const originalText = button.textContent;
+            button.textContent = 'Copied!';
+            button.style.backgroundColor = '#28a745';
             setTimeout(() => {
-                element.style.backgroundColor = originalBg;
-                element.textContent = text;
+                button.textContent = originalText;
+                button.style.backgroundColor = '';
             }, 1500);
         }
     }
@@ -202,8 +202,11 @@
                 // Remove from uploaded files array
                 uploadedFiles = uploadedFiles.filter(file => file.name !== fileName);
                 
-                // Remove the file div from the page
-                button.closest('div').remove();
+                // Remove the file div from the page - need to go up to the parent div
+                const fileDiv = button.closest('#file-list > div');
+                if (fileDiv) {
+                    fileDiv.remove();
+                }
                 
                 // Update ZIP button visibility
                 updateZipButton();

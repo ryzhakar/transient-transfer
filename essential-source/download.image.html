@@ -16,46 +16,52 @@
     </header>
     
     <main>
-        <article>
-            <h1>{{.Filename}}</h1>
+        <section>
+            <div class="file-name">{{.Filename}}</div>
+            <div class="file-details">{{.ContentType}} • {{.ContentLength | format "#,###."}} bytes</div>
             
-            <section>
-                <h2>Image Preview</h2>
-                <img src="{{.URL}}" alt="{{.Filename}}" style="max-width: 100%; height: auto;">
-            </section>
+            <div style="margin: 2rem 0; text-align: center;">
+                <img src="{{.URL}}" alt="{{.Filename}}" style="max-width: 100%; height: auto; border-radius: 0.25rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            </div>
             
-            <section>
-                <h2>Download Options</h2>
-                <ul>
-                    <li><a href="{{.URLGet}}" download>Download {{.Filename}}</a></li>
-                    <li><a href="{{.URL}}" target="_blank">Open Full Size</a></li>
-                    <li><a href="{{.URL}}">Copy Share Link</a></li>
-                </ul>
-            </section>
-            
-            <section>
-                <h2>File Information</h2>
-                <dl>
-                    <dt>Filename</dt>
-                    <dd>{{.Filename}}</dd>
-                    
-                    <dt>File Type</dt>
-                    <dd>{{.ContentType}}</dd>
-                    
-                    <dt>File Size</dt>
-                    <dd>{{.ContentLength | format "#,###."}} bytes</dd>
-                    
-                    <dt>Shared via</dt>
-                    <dd>{{.Hostname}}</dd>
-                </dl>
-            </section>
-            
-            <section>
-                <h2>Mobile Access</h2>
-                <p>Scan this QR code with your mobile device to access this image:</p>
-                <img src="data:image/png;base64,{{.QRCode}}" alt="QR Code for {{.URL}}" width="200" height="200">
-            </section>
-        </article>
+            <div class="file-actions">
+                <button onclick="window.location.href='{{.URLGet}}'">Download</button>
+                <button onclick="window.open('{{.URL}}', '_blank')">View Full Size</button>
+                <button onclick="copyToClipboard('{{.URL}}', this)">Copy Share Link</button>
+            </div>
+        </section>
     </main>
+
+    <script>
+    async function copyToClipboard(text, button) {
+        try {
+            await navigator.clipboard.writeText(text);
+            const originalText = button.textContent;
+            button.textContent = 'Copied!';
+            button.style.backgroundColor = '#28a745';
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.backgroundColor = '';
+            }, 1500);
+        } catch (error) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.opacity = '0';
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            const originalText = button.textContent;
+            button.textContent = 'Copied!';
+            button.style.backgroundColor = '#28a745';
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.backgroundColor = '';
+            }, 1500);
+        }
+    }
+    </script>
 </body>
 </html>
