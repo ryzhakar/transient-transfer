@@ -33,6 +33,17 @@
     // Track uploaded files for ZIP functionality
     let uploadedFiles = [];
     
+    // Format file size consistently: GB > MB > KB
+    function formatFileSize(bytes) {
+        if (bytes >= 1024 * 1024 * 1024) {
+            return (bytes / (1024 * 1024 * 1024)).toFixed(1) + 'GB';
+        } else if (bytes >= 1024 * 1024) {
+            return (bytes / (1024 * 1024)).toFixed(1) + 'MB';
+        } else {
+            return Math.round(bytes / 1024) + 'KB';
+        }
+    }
+    
     // Minimal upload functionality - required due to PUT-only API
     document.getElementById('file-input').addEventListener('change', async function(e) {
         const files = e.target.files;
@@ -50,7 +61,7 @@
             const fileDiv = document.createElement('div');
             fileDiv.innerHTML = `
                 <div class="file-name">${file.name}</div>
-                <div class="file-details">${Math.round(file.size/1024)}KB</div>
+                <div class="file-details">${formatFileSize(file.size)}</div>
                 <div class="file-progress">
                     <div class="progress-bar" style="width: 0%"></div>
                     <span class="progress-text">Uploading...</span>
@@ -112,11 +123,10 @@
                     // Remove progress bar and show actions
                     fileDiv.innerHTML = `
                         <div class="file-name">${file.name}</div>
-                        <div class="file-details">${Math.round(file.size/1024)}KB</div>
+                        <div class="file-details">${formatFileSize(file.size)}</div>
                         <div class="file-actions">
                             <button onclick="copyToClipboard('${downloadUrl.trim()}', this)">Copy</button>
-                            <button class="secondary" onclick="window.open('${downloadUrl.trim()}', '_blank')">Open</button>
-                            ${deleteUrl ? `<button class="danger" onclick="deleteFile('${deleteUrl}', this, '${file.name}')">Delete</button>` : ''}
+                            <button class="danger" onclick="deleteFile('${deleteUrl}', this, '${file.name}')">Delete</button>
                         </div>
                     `;
                     

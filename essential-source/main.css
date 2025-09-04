@@ -13,12 +13,19 @@
 
 /* === FOUNDATION: Typography & Rhythm === */
 
+@font-face {
+    font-family: 'Inter';
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('https://rsms.me/inter/font-files/Inter.var.woff2') format('woff2-variations');
+}
+
 * {
     box-sizing: border-box;
 }
 
 :root {
-    /* Modular scale based on golden ratio (1.618) */
+    /* Modular scale based on golden ratio (1.618) with Inter's precision */
     --scale-xs: 0.618rem;   /* 9.9px */
     --scale-sm: 0.75rem;    /* 12px */
     --scale-base: 1rem;     /* 16px */
@@ -52,41 +59,58 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, 
-                 "Helvetica Neue", Arial, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
     font-size: var(--scale-base);
-    line-height: 1.5;
+    font-weight: 400;
+    line-height: 1.6;
+    letter-spacing: -0.011em;  /* Subtle optical spacing */
     color: var(--color-text);
     background: var(--color-surface);
     margin: 0;
     padding: var(--space-lg);
     max-width: 42rem; /* Optimal reading measure */
     margin: 0 auto;
+    font-feature-settings: 
+        'zero' 1,    /* Slashed zero */
+        'ss01' 1,    /* Alternate lowercase g */
+        'ss02' 1,    /* Alternate a */
+        'cv05' 1,    /* Alternate lowercase l */
+        'cv10' 1;    /* Alternate punctuation */
 }
 
 /* === TYPOGRAPHIC HIERARCHY === */
 
 h1 {
     font-size: var(--scale-xxl);
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
-    margin: 0 0 var(--space-sm) 0;
+    font-weight: 750;  /* Extra bold, but not black */
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    margin: 0 0 var(--space-base) 0;
     color: var(--color-text);
 }
 
 h2 {
     font-size: var(--scale-xl);
-    font-weight: 500;
-    letter-spacing: -0.01em;
-    line-height: 1.3;
+    font-weight: 650;  /* Bold, but not extra bold */
+    letter-spacing: -0.02em;
+    line-height: 1.2;
     margin: var(--space-lg) 0 var(--space-base) 0;
     color: var(--color-text);
 }
 
-p {
-    margin: 0 0 var(--space-base) 0;
+h3 {
+    font-size: var(--scale-lg);
+    font-weight: 600;  /* Semi-bold */
+    letter-spacing: -0.015em;
+    line-height: 1.3;
+    margin: var(--space-md) 0 var(--space-sm) 0;
     color: var(--color-text-secondary);
+}
+
+p, label, input, button {
+    font-weight: 400;
+    letter-spacing: -0.011em;
+    line-height: 1.6;
 }
 
 /* === LAYOUT STRUCTURE === */
@@ -150,6 +174,8 @@ input[type="file"] {
     border-radius: 0.5rem;
     background: var(--color-surface-elevated);
     font-size: var(--scale-base);
+    font-weight: 450;  /* Book weight */
+    letter-spacing: -0.009em;
     color: var(--color-text-secondary);
     cursor: pointer;
     transition: all 0.2s ease;
@@ -178,8 +204,9 @@ button {
     background: var(--color-action);
     color: white;
     font-size: var(--scale-sm);
-    font-weight: 500;
-    letter-spacing: 0.01em;
+    font-weight: 650;  /* Bold weight */
+    letter-spacing: 0.01em;  /* Slight positive tracking for buttons */
+    text-transform: uppercase;
     cursor: pointer;
     transition: all 0.1s ease;
     line-height: 1;
@@ -242,13 +269,6 @@ button.danger:hover {
     border-radius: 0.75rem;
     padding: var(--space-md);
     margin-bottom: var(--space-base);
-    transition: all 0.2s ease;
-}
-
-#file-list > div:hover {
-    border-color: var(--color-border);
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-    transform: translateY(-1px);
 }
 
 .file-name {
