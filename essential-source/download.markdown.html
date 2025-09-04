@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Filename}} - {{.Hostname}}</title>
+    <meta name="description" content="Download {{.Filename}}">
+    <link rel="stylesheet" href="/styles/main.css">
+</head>
+<body>
+    <main>
+        <section>
+            <div class="file-container">
+                <div class="file-name">{{.Filename}}</div>
+                <div class="file-details">{{.ContentType}} • <span id="file-size"></span></div>
+                
+                <div class="file-actions">
+                    <button onclick="window.location.href='{{.URLGet}}'">Download</button>
+                    <button class="secondary" onclick="copyToClipboard('{{.URL}}', this)">Copy Link</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+    // Format file size for display
+    function formatFileSize(bytes) {
+        if (bytes >= 1024 * 1024 * 1024) {
+            return (bytes / (1024 * 1024 * 1024)).toFixed(1) + 'GB';
+        } else if (bytes >= 1024 * 1024) {
+            return (bytes / (1024 * 1024)).toFixed(1) + 'MB';
+        } else {
+            return Math.round(bytes / 1024) + 'KB';
+        }
+    }
+    
+    async function copyToClipboard(text, button) {
+        try {
+            await navigator.clipboard.writeText(text);
+            const originalText = button.textContent;
+            button.textContent = 'Copied!';
+            button.style.backgroundColor = '#28a745';
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.backgroundColor = '';
+            }, 1500);
+        } catch (error) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.opacity = '0';
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            const originalText = button.textContent;
+            button.textContent = 'Copied!';
+            button.style.backgroundColor = '#28a745';
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.backgroundColor = '';
+            }, 1500);
+        }
+    }
+    
+    // Format file size on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileSizeElement = document.getElementById('file-size');
+        if (fileSizeElement) {
+            fileSizeElement.textContent = formatFileSize({{.ContentLength}});
+        }
+    });
+    </script>
+</body>
+</html>
