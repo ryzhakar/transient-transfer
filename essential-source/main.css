@@ -1,168 +1,318 @@
 /**
- * Transfer.sh - Minimal Professional Interface
- * Following Dieter Rams: Typography, spacing, and clarity only
+ * Transfer.sh - Ramsian Design System
+ * 
+ * "Good design is as little design as possible" - but that little design
+ * must be beautiful, precise, and honest to its material.
+ * 
+ * Principles:
+ * - Aesthetic: Beauty through proportion and restraint
+ * - Honest: Form follows function without pretense  
+ * - Minimal: Every element justified by necessity
+ * - Understandable: Self-explanatory through visual hierarchy
  */
 
-/* Reset and base */
+/* === FOUNDATION: Typography & Rhythm === */
+
 * {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
 }
 
-html {
-    font-size: 100%;
+:root {
+    /* Modular scale based on golden ratio (1.618) */
+    --scale-xs: 0.618rem;   /* 9.9px */
+    --scale-sm: 0.75rem;    /* 12px */
+    --scale-base: 1rem;     /* 16px */
+    --scale-md: 1.25rem;    /* 20px */
+    --scale-lg: 1.618rem;   /* 25.9px */
+    --scale-xl: 2rem;       /* 32px */
+    --scale-xxl: 2.618rem;  /* 41.9px */
+    
+    /* Rhythmic spacing system */
+    --space-xs: 0.25rem;    /* 4px */
+    --space-sm: 0.5rem;     /* 8px */
+    --space-base: 1rem;     /* 16px */
+    --space-md: 1.5rem;     /* 24px */
+    --space-lg: 2.5rem;     /* 40px */
+    --space-xl: 4rem;       /* 64px */
+    
+    /* Honest color system */
+    --color-text: #1a1a1a;
+    --color-text-secondary: #666;
+    --color-text-tertiary: #999;
+    --color-action: #0066cc;
+    --color-action-hover: #0052a3;
+    --color-success: #2d7d2d;
+    --color-danger: #cc3300;
+    --color-surface: #fff;
+    --color-surface-elevated: #f8f9fa;
+    --color-border: #e1e5e9;
+    --color-border-light: #f0f2f5;
 }
 
 body {
-    font-family: system-ui, -apple-system, sans-serif;
-    font-size: 1rem;
-    line-height: 1.6;
-    color: #333;
-    background: #fff;
-    max-width: 50rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, 
+                 "Helvetica Neue", Arial, sans-serif;
+    font-size: var(--scale-base);
+    line-height: 1.5;
+    color: var(--color-text);
+    background: var(--color-surface);
+    margin: 0;
+    padding: var(--space-lg);
+    max-width: 42rem; /* Optimal reading measure */
     margin: 0 auto;
-    padding: 2rem 1rem;
 }
 
-/* Typography hierarchy */
+/* === TYPOGRAPHIC HIERARCHY === */
+
 h1 {
-    font-size: 1.5rem;
+    font-size: var(--scale-xxl);
     font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: #000;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin: 0 0 var(--space-sm) 0;
+    color: var(--color-text);
 }
 
 h2 {
-    font-size: 1.125rem;
-    font-weight: 600;
-    margin: 2rem 0 1rem 0;
-    color: #000;
-}
-
-h2:first-of-type {
-    margin-top: 0;
+    font-size: var(--scale-xl);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    margin: var(--space-lg) 0 var(--space-base) 0;
+    color: var(--color-text);
 }
 
 p {
-    margin-bottom: 1rem;
+    margin: 0 0 var(--space-base) 0;
+    color: var(--color-text-secondary);
 }
 
-/* Form elements */
+/* === LAYOUT STRUCTURE === */
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+header h1 {
+    margin: 0;
+    font-size: var(--scale-lg);
+}
+
+header h1 a {
+    color: var(--color-text);
+    text-decoration: none;
+}
+
+header nav a {
+    color: var(--color-action);
+    text-decoration: none;
+    font-size: var(--scale-sm);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+}
+
+header nav a:hover {
+    color: var(--color-action-hover);
+}
+
+main {
+    margin-bottom: var(--space-xl);
+}
+
+section {
+    margin-bottom: var(--space-lg);
+}
+
+/* === FORM ELEMENTS === */
+
 label {
     display: block;
+    font-size: var(--scale-sm);
     font-weight: 500;
-    margin-bottom: 0.5rem;
-    color: #000;
+    color: var(--color-text);
+    margin-bottom: var(--space-sm);
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
 }
 
 input[type="file"] {
     width: 100%;
-    padding: 1rem;
-    border: 2px solid #ddd;
-    border-radius: 0.25rem;
-    font-size: 1rem;
-    margin-bottom: 1rem;
+    padding: var(--space-md);
+    border: 2px dashed var(--color-border);
+    border-radius: 0.5rem;
+    background: var(--color-surface-elevated);
+    font-size: var(--scale-base);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+input[type="file"]:hover {
+    border-color: var(--color-action);
+    background: var(--color-surface);
 }
 
 input[type="file"]:focus {
     outline: none;
-    border-color: #0066cc;
+    border-color: var(--color-action);
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
 }
 
-/* Buttons */
+/* === BUTTON SYSTEM === */
+
 button {
-    font-family: inherit;
-    font-size: 0.875rem;
-    font-weight: 500;
-    padding: 0.75rem 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-sm) var(--space-md);
     border: none;
-    border-radius: 0.25rem;
-    background: #0066cc;
-    color: #fff;
+    border-radius: 0.375rem;
+    background: var(--color-action);
+    color: white;
+    font-size: var(--scale-sm);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
     cursor: pointer;
-    margin-bottom: 1rem;
+    transition: all 0.15s ease;
+    line-height: 1;
 }
 
 button:hover {
-    background: #0052a3;
+    background: var(--color-action-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 102, 204, 0.2);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(0, 102, 204, 0.2);
+}
+
+button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.3);
 }
 
 button:disabled {
-    background: #ccc;
+    background: var(--color-text-tertiary);
     cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
-/* File list styling */
+/* === FILE DISPLAY SYSTEM === */
+
 #file-list {
-    margin-top: 1rem;
+    margin-top: var(--space-lg);
 }
 
 #file-list > div {
-    background: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 0.25rem;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    border-radius: 0.75rem;
+    padding: var(--space-md);
+    margin-bottom: var(--space-base);
+    transition: all 0.2s ease;
 }
 
-#file-list > div:last-child {
-    margin-bottom: 0;
+#file-list > div:hover {
+    border-color: var(--color-border);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    transform: translateY(-1px);
 }
 
-/* File information */
 .file-name {
+    font-size: var(--scale-md);
     font-weight: 600;
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-    color: #000;
+    color: var(--color-text);
+    margin-bottom: var(--space-xs);
+    word-break: break-word;
+    line-height: 1.3;
 }
 
 .file-details {
-    font-size: 0.875rem;
-    color: #666;
-    margin-bottom: 1rem;
+    font-size: var(--scale-sm);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-md);
+    font-variant-numeric: tabular-nums;
 }
 
-/* URLs removed - users don't need to see them */
-
-/* File actions */
 .file-actions {
     display: flex;
-    gap: 0.5rem;
+    gap: var(--space-sm);
     flex-wrap: wrap;
 }
 
 .file-actions button {
-    margin-bottom: 0;
-    font-size: 0.75rem;
-    padding: 0.5rem 0.75rem;
+    flex: none;
 }
 
-/* Links */
-a {
-    color: #0066cc;
-    text-decoration: none;
+/* Special button variants */
+.file-actions button:nth-child(2) {
+    background: var(--color-text-secondary);
 }
 
-a:hover {
-    text-decoration: underline;
+.file-actions button:nth-child(2):hover {
+    background: var(--color-text);
 }
 
-/* Responsive */
-@media (max-width: 48rem) {
+.file-actions button:last-child {
+    background: var(--color-danger);
+}
+
+.file-actions button:last-child:hover {
+    background: #a32900;
+}
+
+/* === COPY ZIP FUNCTIONALITY === */
+
+#copy-zip-btn {
+    background: var(--color-success);
+    margin-top: var(--space-md);
+    width: 100%;
+    justify-content: center;
+}
+
+#copy-zip-btn:hover {
+    background: #246824;
+}
+
+/* === MEDIA PREVIEWS === */
+
+img, video, audio {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* === RESPONSIVE DESIGN === */
+
+@media (max-width: 640px) {
     body {
-        padding: 1rem 0.75rem;
+        padding: var(--space-base);
+        font-size: var(--scale-sm);
+    }
+    
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-base);
     }
     
     h1 {
-        font-size: 1.25rem;
+        font-size: var(--scale-xl);
     }
     
-    #file-list > div {
-        padding: 1rem;
+    h2 {
+        font-size: var(--scale-lg);
     }
     
     .file-actions {
@@ -171,35 +321,78 @@ a:hover {
     
     .file-actions button {
         width: 100%;
+        justify-content: center;
     }
 }
 
-/* Accessibility */
+/* === ACCESSIBILITY === */
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 .skip-link {
     position: absolute;
     top: -40px;
-    left: 1rem;
-    background: #000;
-    color: #fff;
-    padding: 0.5rem;
+    left: 6px;
+    background: var(--color-text);
+    color: var(--color-surface);
+    padding: 8px;
     text-decoration: none;
     border-radius: 0.25rem;
+    z-index: 1000;
 }
 
 .skip-link:focus {
-    top: 1rem;
+    top: 6px;
 }
 
-button:focus,
-input:focus,
-a:focus {
-    outline: 2px solid #0066cc;
+/* Focus indicators */
+*:focus-visible {
+    outline: 2px solid var(--color-action);
     outline-offset: 2px;
 }
 
+/* === MOTION PREFERENCES === */
+
 @media (prefers-reduced-motion: reduce) {
-    * {
+    *,
+    *::before,
+    *::after {
         animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* === PRINT STYLES === */
+
+@media print {
+    * {
+        background: transparent !important;
+        color: black !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+    
+    button {
+        display: none;
+    }
+    
+    a {
+        text-decoration: underline;
+    }
+    
+    a[href]:after {
+        content: " (" attr(href) ")";
     }
 }

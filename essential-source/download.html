@@ -11,7 +11,7 @@
     <header>
         <h1><a href="/">{{.Hostname}}</a></h1>
         <nav>
-            <a href="/">Upload New Files</a>
+            <a href="/">Share Files</a>
         </nav>
     </header>
     
@@ -22,7 +22,6 @@
             
             <div class="file-actions">
                 <button onclick="window.location.href='{{.URLGet}}'">Download</button>
-                <button onclick="window.open('{{.URL}}', '_blank')">View in Browser</button>
                 <button onclick="copyToClipboard('{{.URL}}', this)">Copy Share Link</button>
             </div>
         </section>

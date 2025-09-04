@@ -18,14 +18,14 @@
     
     <main id="main-content">
         <section>
-            <h2>Upload Files</h2>
+            <h2>Share Files</h2>
             <label for="file-input">Choose files to upload:</label>
             <input type="file" id="file-input" multiple>
+            
+            <button id="copy-zip-btn" onclick="copyZipLink()" style="display: none;">Copy ZIP Link</button>
         </section>
         
         <section>
-            <h2>Your Shared Files</h2>
-            <button id="copy-zip-btn" onclick="copyZipLink()" style="display: none;">Copy ZIP Link</button>
             <div id="file-list">
                 <p>No files shared yet. Upload files to see them here.</p>
             </div>
