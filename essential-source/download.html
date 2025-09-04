@@ -1,90 +1,56 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{.Filename}} - {{.Hostname}}</title>
-    <meta name="description" content="Download {{.Filename}}">
-    <link rel="stylesheet" href="/styles/main.css">
+    <meta name="description" content="Download {{.Filename}} shared via Transfer.sh">
 </head>
-<body class="download-page">
+<body>
+    <header>
+        <h1><a href="/">Transfer Files</a></h1>
+    </header>
 
-<nav id="navigation">
-    <div class="container">
-        <a href="/">
-            <h1>{{.Hostname}}</h1>
-        </a>
-    </div>
-</nav>
+    <main>
+        <section>
+            <h2>{{.Filename}}</h2>
+            
+            <div class="download-actions">
+                <a href="{{.URLGet}}" class="button" download>
+                    Download
+                </a>
+                <button type="button" class="secondary" onclick="copyCurrentUrl(this)">
+                    Copy Link
+                </button>
+            </div>
+        </section>
+    </main>
 
-<main>
-    <div class="container">
-        <h1>{{.Filename}}</h1>
-        <div class="meta mono">{{.ContentType}} · {{.ContentLength}} bytes</div>
-        
-        <!-- Preview section for different file types -->
-        {{if eq .ContentType "image/jpeg"}}
-            <img src="{{.URL}}" alt="{{.Filename}}" class="preview">
-        {{else if eq .ContentType "image/png"}}
-            <img src="{{.URL}}" alt="{{.Filename}}" class="preview">
-        {{else if eq .ContentType "image/gif"}}
-            <img src="{{.URL}}" alt="{{.Filename}}" class="preview">
-        {{else if eq .ContentType "image/webp"}}
-            <img src="{{.URL}}" alt="{{.Filename}}" class="preview">
-        {{else if eq .ContentType "video/mp4"}}
-            <video controls class="preview">
-                <source src="{{.URL}}" type="{{.ContentType}}">
-                Your browser does not support the video element.
-            </video>
-        {{else if or (eq .ContentType "video/webm") (eq .ContentType "video/quicktime") (eq .ContentType "video/mov")}}
-            <video controls class="preview">
-                <source src="{{.URL}}" type="{{.ContentType}}">
-                Your browser does not support the video element.
-            </video>
-        {{else if or (eq .ContentType "audio/mpeg") (eq .ContentType "audio/wav") (eq .ContentType "audio/x-aiff") (eq .ContentType "audio/aiff")}}
-            <audio controls class="preview">
-                <source src="{{.URL}}" type="{{.ContentType}}">
-                Your browser does not support the audio element.
-            </audio>
-        {{else if eq .ContentType "text/markdown"}}
-            <div class="preview">{{.Content}}</div>
-        {{end}}
-        
-        <div class="actions">
-            <button id="copy-link" class="btn btn-primary" data-url="{{.URL}}">Copy Link</button>
-            <a href="{{.URLGet}}" class="btn">Download</a>
-            <a href="/" class="btn">Upload More</a>
-        </div>
-    </div>
-</main>
 
-<script>
-document.getElementById('copy-link').addEventListener('click', function() {
-    const url = this.dataset.url;
-    const fullUrl = url.startsWith('http') ? url.replace('/get', '') + '?dl=1' : window.location.origin + '/get' + url;
-    navigator.clipboard.writeText(fullUrl).then(() => {
-        const originalText = this.textContent;
-        this.textContent = 'Copied!';
-        setTimeout(() => {
-            this.textContent = originalText;
-        }, 2000);
-    }).catch(() => {
-        // Fallback for older browsers
-        const textArea = document.createElement('textarea');
-        textArea.value = fullUrl;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        
-        const originalText = this.textContent;
-        this.textContent = 'Copied!';
-        setTimeout(() => {
-            this.textContent = originalText;
-        }, 2000);
-    });
-});
-</script>
-
+    <script>
+        function copyCurrentUrl(button) {
+            const originalText = button.textContent;
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => {
+                button.textContent = 'Copied!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            }).catch(() => {
+                // Fallback
+                const textArea = document.createElement('textarea');
+                textArea.value = url;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                button.textContent = 'Copied!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            });
+        }
+    </script>
+    <link rel="stylesheet" href="/styles/main.css">
 </body>
 </html>

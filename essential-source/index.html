@@ -1,45 +1,45 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{.Hostname}} - File sharing</title>
-    <meta name="description" content="Simple, fast file sharing">
-    <link rel="stylesheet" href="styles/main.css">
+    <title>{{.Hostname}} - Transfer Files</title>
+    <meta name="description" content="Simple, fast file sharing. Upload files and share them instantly.">
 </head>
 <body>
+    <header>
+        <h1>Transfer Files</h1>
+    </header>
 
-<nav id="navigation">
-    <div class="container">
-        <a href="/">
-            <h1>{{.Hostname}}</h1>
-        </a>
-    </div>
-</nav>
-
-<main>
-    <div class="container">
-        <div class="upload-area" id="upload-area">
-            <p class="upload-description">Drop files here or <a class="browse" href="#">browse</a></p>
-            <input type="file" multiple id="file-input" hidden>
-        </div>
-        
-        <div class="file-queue" id="file-queue">
-            <div class="queue-header">
-                <h3 class="queue-title">Files</h3>
-                <div class="queue-actions">
-                    <button id="download-all" class="download-all btn" disabled>Copy link</button>
-                    <button id="clear-all" class="clear-all btn" disabled>Clear</button>
+    <main>
+        <section>
+            <form action="/upload" method="post" enctype="multipart/form-data" id="upload-form">
+                <div class="upload-area">
+                    <label for="file-input">Choose files or drag them here</label>
+                    <input type="file" id="file-input" name="files" multiple required accept="*/*">
                 </div>
+                
+                <button type="submit">Upload</button>
+            </form>
+
+            <div class="upload-progress" hidden aria-live="polite">
+                <progress value="0" max="100" aria-describedby="progress-text"></progress>
+                <div id="progress-text">0% complete</div>
             </div>
-            <ul class="queue"></ul>
-            <div class="queue-empty">No files uploaded</div>
-        </div>
-    </div>
-</main>
+            
+            <div class="file-list" role="region" aria-live="polite">
+                <p>No files uploaded yet.</p>
+            </div>
+        </section>
 
-<script src="scripts/main.js"></script>
+    </main>
 
+    <footer>
+        <p>Files expire automatically.</p>
+    </footer>
+
+    <!-- Progressive enhancement -->
+    <script src="/scripts/main.js" defer></script>
+    <link rel="stylesheet" href="/styles/main.css">
 </body>
 </html>
-

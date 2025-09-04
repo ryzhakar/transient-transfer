@@ -1,67 +1,61 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{.Filename}} - {{.Hostname}}</title>
-    <meta name="description" content="Download {{.Filename}}">
-    <link rel="stylesheet" href="/styles/main.css">
+    <meta name="description" content="Listen to and download {{.Filename}} shared via Transfer.sh">
+    <meta property="og:type" content="audio">
 </head>
-<body class="download-page">
+<body>
+    <header>
+        <h1><a href="/">Transfer Files</a></h1>
+    </header>
 
-<nav id="navigation">
-    <div class="container">
-        <a href="/">
-            <h1>{{.Hostname}}</h1>
-        </a>
-    </div>
-</nav>
+    <main>
+        <section>
+            <div class="file-preview">
+                <audio controls preload="metadata" style="width: 100%;">
+                    <source src="{{.URL}}" type="{{.ContentType}}">
+                    <p>Your browser doesn't support audio playback. <a href="{{.URLGet}}" download>Download the audio file</a> to listen to it.</p>
+                </audio>
+            </div>
 
-<main>
-    <div class="container">
-        <h1>{{.Filename}}</h1>
-        <div class="meta mono">{{.ContentType}} · {{.ContentLength}} bytes</div>
-        
-        <audio controls class="preview">
-            <source src="{{.URL}}" type="{{.ContentType}}">
-            Your browser does not support the audio element.
-        </audio>
-        
-        <div class="actions">
-            <button id="copy-link" class="btn btn-primary" data-url="{{.URL}}">Copy Link</button>
-            <a href="{{.URLGet}}" class="btn">Download</a>
-            <a href="/" class="btn">Upload More</a>
-        </div>
-    </div>
-</main>
+            <div class="download-actions">
+                <a href="{{.URLGet}}" class="button" download>
+                    Download
+                </a>
+                <button type="button" class="secondary" onclick="copyCurrentUrl(this)">
+                    Copy Link
+                </button>
+            </div>
+        </section>
+    </main>
 
-<script>
-document.getElementById('copy-link').addEventListener('click', function() {
-    const url = this.dataset.url;
-    const fullUrl = url.startsWith('http') ? url.replace('/get', '') + '?dl=1' : window.location.origin + '/get' + url;
-    navigator.clipboard.writeText(fullUrl).then(() => {
-        const originalText = this.textContent;
-        this.textContent = 'Copied!';
-        setTimeout(() => {
-            this.textContent = originalText;
-        }, 2000);
-    }).catch(() => {
-        const textArea = document.createElement('textarea');
-        textArea.value = fullUrl;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        
-        const originalText = this.textContent;
-        this.textContent = 'Copied!';
-        setTimeout(() => {
-            this.textContent = originalText;
-        }, 2000);
-    });
-});
-</script>
 
+    <script>
+        function copyCurrentUrl(button) {
+            const originalText = button.textContent;
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                button.textContent = 'Copied!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            }).catch(() => {
+                // Fallback
+                const textArea = document.createElement('textarea');
+                textArea.value = window.location.href;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                button.textContent = 'Copied!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            });
+        }
+    </script>
+    <link rel="stylesheet" href="/styles/main.css">
 </body>
 </html>
-

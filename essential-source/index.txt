@@ -1,17 +1,7 @@
-{{.Hostname}}: Easy file sharing from the command line 
-===
+{{.Hostname}} - Simple file sharing
 
-Upload:
-$ curl --upload-file ./hello.txt {{.WebAddress}}hello.txt
+Upload: curl --upload-file file.txt {{.WebAddress}}file.txt
+Download: curl {{.WebAddress}}{{.SampleToken}}/file.txt -o file.txt  
+Delete: curl -X DELETE <deletion-url>
 
-Encrypt with gpg & upload:
-$ cat /tmp/hello.txt|gpg -ac -o-|curl -X PUT --upload-file "-" {{.WebAddress}}test.txt
-
-Download & decrypt with gpg:
-$ curl {{.WebAddress}}{{.SampleToken}}/test.txt|gpg -o- > /tmp/hello.txt
-
-Add shell function to .bashrc or .zshrc or its equivalent:
-===
-transfer(){ if [ $# -eq 0 ];then echo "No arguments specified.\nUsage:\n  transfer <file|directory>\n  ... | transfer <file_name>">&2;return 1;fi;if tty -s;then file="$1";file_name=$(basename "$file");if [ ! -e "$file" ];then echo "$file: No such file or directory">&2;return 1;fi;if [ -d "$file" ];then file_name="$file_name.zip" ,;(cd "$file"&&zip -r -q - .)|curl --progress-bar --upload-file "-" "{{.WebAddress}}$file_name"|tee /dev/null,;else cat "$file"|curl --progress-bar --upload-file "-" "{{.WebAddress}}/$file_name"|tee /dev/null;fi;else file_name=$1;curl --progress-bar --upload-file "-" "{{.WebAddress}}/$file_name"|tee /dev/null;fi;}
-===
-$ transfer test.txt
+Web interface: {{.WebAddress}}
