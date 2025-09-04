@@ -57,19 +57,18 @@ body {
     overflow: hidden;
 }
 
-/* PARCEL Header - Initially visible, takes proper space */
+/* Element 1: PARCEL Header */
 #parcel-header {
     width: 100%;
     max-width: 56rem;
     margin: 0 auto;
     padding: var(--space-xxl);
     text-align: center;
-    transition: all 0.3s ease;
-    /* Take about 20% of screen height */
     height: 20vh;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.3s ease;
 }
 
 #parcel-header h1 {
@@ -79,37 +78,17 @@ body {
     letter-spacing: 0.05em;
 }
 
-main {
+/* Element 2: Upload Area */
+#upload-area {
     width: 100%;
     max-width: 56rem;
     margin: 0 auto;
-    padding: 0 var(--space-xxl) var(--space-xxl);
-    display: flex;
-    flex-direction: column;
-    /* Fill remaining 80% of screen */
+    padding: var(--space-xxl);
     height: 80vh;
-}
-
-/* Upload section - Initially fills all remaining space */
-#upload-section {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    /* Take full height of main container */
-    height: 100%;
-    transition: all 0.3s ease;
-}
-
-/* Controls section - Hidden initially */
-#controls-section {
-    padding: var(--space-lg) 0;
-    text-align: center;
-    transition: all 0.3s ease;
-}
-
-/* File list section - Hidden initially */
-#file-list-section {
     transition: all 0.3s ease;
 }
 
@@ -135,16 +114,9 @@ body.has-files #parcel-header {
     overflow: hidden;
 }
 
-body.has-files main {
+body.has-files #upload-area {
     height: 100vh;
-    padding: var(--space-xxl);
-}
-
-body.has-files #upload-section {
-    height: auto;
-    flex: none;
     justify-content: flex-start;
-    margin-bottom: var(--space-lg);
 }
 
 /* Typography hierarchy */
