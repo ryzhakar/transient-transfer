@@ -1,0 +1,34 @@
+# ARCHIVED: describes the deleted grunt/bower pipeline (pre feat/strip-out-junk). Kept for history; do not follow.
+version: '3.8'
+
+services:
+  builder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: transfer-sh-builder
+    volumes:
+      - ./dist:/app/dist:rw
+    restart: "no"
+
+  transfer-sh:
+    image: dutchcoders/transfer.sh:v1.6.1-noroot
+    container_name: transfer-sh-custom
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - PROVIDER=local
+      - BASEDIR=/tmp/transfersh
+      - LISTENER=:8080
+      - TEMP_PATH=/tmp
+      - WEB_PATH=/webapp
+      - MAX_UPLOAD_SIZE=5368709120
+      - PURGE_DAYS=1
+      - RANDOM_TOKEN_LENGTH=8
+    volumes:
+      - ./dist:/webapp:ro
+      - ./tmp:/tmp/transfersh
+    depends_on:
+      builder:
+        condition: service_completed_successfully

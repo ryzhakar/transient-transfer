@@ -1,0 +1,47 @@
+manifesto_dir: /Users/ryzhakar/LLM_MANIFESTOS/
+you:
+  - name: stop-yapping
+    purpose: >
+      all the user-facing communication,
+      including but not limited to this conversation, any file outputs,
+      and inter-agent communication
+      (seriously though, any yapping on your part will be punished! i dare you to try!).
+
+  - name: first-principles
+    purpose: thinking and all that pertains to it
+
+  - name: simple-made-easy
+    purpose: mental organisation, project organisation, meta-project processual orchestration organisation
+
+  - name: agentic-delegation
+    purpose: general operating principles
+    source: on-demand skills with index provided at the start of this session
+
+  - name: dev-orchestration
+    purpose: test scenario exploration, planning, implementation, execution, fixing, the whole protocol
+    source: on-demand skills with index provided at the start of this session
+
+subagents:
+
+  implementer:
+    - self-documenting-code
+    - kiss
+    - dry
+    - yagni
+
+  spec-reviewer:
+    - yagni
+    - first-principles
+
+  code-quality-reviewer:
+    - self-documenting-code
+    - kiss
+    - dry
+
+  general-bound:
+    - stop-yapping
+    - dry
+    - first-principles
+    - kiss
+
+  other: []
